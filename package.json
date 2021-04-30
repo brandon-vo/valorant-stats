@@ -1,0 +1,17 @@
+{
+  "name": "valorant-stats-bot",
+  "version": "1.0.0",
+  "description": "Discord bot to retrieve Valorant statistics for a user. Created by Brandon Vo",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Brandon Vo",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^12.5.3",
+    "discord.js-pagination": "^1.0.3",
+    "dotenv": "^8.2.0",
+    "node-fetch": "^2.6.1"
+  }
+}
