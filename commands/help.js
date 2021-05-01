@@ -13,6 +13,7 @@ module.exports = {
                 { name: 'Career Stats', value: "`$stats`: Display career stats of a user" },
                 { name: 'Last 20 Matches', value: "`$last20` `$l20`: Display stats for the last 20 matches of a user" },
                 { name: 'Last Game', value: "`$lastmatch` `$lm`: Display last match information of a user" },
+                { name: 'Link Account', value: "`$link`: Link a Valorant account to your Discord ID"},
                 { name: 'Extra', value: "`$joke` `$ping` `$help` `$join` `$leave`" },
             )
             .setTimestamp()
