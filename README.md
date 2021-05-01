@@ -1,7 +1,11 @@
-# Valorant Stats Discord Bot
-Discord bot to track statistics of a Valorant player. 
-Retrieves data from http://blitz.gg. 
-[Invite this bot to your Discord server](https://discord.com/api/oauth2/authorize?client_id=833535533287866398&permissions=2417093728&scope=bot)
+<h1 align="center">Valorant Stats Discord Bot Bot</h1>
+<p align="center">
+  <b>Created by Brandon Vo</b><br>
+  <a href="https://discord.com/api/oauth2/authorize?client_id=833535533287866398&permissions=2417093728&scope=bot">Invite this bot to your Discord server</a> 
+  <br><br>
+  <img src="https://static.wikia.nocookie.net/valorant/images/b/b5/Precision_Spray.gif/revision/latest/scale-to-width-down/250?cb=20210110011244">
+</p>
+
 ---
 # Images 📷
 | Career Stats        | Last 20 Matches | 
@@ -41,9 +45,8 @@ Retrieves data from http://blitz.gg.
 - [ ] Ranks of other players in last match (?)
 - [ ] Current elo, Elo gained/lossed (?)
 
-
-
- 
+This is the first Discord bot that I have ever created
+Retrieves data from http://blitz.gg 
  
  
  
