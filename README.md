@@ -21,7 +21,8 @@
 | :-----------: | :--------: | 
 | $help      | Display a list of avaliable commands      | 
 | $stats      | Display career stats of a Valorant player | 
-| $last20, $l20      | Display last match information of a Valorant player |  
+| $last20, $l20      | Display information for the last 20 matches of a Valorant player |  
+| $lastmatch, $lm      | Display last match information of a Valorant player |  
 | $link | Link a Valorant user to your Discord ID    |
 
 | Extra        | Description    | 
