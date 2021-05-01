@@ -4,7 +4,7 @@
   "description": "Discord bot to retrieve Valorant statistics for a user. Created by Brandon Vo",
   "main": "index.js",
   "scripts": {
-    "start": "start"
+    "test": "nothing"
   },
   "author": "Brandon Vo",
   "license": "ISC",
