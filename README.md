@@ -45,7 +45,7 @@
 - [ ] Ranks of other players in last match (?)
 - [ ] Current elo, Elo gained/lossed (?)
 
-This is the first Discord bot that I have ever created
+This is the first Discord bot that I have ever created  
 Retrieves data from http://blitz.gg 
  
  
