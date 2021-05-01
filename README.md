@@ -45,6 +45,7 @@
 - [ ] Win/Loss ratio visualized with red and green squares
 - [ ] Ranks of other players in last match (?)
 - [ ] Current elo, Elo gained/lossed (?)
+- [ ] Link accounts to a database, rather than a .json file
 
 This is the first Discord bot that I have ever created  
 Retrieves data from http://blitz.gg 
