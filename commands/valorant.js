@@ -352,7 +352,7 @@ module.exports = {
                     count++
 
                     lastMatchEmbed2.addFields(
-                        { name: name + " " + teamColour + " " + playerAgentEmoji + " " + playerRankEmoji, value: "```yaml\nK /  D / A / R   | ACS\n" + 
+                        { name: name + " " + teamColour + " " + playerAgentEmoji + " " + playerRankEmoji, value: "```yaml\nK / D / A / R   | ACS\n" + 
                         kills + " / " + deaths + " / " + assists + " / " + kdr + " | " + parseInt(acs).toFixed(0) + "\n```", inline: true },
                     )
 
