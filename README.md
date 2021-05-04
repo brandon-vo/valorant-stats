@@ -22,11 +22,19 @@
 | $help      | Display a list of avaliable commands      | 
 | $stats      | Display career stats of a Valorant player | 
 <<<<<<< HEAD
+<<<<<<< HEAD
 | $last20, $l20      | Display information for the last 20 matches of a Valorant player |  
 | $lastmatch, $lm      | Display last match information of a Valorant player |  
 =======
 | $last20, $l20      | Display last match information of a Valorant player |  
 >>>>>>> 0fa1075 (Update Bot)
+=======
+| $last20, $l20      | Display last match information of a Valorant player |  
+=======
+| $last20, $l20      | Display information for the last 20 matches of a Valorant player |  
+| $lastmatch, $lm      | Display last match information of a Valorant player |  
+>>>>>>> 60a5ebd8cdecc0cd893622e7b598912ac3146638
+>>>>>>> b3c2a4b (Fix)
 | $link | Link a Valorant user to your Discord ID    |
 
 | Extra        | Description    | 
@@ -50,9 +58,15 @@
 - [ ] Ranks of other players in last match (?)
 - [ ] Current elo, Elo gained/lossed (?)
 <<<<<<< HEAD
+<<<<<<< HEAD
 - [ ] Link accounts to a database, rather than a .json file
 =======
 >>>>>>> 0fa1075 (Update Bot)
+=======
+=======
+- [ ] Link accounts to a database, rather than a .json file
+>>>>>>> 60a5ebd8cdecc0cd893622e7b598912ac3146638
+>>>>>>> b3c2a4b (Fix)
 
 This is the first Discord bot that I have ever created  
 Retrieves data from http://blitz.gg 
