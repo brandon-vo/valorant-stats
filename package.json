@@ -9,6 +9,7 @@
   "author": "Brandon Vo",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.21.1",
     "discord.js": "^12.5.3",
     "discord.js-pagination": "^1.0.3",
     "dotenv": "^8.2.0",

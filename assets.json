@@ -26,7 +26,7 @@
         },
         "8": {
             "name": "Bronze 3",
-            "img": "https://bit.ly/3ni0u4M"
+            "img": "https://static.wikia.nocookie.net/valorant/images/a/a8/TX_CompetitiveTier_Large_8.png/revision/latest/scale-to-width-down/250?cb=20200623203313"
         },
         "9": {
             "name": "Silver 1",
@@ -148,35 +148,147 @@
         }
     },
     "maps": {
-        "bind": {
+        "Bind": {
             "name": "Bind",
             "imgWon": "https://cdn.discordapp.com/attachments/834195818080108564/836293456003072020/bindVictory.jpg",
             "imgLost": "https://cdn.discordapp.com/attachments/834195818080108564/836293453943275540/bindDefeat.jpg",
             "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836293455277195284/bindDraw.jpg"
         },
-        "split": {
+        "Split": {
             "name": "Split",
             "imgWon": "https://cdn.discordapp.com/attachments/834195818080108564/836293469050765433/havenVictory.jpg",
             "imgLost": "https://cdn.discordapp.com/attachments/834195818080108564/836293469630627900/havenDefeat.jpg",
             "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836293471915868218/havenDraw.jpg"
         },
-        "haven": {
+        "Haven": {
             "name": "Haven",
             "imgWon": "https://cdn.discordapp.com/attachments/834195818080108564/836293469050765433/havenVictory.jpg",
             "imgLost": "https://cdn.discordapp.com/attachments/834195818080108564/836293469630627900/havenDefeat.jpg",
             "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836293471915868218/havenDraw.jpg"
         },
-        "ascent": {
+        "Ascent": {
             "name": "Ascent",
             "imgWon": "https://cdn.discordapp.com/attachments/834195818080108564/836293440891256862/ascentDefeat.jpg",
             "imgLost": "https://cdn.discordapp.com/attachments/834195818080108564/836293440891256862/ascentDefeat.jpg",
             "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836293442102624308/ascentDraw.jpg"
         },
-        "port": {
+        "Icebox": {
             "name": "Icebox",
             "imgWon": "https://cdn.discordapp.com/attachments/834195818080108564/836293576018886746/iceboxVictory.jpg",
             "imgLost": "https://cdn.discordapp.com/attachments/834195818080108564/836293532364570695/iceboxDefeat.jpg",
             "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836293588001488936/iceboxDraw.jpg"
+        }
+    },
+    "rankEmojis": {
+        "Unrated": {
+            "emoji": "<:unranked:839140865666318346>"
+        },
+        "Iron 1": {
+            "emoji": "<:iron1:839142017078001725>"
+        },
+        "Iron 2": {
+            "emoji": "<:iron2:839142018541944852>"
+        },
+        "Iron 3": {
+            "emoji": "<:iron3:839142019263234058>"
+        },
+        "Bronze 1": {
+            "emoji": "<:bronze1:839142013349789789>"
+        },
+        "Bronze 2": {
+            "emoji": "<:bronze2:839142013319643236>"
+        },
+        "Bronze 3": {
+            "emoji": "<:bronze3:839142018877095996>"
+        },
+        "Silver 1": {
+            "emoji": "<:silver1:839142017078525953>"
+        },
+        "Silver 2": {
+            "emoji": "<:silver2:839142018541813830>"
+        },
+        "Silver 3": {
+            "emoji": "<:silver3:839142019225223230>"
+        },
+        "Gold 1": {
+            "emoji": "<:gold1:839142018521366528>"
+        },
+        "Gold 2": {
+            "emoji": "<:gold2:839142019367567440>"
+        },
+        "Gold 3": {
+            "emoji": "<:gold3:839142020093444116>"
+        },
+        "Platinum 1": {
+            "emoji": "<:platnium1:839167134712987688>"
+        },
+        "Platinum 2": {
+            "emoji": "<:platnium2:839142018986803271>"
+        },
+        "Platinum 3": {
+            "emoji": ":platnium3:839142019505848411>"
+        },
+        "Diamond 1": {
+            "emoji": "<:diamond1:839142018152005642>"
+        },
+        "Diamond 2": {
+            "emoji": "<:diamond2:839142018785607693>"
+        },
+        "Diamond 3": {
+            "emoji": "<:diamond3:839142019510566932>"
+        },
+        "Immortal": {
+            "emoji": "<:immortal:839142019942711376>"
+        },
+        "Radiant": {
+            "emoji": "<:radiant:839142018797273088>"
+        }
+    },
+    "agentEmojis": {
+        "Astra": {
+            "emoji": "<:astra:839142766986395648>"
+        },
+        "Breach": {
+            "emoji": "<:breach:839142767275671612>"
+        },
+        "Brimstone": {
+            "emoji": "<:brimstone:839142770165809192>"
+        },
+        "Cypher": {
+            "emoji": "<:cypher:839142768986554399>"
+        },
+        "Jett": {
+            "emoji": "<:jett:839142770576851006>"
+        },
+        "Killjoy": {
+            "emoji": "<:killjoy:839142769682808852>"
+        },
+        "Omen": {
+            "emoji": "<:omen:839142769343332394>"
+        },
+        "Phoenix": {
+            "emoji": "<:phoenix:839142770576064584>"
+        },
+        "Raze": {
+            "emoji": "<:raze:839142769690804275>"
+        },
+        "Reyna": {
+            "emoji": "<:reyna:839142769133617164>"
+        },
+        "Sage": {
+            "emoji": "<:sage:839142771025510417>"
+        },
+        "Skye": {
+            "emoji": "<:skye:839142769355260006>"
+        },
+        "Sova": {
+            "emoji": "<:sova:839142771100745738>"
+        },
+        "Viper": {
+            "emoji": "<:viper:839142769749655592>"
+        },
+        "Yoru": {
+            "emoji": "<:yoru:839142769686478888>"
         }
     }
 }

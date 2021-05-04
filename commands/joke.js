@@ -9,7 +9,7 @@ module.exports = {
     let joke = await fetch('http://official-joke-api.appspot.com/random_joke').then(res => res.json())
 
     const jokeEmbed = new MessageEmbed()
-      .setColor('#0099ff')
+      .setColor('#11806A')
       .setTitle(`Here is your joke`)
       .addFields(
         { name: 'Setup', value: "`" + joke.setup + "`" },

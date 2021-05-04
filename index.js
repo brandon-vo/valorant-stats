@@ -15,7 +15,7 @@ for (const file of commandFiles) {
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
-	client.user.setActivity("VALORANT | $help"); 
+	client.user.setActivity("VALORANT | v!help"); 
 });
 
 client.on('message', async message => {
