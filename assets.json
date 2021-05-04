@@ -177,6 +177,12 @@
             "imgWon": "https://cdn.discordapp.com/attachments/834195818080108564/836293576018886746/iceboxVictory.jpg",
             "imgLost": "https://cdn.discordapp.com/attachments/834195818080108564/836293532364570695/iceboxDefeat.jpg",
             "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836293588001488936/iceboxDraw.jpg"
+        },
+        "Breeze": {
+            "name": "Breeze",
+            "imgWon": "https://cdn.discordapp.com/attachments/834195818080108564/836970400088457264/breezeVictory.jpg",
+            "imgLost": "https://cdn.discordapp.com/attachments/834195818080108564/836970397344858154/breezeDefeat.jpg",
+            "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836970398692016188/breezeDraw.jpg"
         }
     },
     "rankEmojis": {
