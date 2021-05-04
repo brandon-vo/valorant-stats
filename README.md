@@ -7,7 +7,7 @@
 </p>
 
 ---
-# Images 📷
+# Images 📷 (old, needs an update)
 | Career Stats        | Last 20 Matches | 
 | ------------- |-------------| 
 | ![116490888-88c9f700-a866-11eb-8e56-f1c6b0b739f3](https://user-images.githubusercontent.com/76707560/116766721-f9554d00-a9f9-11eb-9157-84dbd4bfbf27.png) | ![116490985-c6c71b00-a866-11eb-80d4-890b8e873db0](https://user-images.githubusercontent.com/76707560/116766715-efcbe500-a9f9-11eb-8c2c-8771f445742f.png)
@@ -19,23 +19,11 @@
 # Commands ⌨️
 | Command        | Description    | 
 | :-----------: | :--------: | 
-| $help      | Display a list of avaliable commands      | 
-| $stats      | Display career stats of a Valorant player | 
-<<<<<<< HEAD
-<<<<<<< HEAD
-| $last20, $l20      | Display information for the last 20 matches of a Valorant player |  
-| $lastmatch, $lm      | Display last match information of a Valorant player |  
-=======
-| $last20, $l20      | Display last match information of a Valorant player |  
->>>>>>> 0fa1075 (Update Bot)
-=======
-| $last20, $l20      | Display last match information of a Valorant player |  
-=======
-| $last20, $l20      | Display information for the last 20 matches of a Valorant player |  
-| $lastmatch, $lm      | Display last match information of a Valorant player |  
->>>>>>> 60a5ebd8cdecc0cd893622e7b598912ac3146638
->>>>>>> b3c2a4b (Fix)
-| $link | Link a Valorant user to your Discord ID    |
+| v!help      | Display a list of avaliable commands      | 
+| v!stats      | Display competitive career stats of a Valorant player | 
+| v!lastmatch, v!lm      | Display last match information of a Valorant player |  
+| v!link | Link a Valorant user to your Discord ID    |
+| v!invite | Get Discord bot invite link |
 
 | Extra        | Description    | 
 | ------------- |-------------| 
@@ -45,31 +33,17 @@
 | $leave | Leave users channel    |
 
 # TODO ✅
-- [ ] Last match time and date played
-- [ ] Last match average combat score
-- [ ] Last match econ rating
 - [ ] Overall agent stats command (playtime, win/loss, kdr...)
 - [ ] Overall weapon stats command (kills, accuracy..)
 - [ ] Overall map stats command (win/loss ratio)
-- [ ] Shot accuracy (headshot, body, leg%)
+- [ ] Career stats for other gamemodes
 - [ ] Add unknown map/agent images to prevent code from breaking
 - [ ] Deathmatch placement for last match
-- [ ] Win/Loss ratio visualized with red and green squares
-- [ ] Ranks of other players in last match (?)
 - [ ] Current elo, Elo gained/lossed (?)
-<<<<<<< HEAD
-<<<<<<< HEAD
 - [ ] Link accounts to a database, rather than a .json file
-=======
->>>>>>> 0fa1075 (Update Bot)
-=======
-=======
-- [ ] Link accounts to a database, rather than a .json file
->>>>>>> 60a5ebd8cdecc0cd893622e7b598912ac3146638
->>>>>>> b3c2a4b (Fix)
 
 This is the first Discord bot that I have ever created  
-Retrieves data from http://blitz.gg 
+Retrieves data from https://tracker.gg/valorant
  
  
  
