@@ -152,37 +152,43 @@
             "name": "Bind",
             "imgWon": "https://cdn.discordapp.com/attachments/834195818080108564/836293456003072020/bindVictory.jpg",
             "imgLost": "https://cdn.discordapp.com/attachments/834195818080108564/836293453943275540/bindDefeat.jpg",
-            "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836293455277195284/bindDraw.jpg"
+            "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836293455277195284/bindDraw.jpg",
+            "img": "https://cdn.discordapp.com/attachments/834195818080108564/835586366720966797/bindImage.png"
         },
         "Split": {
             "name": "Split",
-            "imgWon": "https://cdn.discordapp.com/attachments/834195818080108564/836293469050765433/havenVictory.jpg",
-            "imgLost": "https://cdn.discordapp.com/attachments/834195818080108564/836293469630627900/havenDefeat.jpg",
-            "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836293471915868218/havenDraw.jpg"
+            "imgWon": "https://cdn.discordapp.com/attachments/834195818080108564/836293603235594240/splitVictory.jpg",
+            "imgLost": "https://cdn.discordapp.com/attachments/834195818080108564/836293604447354930/splitDefeat.jpg",
+            "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836293606045777961/splitDraw.jpg",
+            "img": "https://cdn.discordapp.com/attachments/834195818080108564/835588130857811998/splitImage.png"
         },
         "Haven": {
             "name": "Haven",
             "imgWon": "https://cdn.discordapp.com/attachments/834195818080108564/836293469050765433/havenVictory.jpg",
             "imgLost": "https://cdn.discordapp.com/attachments/834195818080108564/836293469630627900/havenDefeat.jpg",
-            "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836293471915868218/havenDraw.jpg"
+            "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836293471915868218/havenDraw.jpg",
+            "img": "https://cdn.discordapp.com/attachments/834195818080108564/835588132224106576/havenImage.png"
         },
         "Ascent": {
             "name": "Ascent",
             "imgWon": "https://cdn.discordapp.com/attachments/834195818080108564/836293440891256862/ascentDefeat.jpg",
             "imgLost": "https://cdn.discordapp.com/attachments/834195818080108564/836293440891256862/ascentDefeat.jpg",
-            "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836293442102624308/ascentDraw.jpg"
+            "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836293442102624308/ascentDraw.jpg",
+            "img": "https://cdn.discordapp.com/attachments/834195818080108564/835588133453955082/ascentImage.png"
         },
         "Icebox": {
             "name": "Icebox",
             "imgWon": "https://cdn.discordapp.com/attachments/834195818080108564/836293576018886746/iceboxVictory.jpg",
             "imgLost": "https://cdn.discordapp.com/attachments/834195818080108564/836293532364570695/iceboxDefeat.jpg",
-            "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836293588001488936/iceboxDraw.jpg"
+            "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836293588001488936/iceboxDraw.jpg",
+            "img": "https://cdn.discordapp.com/attachments/834195818080108564/835588129696120863/iceboxImage.png"
         },
         "Breeze": {
             "name": "Breeze",
             "imgWon": "https://cdn.discordapp.com/attachments/834195818080108564/836970400088457264/breezeVictory.jpg",
             "imgLost": "https://cdn.discordapp.com/attachments/834195818080108564/836970397344858154/breezeDefeat.jpg",
-            "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836970398692016188/breezeDraw.jpg"
+            "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836970398692016188/breezeDraw.jpg",
+            "img": "https://cdn.discordapp.com/attachments/834195818080108564/839591211358748713/breezeImage.png"
         }
     },
     "rankEmojis": {
