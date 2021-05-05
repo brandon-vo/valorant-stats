@@ -75,63 +75,11 @@ module.exports = {
 
             if (command === 'stats') {
 
-                //console.log(trackerProfile.data.data)
-                //console.log('-------------------')
-                //console.log(trackerMatch.data.data.matches)
-                //console.log('-------------------')
-                // console.log(trackerProfile.data.data.segments)
-                // console.log('-------------------')
-                // console.log(trackerProfile.data.data.segments[0].stats) // comp stats
-                // console.log('-------------------')
-
-                // console.log(compStats.matchesWon.displayValue) // amount of wins
-                // console.log(compStats.matchesLost.displayValue) // amount of losses
-                // console.log(compStats.matchesWinPct.displayValue) // win percent
-                // console.log(compStats.headshotsPercentage.displayValue) //headshot percent
-                // console.log(compStats.kDRatio.displayValue) //kdr
-                // console.log(compStats.damagePerRound.displayValue) //dmg/round
-                // console.log(compStats.timePlayed.displayValue) // time played
-                // console.log(compStats.rank.metadata.tierName) // rank
-                // console.log(compStats.kills.displayValue) // total kills
-                // console.log(compStats.deaths.displayValue) // total deaths
-                // console.log(compStats.assists.displayValue) // total assists
-                // console.log(compStats.killsPerMatch.displayValue) // kills per match average
-                // console.log(compStats.deathsPerMatch.displayValue) // deaths per match average
-                // console.log(compStats.assistsPerMatch.displayValue) // assists per match average
-                // console.log(compStats.firstBloods.displayValue) // first bloods total
-                //console.log(compStats.deathsFirst.displayValue) // first deaths total
-                //console.log(compStats.mostKillsInMatch.displayValue) // most kills in a match
-                //console.log(compStats.econRatingPerMatch.displayValue) // average econ rating
-                //console.log(compStats.damagePerRound.displayValue) // damage per round comp
-                //console.log(compStats)
-                console.log(trackerProfile.data.data)
-                console.log(compStats)
-
-                //console.log(trackerProfile.data.data.segments[1]) //deathmatch stats
-                console.log('-------------------')
-                //console.log(trackerProfile.data.data.segments[2]) //escalation stats
-                console.log('-------------------')
-                //console.log(trackerProfile.data.data.segments[3]) //spike rush stats
-                console.log('-------------------')
-                //console.log(trackerProfile.data.data.segments[4]) // unrated stats
-                //console.log(trackerProfile.data.data.segments[5].attributes)
-                //console.log(trackerProfile.data.data.segments[5].metadata) // cypher
-                //console.log(trackerProfile.data.data.segments[5].stats) // 
-                //console.log(trackerProfile.data.data.segments[6].metadata) // killjoy
-                //console.log(trackerProfile.data.data.segments[7].metadata) // sova
-                //console.log(trackerProfile.data.data.segments[8].metadata) // sage
-                //console.log(trackerProfile.data.data.segments[9])
-                //console.log(trackerProfile.data.data.segments[5].stats)
-
-                //console.log(trackerProfile.data.data.segments[14].metadata) //recent matches - escalation
-                //console.log(trackerProfile.data.data.segments[15].metadata) // recent matches - spike rush
-
-
                 // each square represents ~8.33%
                 greenSquare = Math.round(compStats.matchesWinPct.value / 8.33)
                 redSquare = 12 - greenSquare
 
-                winRate = "🟩".repeat(greenSquare) + "🟥".repeat(redSquare)
+                winRate = "<:greenline:839562756930797598>".repeat(greenSquare) + "<:redline:839562438760071298>".repeat(redSquare)
 
 
                 const statsEmbed1 = new MessageEmbed()
@@ -166,7 +114,7 @@ module.exports = {
                         { name: 'Assists/Match', value: "```yaml\n" + compStats.assistsPerMatch.displayValue + "\n```", inline: true },
                         { name: 'Headshot %', value: "```yaml\n" + compStats.headshotsPercentage.displayValue + "%\n```", inline: true },
                         { name: 'DMG/Round', value: "```yaml\n" + compStats.damagePerRound.displayValue + "\n```", inline: true },
-                        { name: 'Avg Combat Score', value: "```yaml\n" + compStats.scorePerMatch.displayValue + "\n```", inline: true },
+                        { name: 'Avg Combat Score', value: "```yaml\n" + compStats.scorePerRound.displayValue + "\n```", inline: true },
                         { name: 'Plants', value: "```yaml\n" + compStats.plants.displayValue + "\n```", inline: true },
                         { name: 'Defuses', value: "```yaml\n" + compStats.defuses.displayValue + "\n```", inline: true },
                         { name: 'Avg Econ Rating', value: "```yaml\n" + compStats.econRatingPerMatch.displayValue + "\n```", inline: true },
@@ -190,38 +138,73 @@ module.exports = {
             }
 
             else if (command === 'lastmatch' || command === 'lm') {
-                // console.log(trackerMatch.data.data)
-                // console.log('-------------------')
-                // //console.log(trackerMatch.data.data.matches) // match history
-                // console.log('-------------------')
-                //console.log(trackerMatch.data.data.segments[0])
-                console.log('-------------------')
-                // console.log(trackerMatch.data.data.matches.segments[0])
-                //console.log(trackerMatch.data.data)
-                console.log('-------------------')
-                //console.log(lastMatch)
-                console.log('----')
-                //console.log(lastMatch.attributes) // useless
-                console.log('-------------------')
-                //console.log(lastMatch.metadata) // map stuff. mostly useless except for mapname and result
-                console.log('-------------------')
-                //console.log(lastMatch)
-                //console.log(lastMatch.attributes.id)
-                //console.log(matchInfo.data.data)
-                //console.log(matchInfo.data.data.segments[0]) //red team
-                //console.log(matchInfo.data.data.segments[1]) // blue team
-                console.log(matchInfo.data.data.segments[2])
-                console.log("^^^")
-                console.log(matchInfo.data.data.segments[0])
-                console.log('aaaa')
-                console.log(matchInfo.data.data.segments[1])
 
-                playerMatchInfo = []
-                redTeam = []
-                blueTeam = []
+                const lastMap = lastMatch.metadata.mapName // Map name
+
+                playerMatchInfo = [] // all players
+                redTeam = [] // team a
+                blueTeam = [] // team b
 
                 if (lastMatch.metadata.modeName === 'Deathmatch') {
-                    return message.reply('Your last match was a Deathmatch game. Coming soon')
+
+                    // Get the 14 players
+                    for (x = 14; x < 28; x++) {
+                        playerName = matchInfo.data.data.segments[x].attributes.platformUserIdentifier
+                        playerAgent = matchInfo.data.data.segments[x].metadata.agentName
+                        playerScore = matchInfo.data.data.segments[x].stats.score.value
+                        playerKills = matchInfo.data.data.segments[x].stats.kills.displayValue
+                        playerDeaths = matchInfo.data.data.segments[x].stats.deaths.displayValue
+                        playerAssists = matchInfo.data.data.segments[x].stats.assists.displayValue
+                        playerKDR = matchInfo.data.data.segments[x].stats.kdRatio.displayValue
+
+                        playerMatchInfo.push([playerName, playerAgent, playerScore, playerKills, playerDeaths, playerAssists, playerKDR])
+                    }
+
+
+                    playerMatchInfo.sort(function (a, b) { return b[2] - a[2] }) // Sort players by score
+
+                    var mapImage = assets.maps[lastMap].img // Set map image
+
+                    const deathmatchEmbed = new MessageEmbed()
+
+                    deathmatchEmbed.setColor('#11806A')
+                    deathmatchEmbed.setTitle('Last Match Stats - ' + lastMap)
+                    deathmatchEmbed.setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                    deathmatchEmbed.setThumbnail(lastMatch.segments[0].metadata.agentImageUrl)
+                    deathmatchEmbed.setDescription("`" + lastMatch.metadata.timestamp + "`")
+                    deathmatchEmbed.setDescription("```yaml\n     " + lastMatch.metadata.modeName + " - " + lmStats.playtime.displayValue + "\n```")
+                    deathmatchEmbed.setTimestamp()
+                    deathmatchEmbed.setImage(mapImage)
+
+                    var count = 0
+
+                    for (x = 0; x < playerMatchInfo.length; x++) {
+
+                        let name = playerMatchInfo[x][0]
+                        let agent = playerMatchInfo[x][1]
+                        let score = playerMatchInfo[x][2]
+                        let kills = playerMatchInfo[x][3]
+                        let deaths = playerMatchInfo[x][4]
+                        let assists = playerMatchInfo[x][5]
+
+                        var username = name.split('#', 2) // username without tag
+
+                        var playerAgentEmoji = assets.agentEmojis[agent].emoji
+
+                        count++
+
+                        deathmatchEmbed.addFields(
+                            { name: username[0] + playerAgentEmoji, value: "```yaml\nPts: " + score + "\n" + kills + " / " + deaths + " / " + assists + "\n```", inline: true },
+                        )
+
+                        // For 2 column formatting
+                        if (count == 2) {
+                            deathmatchEmbed.addField('\u200B', '\u200B', true)
+                            count = 0
+                        }
+                    }
+
+                    return message.channel.send(deathmatchEmbed)
                 }
                 // Get info about players in last match
                 for (x = 2; x < 12; x++) {
@@ -247,49 +230,7 @@ module.exports = {
                         blueTeam.push(playerMatchInfo[x])
                 }
 
-                // Game modes with teams
-                if (lastMatch.metadata.modeName !== 'Deathmatch') {
-                    playerMatchInfoSorted = []
-
-                    for (x = 0; x < playerMatchInfo.length / 2; x++)
-                        playerMatchInfoSorted.push(redTeam[x], blueTeam[x])
-
-                    playerMatchInfo = []
-                    playerMatchInfo = playerMatchInfoSorted
-                }
-
-                //}
-                // console.log(trackerMatch.data.data.matches[0]) // LAST MATCH -> made a variable called lastMatch
-                //console.log(lastMatch)
-                // console.log('-------------------')
-                // console.log(lastMatch.segments) // players last match info
-                // console.log('-------------------')
-                // console.log(lastMatch.metadata.modeName) //competitive...
-                // console.log(lastMatch.metadata.modeImageUrl) // image of the mode
-                // console.log(lastMatch.metadata.mapName) // map name
-                // console.log(lastMatch.segments[0]) // more detail of player last match
-                // console.log(lastMatch.segments[0].metadata.result) // victory/defeat
-                // console.log(lastMatch.segments[0].metadata.agentName) // players last match agent
-                // console.log(lastMatch.segments[0].metadata.agentImageUrl) // players last match agent image
-                // console.log(lastMatch.segments[0].stats.score.displayValue)
-                // console.log(lastMatch.segments[0].stats.kills.displayValue) // kills
-                // console.log(lastMatch.segments[0].stats.deaths.displayValue) //deaths
-                // console.log(lastMatch.segments[0].stats.assists.displayValue) // assists
-                // console.log(lastMatch.segments[0].stats.kdRatio.displayValue) // kd
-                // console.log(lastMatch.segments[0].stats.plants.displayValue)
-                // console.log(lastMatch.segments[0].stats.defuses.displayValue)
-                // console.log(lastMatch.segments[0].stats.playtime.displayValue)
-                // console.log(lastMatch.segments[0].stats.econRating.displayValue) // econ rating
-                // console.log(lastMatch.segments[0].stats.firstBloods.displayValue) // first blood
-                // console.log(lastMatch.segments[0].stats.roundsWon.displayValue) // rounds won
-                // console.log(lastMatch.segments[0].stats.roundsLost.displayValue) // rounds lost
-                // console.log(lastMatch.segments[0].stats.placement.displayValue) // rank on scoreboard
-                // console.log(lastMatch.segments[0].stats.headshotsPercentage.displayValue) // headshot %
-                // console.log(lastMatch.segments[0].stats.rank.metadata.tierName) // silver 2
-                // console.log(lastMatch.segments[0].stats.rank.metadata.iconUrl) // rank img
-
-                const lastMap = lastMatch.metadata.mapName
-
+                // Text format
                 if (lastMatch.segments[0].metadata.result === 'victory') {
                     lastMatch.segments[0].metadata.result = 'Victory'
                     var mapImage = assets.maps[lastMap].imgWon
@@ -304,11 +245,10 @@ module.exports = {
                 if (lastMatch.metadata.modeName === 'Normal')
                     lastMatch.metadata.modeName = 'Unrated'
 
+                // Score
                 greenSquare = Math.round(lmStats.roundsWon.displayValue)
                 redSquare = Math.round(lmStats.roundsLost.displayValue)
-
-                scoreVisualized = "🟩".repeat(greenSquare) + "\n" + "🟥".repeat(redSquare)
-                console.log(lmStats)
+                scoreVisualized = "<:greenline:839562756930797598>".repeat(greenSquare) + "\n" + "<:redline:839562438760071298>".repeat(redSquare)
 
                 const lastMatchEmbed1 = new MessageEmbed()
 
@@ -361,40 +301,51 @@ module.exports = {
                     .setColor('#11806A')
                     .setTitle('Last Match Stats - ' + lastMap)
                     .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
-                    .setDescription('Players in your game')
+                    .setDescription('```\n                Players in your game\n```')
 
                 var count = 0
-                var teamColour = ':white_circle:'
 
-                for (x = 0; x < playerMatchInfo.length; x++) {
+                for (x = 0; x < playerMatchInfo.length / 2; x++) {
 
-                    if (playerMatchInfo[x][8] === 'Red')
-                        teamColour = ':red_circle:'
+                    let nameA = blueTeam[x][0]
+                    let agentA = blueTeam[x][1]
+                    let rankA = blueTeam[x][2]
+                    let killsA = blueTeam[x][3]
+                    let deathsA = blueTeam[x][4]
+                    let assistsA = blueTeam[x][5]
+                    let kdrA = blueTeam[x][6]
+                    let acsA = blueTeam[x][7]
 
-                    if (playerMatchInfo[x][8] === 'Blue')
-                        teamColour = ':blue_circle:'
+                    let nameB = redTeam[x][0]
+                    let agentB = redTeam[x][1]
+                    let rankB = redTeam[x][2]
+                    let killsB = redTeam[x][3]
+                    let deathsB = redTeam[x][4]
+                    let assistsB = redTeam[x][5]
+                    let kdrB = redTeam[x][6]
+                    let acsB = redTeam[x][7]
 
-                    let name = playerMatchInfo[x][0]
-                    let agent = playerMatchInfo[x][1]
-                    let rank = playerMatchInfo[x][2]
-                    let kills = playerMatchInfo[x][3]
-                    let deaths = playerMatchInfo[x][4]
-                    let assists = playerMatchInfo[x][5]
-                    let kdr = playerMatchInfo[x][6]
-                    let acs = playerMatchInfo[x][7]
+                    var playerAgentEmojiA = assets.agentEmojis[agentA].emoji
+                    var playerRankEmojiA = assets.rankEmojis[rankA].emoji
 
-                    var playerAgentEmoji = assets.agentEmojis[agent].emoji
-                    var playerRankEmoji = assets.rankEmojis[rank].emoji
+                    var playerAgentEmojiB = assets.agentEmojis[agentB].emoji
+                    var playerRankEmojiB = assets.rankEmojis[rankB].emoji
 
                     count++
 
                     lastMatchEmbed2.addFields(
-                        { name: name + " " + teamColour + " " + playerAgentEmoji + " " + playerRankEmoji, value: "```yaml\nK / D / A / R   | ACS\n" + 
-                        kills + " / " + deaths + " / " + assists + " / " + kdr + " | " + parseInt(acs).toFixed(0) + "\n```", inline: true },
+                        {
+                            name: nameA + " " + playerAgentEmojiA + " " + playerRankEmojiA, value: "```yaml\nK / D / A / R   | ACS\n" +
+                                killsA + " / " + deathsA + " / " + assistsA + " / " + kdrA + " | " + parseInt(acsA).toFixed(0) + "\n```", inline: true
+                        },
+                        {
+                            name: nameB + " " + playerAgentEmojiB + " " + playerRankEmojiB, value: "```fix\nK / D / A / R   | ACS\n" +
+                                killsB + " / " + deathsB + " / " + assistsB + " / " + kdrB + " | " + parseInt(acsB).toFixed(0) + "\n```", inline: true
+                        },
                     )
 
                     // For 2 column formatting
-                    if (count == 2) {
+                    if (count == 1) {
                         lastMatchEmbed2.addField('\u200B', '\u200B', true)
                         count = 0
                     }
