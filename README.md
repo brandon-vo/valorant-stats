@@ -8,11 +8,9 @@
 
 ---
 # Images 📷
-![stats1](https://user-images.githubusercontent.com/76707560/117166321-4176c580-ad94-11eb-8b87-bd3e9d6b8430.png)
-![stats2](https://user-images.githubusercontent.com/76707560/117166327-42a7f280-ad94-11eb-87b0-cde8cd264444.png)
+![stats](https://user-images.githubusercontent.com/76707560/117216117-44da7300-adcd-11eb-9ad8-3681d30fa005.png)
 ![lm](https://user-images.githubusercontent.com/76707560/117197555-f2da2300-adb5-11eb-9bd1-024281472275.png)
-
-
+![lmdeathmatch](https://user-images.githubusercontent.com/76707560/117216135-499f2700-adcd-11eb-84d3-7be064905268.png)
 
 
 # Commands ⌨️
@@ -30,20 +28,11 @@
 | $ping      | Pong!             | 
 
 # TODO ✅
-- [ ] Overall agent stats command (playtime, win/loss, kdr...)
-- [ ] Overall weapon stats command (kills, accuracy..)
-- [ ] Overall map stats command (win/loss ratio)
-- [ ] Career stats for other gamemodes
-- [ ] Last match deathmatch
-- [ ] Current elo, Elo gained/lossed (?)
+- [ ] Agent stats command (playtime, win/loss, kdr...)
+- [ ] Weapon stats command (kills, accuracy...)
+- [ ] Map stats command (win/loss ratio)
+- [ ] Career stats for other gamemodes (deathmatch, spike rush...)
 - [ ] Link accounts to a database, rather than a .json file
 
 This is the first Discord bot that I have ever created  
 Retrieves data from https://tracker.gg/valorant
- 
- 
- 
- 
- 
- 
- 
