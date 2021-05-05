@@ -10,7 +10,8 @@
 # Images 📷
 ![stats1](https://user-images.githubusercontent.com/76707560/117166321-4176c580-ad94-11eb-8b87-bd3e9d6b8430.png)
 ![stats2](https://user-images.githubusercontent.com/76707560/117166327-42a7f280-ad94-11eb-87b0-cde8cd264444.png)
-![lm](https://user-images.githubusercontent.com/76707560/117166599-869af780-ad94-11eb-8d9e-af085f9e2970.png)
+![lm](https://user-images.githubusercontent.com/76707560/117197555-f2da2300-adb5-11eb-9bd1-024281472275.png)
+
 
 
 
