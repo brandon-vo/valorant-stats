@@ -8,7 +8,7 @@ module.exports = {
     name: "valorant",
     aliases: ['stats', 'lastmatch', 'lm', 'test'],
     description: "Get statistics for a Valorant player",
-    async execute(message, args, command, client) {
+    async execute(message, args, command) {
 
         // Argument formatting to access Valorant usernames with spaces
         var str = args[0];
@@ -31,6 +31,7 @@ module.exports = {
         // Convert characters to lowercase
         var ID = str.toLowerCase();
 
+        // # to %23
         var playerID = ID.replace(/#/g, "%23")
 
         try {
@@ -67,11 +68,9 @@ module.exports = {
             }
 
             // Set rank emojis
-            var rankEmoji = ':medal:'
             rankEmoji = assets.rankEmojis[compStats.rank.metadata.tierName].emoji
 
             // Set agent emoji for the user
-            var agentEmoji = ':slight_smile:'
             agentEmoji = assets.agentEmojis[lastMatch.segments[0].metadata.agentName].emoji
 
             if (command === 'stats') {
@@ -167,12 +166,13 @@ module.exports = {
                         { name: 'Assists/Match', value: "```yaml\n" + compStats.assistsPerMatch.displayValue + "\n```", inline: true },
                         { name: 'Headshot %', value: "```yaml\n" + compStats.headshotsPercentage.displayValue + "%\n```", inline: true },
                         { name: 'DMG/Round', value: "```yaml\n" + compStats.damagePerRound.displayValue + "\n```", inline: true },
-                        { name: 'Average Econ', value: "```yaml\n" + compStats.econRatingPerMatch.displayValue + "\n```", inline: true },
+                        { name: 'Avg Combat Score', value: "```yaml\n" + compStats.scorePerMatch.displayValue + "\n```", inline: true },
                         { name: 'Plants', value: "```yaml\n" + compStats.plants.displayValue + "\n```", inline: true },
                         { name: 'Defuses', value: "```yaml\n" + compStats.defuses.displayValue + "\n```", inline: true },
+                        { name: 'Avg Econ Rating', value: "```yaml\n" + compStats.econRatingPerMatch.displayValue + "\n```", inline: true },
                         { name: 'Aces', value: "```yaml\n" + compStats.aces.displayValue + "\n```", inline: true },
-                        { name: 'First Bloods :drop_of_blood:', value: "```yaml\n" + compStats.firstBloods.displayValue + "\n```", inline: true },
-                        { name: 'First Deaths :skull_crossbones:', value: "```yaml\n" + compStats.deathsFirst.displayValue + "\n```", inline: true },
+                        { name: 'First Bloods', value: "```yaml\n" + compStats.firstBloods.displayValue + "\n```", inline: true },
+                        { name: 'First Deaths', value: "```yaml\n" + compStats.deathsFirst.displayValue + "\n```", inline: true },
                     )
 
                 // Pages
@@ -212,11 +212,18 @@ module.exports = {
                 //console.log(matchInfo.data.data.segments[1]) // blue team
                 console.log(matchInfo.data.data.segments[2])
                 console.log("^^^")
+                console.log(matchInfo.data.data.segments[0])
+                console.log('aaaa')
+                console.log(matchInfo.data.data.segments[1])
 
                 playerMatchInfo = []
                 redTeam = []
                 blueTeam = []
 
+                if (lastMatch.metadata.modeName === 'Deathmatch') {
+                    return message.reply('Your last match was a Deathmatch game. Coming soon')
+                }
+                // Get info about players in last match
                 for (x = 2; x < 12; x++) {
                     playerName = matchInfo.data.data.segments[x].attributes.platformUserIdentifier
                     playerKills = matchInfo.data.data.segments[x].stats.kills.displayValue
