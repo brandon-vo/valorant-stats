@@ -172,7 +172,7 @@ module.exports = {
                     deathmatchEmbed.setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
                     deathmatchEmbed.setThumbnail(lastMatch.segments[0].metadata.agentImageUrl)
                     deathmatchEmbed.setDescription("`" + lastMatch.metadata.timestamp + "`")
-                    deathmatchEmbed.setDescription("```yaml\n     " + lastMatch.metadata.modeName + " - " + lmStats.playtime.displayValue + "\n```")
+                    deathmatchEmbed.setDescription("```\n     " + lastMatch.metadata.modeName + " - " + lmStats.playtime.displayValue + "\n```")
                     deathmatchEmbed.setTimestamp()
                     deathmatchEmbed.setImage(mapImage)
 
@@ -262,7 +262,6 @@ module.exports = {
                     lastMatchEmbed1.addFields(
                         { name: 'Mode', value: "```yaml\n" + lastMatch.metadata.modeName + "\n```", inline: true },
                         { name: 'Length', value: "```yaml\n" + lmStats.playtime.displayValue + "\n```", inline: true },
-                        //{ name: 'Agent ' + agentEmoji, value: "```yaml\n" + lastMatch.segments[0].metadata.agentName + "\n```", inline: true },
                         { name: 'Rank' + rankEmoji, value: "```grey\n" + lmStats.rank.metadata.tierName + "\n```", inline: false },
                         { name: 'K / D / A', value: "```yaml\n" + lmStats.kills.displayValue + "/" + lmStats.deaths.displayValue + "/" + lmStats.assists.displayValue + "\n```", inline: true },
                         { name: 'KDR', value: "```yaml\n" + lmStats.kdRatio.displayValue + "\n```", inline: true },
