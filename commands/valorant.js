@@ -294,18 +294,25 @@ module.exports = {
                     var mapImage = assets.maps[lastMap.imgDraw]
                 }
 
+                if (lastMatch.metadata.modeName === 'Normal')
+                    lastMatch.metadata.modeName = 'Unrated'
+
                 greenSquare = Math.round(lmStats.roundsWon.displayValue)
                 redSquare = Math.round(lmStats.roundsLost.displayValue)
 
                 scoreVisualized = "🟩".repeat(greenSquare) + "\n" + "🟥".repeat(redSquare)
+                console.log(lmStats)
 
                 const lastMatchEmbed1 = new MessageEmbed()
-                    .setColor('#11806A')
-                    .setTitle('Last Match Stats - ' + lastMap)
-                    .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
-                    .setThumbnail(lastMatch.segments[0].metadata.agentImageUrl)
-                    .setDescription("`" + lastMatch.metadata.timestamp + "`")
-                    .addFields(
+
+                // Competitive game embed
+                if (lastMatch.metadata.modeName === 'Competitive') {
+                    lastMatchEmbed1.setColor('#11806A')
+                    lastMatchEmbed1.setTitle('Last Match Stats - ' + lastMap)
+                    lastMatchEmbed1.setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                    lastMatchEmbed1.setThumbnail(lastMatch.segments[0].metadata.agentImageUrl)
+                    lastMatchEmbed1.setDescription("`" + lastMatch.metadata.timestamp + "`")
+                    lastMatchEmbed1.addFields(
                         { name: 'Mode', value: "```yaml\n" + lastMatch.metadata.modeName + "\n```", inline: true },
                         { name: 'Length', value: "```yaml\n" + lmStats.playtime.displayValue + "\n```", inline: true },
                         //{ name: 'Agent ' + agentEmoji, value: "```yaml\n" + lastMatch.segments[0].metadata.agentName + "\n```", inline: true },
@@ -317,8 +324,31 @@ module.exports = {
                         { name: 'Headshot %', value: "```yaml\n" + lmStats.headshotsPercentage.displayValue + "%\n```", inline: true },
                         { name: 'Score', value: scoreVisualized + "```yaml\n             " + lmStats.roundsWon.displayValue + " - " + lmStats.roundsLost.displayValue + "\n```", inline: false },
                     )
-                    .setTimestamp()
-                    .setImage(mapImage)
+                    lastMatchEmbed1.setTimestamp()
+                    lastMatchEmbed1.setImage(mapImage)
+                }
+
+                // Other gamemode embeds
+                else {
+                    lastMatchEmbed1.setColor('#11806A')
+                    lastMatchEmbed1.setTitle('Last Match Stats - ' + lastMap)
+                    lastMatchEmbed1.setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                    lastMatchEmbed1.setThumbnail(lastMatch.segments[0].metadata.agentImageUrl)
+                    lastMatchEmbed1.setDescription("`" + lastMatch.metadata.timestamp + "`")
+                    lastMatchEmbed1.addFields(
+                        { name: 'Mode', value: "```yaml\n" + lastMatch.metadata.modeName + "\n```", inline: true },
+                        { name: 'Length', value: "```yaml\n" + lmStats.playtime.displayValue + "\n```", inline: true },
+                        { name: '\u200B', value: '\u200B', inline: true },
+                        { name: 'K / D / A', value: "```yaml\n" + lmStats.kills.displayValue + "/" + lmStats.deaths.displayValue + "/" + lmStats.assists.displayValue + "\n```", inline: true },
+                        { name: 'KDR', value: "```yaml\n" + lmStats.kdRatio.displayValue + "\n```", inline: true },
+                        { name: 'ACS', value: "```yaml\n" + lmStats.scorePerRound.displayValue + "\n```", inline: true },
+                        { name: 'Econ Rating', value: "```yaml\n" + lmStats.econRating.displayValue + "\n```", inline: true },
+                        { name: 'Headshot %', value: "```yaml\n" + lmStats.headshotsPercentage.displayValue + "%\n```", inline: true },
+                        { name: 'Score', value: scoreVisualized + "```yaml\n             " + lmStats.roundsWon.displayValue + " - " + lmStats.roundsLost.displayValue + "\n```", inline: false },
+                    )
+                    lastMatchEmbed1.setTimestamp()
+                    lastMatchEmbed1.setImage(mapImage)
+                }
 
                 const lastMatchEmbed2 = new MessageEmbed()
                     .setColor('#11806A')
@@ -352,7 +382,7 @@ module.exports = {
                     count++
 
                     lastMatchEmbed2.addFields(
-                        { name: name + " " + teamColour + " " + playerAgentEmoji + " " + playerRankEmoji, value: "```yaml\nK /  D / A / R   | ACS\n" + 
+                        { name: name + " " + teamColour + " " + playerAgentEmoji + " " + playerRankEmoji, value: "```yaml\nK / D / A / R   | ACS\n" + 
                         kills + " / " + deaths + " / " + assists + " / " + kdr + " | " + parseInt(acs).toFixed(0) + "\n```", inline: true },
                     )
 
