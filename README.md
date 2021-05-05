@@ -7,14 +7,12 @@
 </p>
 
 ---
-# Images 📷 (old, needs an update)
-| Career Stats        | Last 20 Matches | 
-| ------------- |-------------| 
-| ![116490888-88c9f700-a866-11eb-8e56-f1c6b0b739f3](https://user-images.githubusercontent.com/76707560/116766721-f9554d00-a9f9-11eb-9157-84dbd4bfbf27.png) | ![116490985-c6c71b00-a866-11eb-80d4-890b8e873db0](https://user-images.githubusercontent.com/76707560/116766715-efcbe500-a9f9-11eb-8c2c-8771f445742f.png)
+# Images 📷
+![stats1](https://user-images.githubusercontent.com/76707560/117166321-4176c580-ad94-11eb-8b87-bd3e9d6b8430.png)
+![stats2](https://user-images.githubusercontent.com/76707560/117166327-42a7f280-ad94-11eb-87b0-cde8cd264444.png)
+![lm](https://user-images.githubusercontent.com/76707560/117166599-869af780-ad94-11eb-8d9e-af085f9e2970.png)
 
-| Last Match Stats (page 1) | Last Match Stats (page 2) |
-| ------------- | ----------- | 
-| ![116157823-9e4eed80-a6bb-11eb-83ac-9d561f9ebe77](https://user-images.githubusercontent.com/76707560/116766736-096d2c80-a9fa-11eb-8757-a325ac67c7d8.jpg) | ![116490755-25d86000-a866-11eb-98c5-96f508e4a7ec](https://user-images.githubusercontent.com/76707560/116766739-0d994a00-a9fa-11eb-8726-8985507cdcef.png)
+
 
 # Commands ⌨️
 | Command        | Description    | 
@@ -29,16 +27,13 @@
 | ------------- |-------------| 
 | $joke      | Tell a joke      | 
 | $ping      | Pong!             | 
-| $join      |Join users channel |  
-| $leave | Leave users channel    |
 
 # TODO ✅
 - [ ] Overall agent stats command (playtime, win/loss, kdr...)
 - [ ] Overall weapon stats command (kills, accuracy..)
 - [ ] Overall map stats command (win/loss ratio)
 - [ ] Career stats for other gamemodes
-- [ ] Add unknown map/agent images to prevent code from breaking
-- [ ] Deathmatch placement for last match
+- [ ] Last match deathmatch
 - [ ] Current elo, Elo gained/lossed (?)
 - [ ] Link accounts to a database, rather than a .json file
 
