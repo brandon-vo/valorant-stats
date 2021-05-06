@@ -63,7 +63,7 @@ module.exports = {
                     `https://api.tracker.gg/api/v2/valorant/rap-matches/${matchID}`
                 )
             } catch (error) {
-                message.reply("There is no match to retrieve.")
+                message.reply("There is no match to retrieve. Please try again.")
                 return
             }
 
@@ -249,6 +249,9 @@ module.exports = {
                 greenSquare = Math.round(lmStats.roundsWon.displayValue)
                 redSquare = Math.round(lmStats.roundsLost.displayValue)
                 scoreVisualized = "<:greenline:839562756930797598>".repeat(greenSquare) + "\n" + "<:redline:839562438760071298>".repeat(redSquare)
+
+                redTeam.sort(function (a, b) { return b[7] - a[7] }) // Sort team players by ACS
+                blueTeam.sort(function (a, b) { return b[7] - a[7] }) // Sort team players by ACS
 
                 const lastMatchEmbed1 = new MessageEmbed()
 
