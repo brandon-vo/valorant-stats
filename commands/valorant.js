@@ -161,7 +161,7 @@ module.exports = {
                     }
 
 
-                    playerMatchInfo.sort(function (a, b) { return b[2] - a[2] }) // Sort players by score
+                    playerMatchInfo.sort(function (a, b) { return b[3] - a[3] }) // Sort players by kills
 
                     var mapImage = assets.maps[lastMap].img // Set map image
 
