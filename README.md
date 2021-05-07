@@ -31,7 +31,7 @@
 - [ ] Agent stats command (playtime, win/loss, kdr...)
 - [ ] Weapon stats command (kills, accuracy...)
 - [ ] Map stats command (win/loss ratio)
-- [ ] Career stats for other gamemodes (deathmatch, spike rush...)
+- [ ] Command to compare two Valorant players stats
 - [ ] Link accounts to a database, rather than a .json file
 
 This is the first Discord bot that I have ever created  
