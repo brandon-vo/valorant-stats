@@ -14,9 +14,10 @@ for (const file of commandFiles) {
 }
 
 client.on('ready', () => {
-    console.log(`Logged in as ${client.user.tag}!`);
-	client.user.setActivity(`${client.guilds.cache.size} servers | v!help`, {type: 'WATCHING'}); 
-});
+	console.log(`Logged in as ${client.user.tag}!`);
+	let activities = [ `${client.guilds.cache.size} servers`, `${client.channels.cache.size} chnls`, `${client.users.cache.size} users` ], i = 0;
+	setInterval(() => client.user.setActivity(`${activities[i ++ % activities.length]} | v!help`, { type: "WATCHING"}),`20000`)
+  })
 
 client.on('message', async message => {
     if(!message.content.startsWith(process.env.PREFIX) || message.author.bot) return; // Return nothing if there is no prefix or if the bot is messaging
