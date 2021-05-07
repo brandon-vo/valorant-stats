@@ -6,7 +6,7 @@ const axios = require('axios').default;
 
 module.exports = {
     name: "valorant",
-    aliases: ['stats', 'lastmatch', 'lm', 'test'],
+    aliases: ['stats', 'competitive', 'comp', 'unrated', 'unranked', 'lastmatch', 'lm', 'deathmatch', 'dm', 'escalation', 'spikerush'],
     description: "Get statistics for a Valorant player",
     async execute(message, args, command) {
 
@@ -52,12 +52,16 @@ module.exports = {
             }
 
             const compStats = trackerProfile.data.data.segments[0].stats // access overall comp stats
+            const dmStats = trackerProfile.data.data.segments[1].stats // access overall deathmatch stats
+            const escalationStats = trackerProfile.data.data.segments[2].stats // access overall escalation stats
+            const spikeRushStats = trackerProfile.data.data.segments[3].stats // access overall spike rush stats
+            const unratedStats = trackerProfile.data.data.segments[4].stats // access overall unrated stats 
             const userHandle = trackerProfile.data.data.platformInfo.platformUserHandle // access username and tag
             const userAvatar = trackerProfile.data.data.platformInfo.avatarUrl // access valorant avatar image
             const lastMatch = trackerMatch.data.data.matches[0] // access last match info
             const lmStats = lastMatch.segments[0].stats // access last match stats for the player
+            const matchID = lastMatch.attributes.id // match id
 
-            const matchID = lastMatch.attributes.id
             try {
                 matchInfo = await axios.get(
                     `https://api.tracker.gg/api/v2/valorant/rap-matches/${matchID}`
@@ -80,7 +84,6 @@ module.exports = {
                 redSquare = 12 - greenSquare
 
                 winRate = "<:greenline:839562756930797598>".repeat(greenSquare) + "<:redline:839562438760071298>".repeat(redSquare)
-
 
                 const statsEmbed1 = new MessageEmbed()
                     .setColor('#11806A')
@@ -134,6 +137,193 @@ module.exports = {
                 const timeout = '200000' // 20 seconds
 
                 pagination(message, statsPages, flipPage, timeout)
+
+            }
+
+            else if (command === 'unrated' || command === 'unranked') {
+
+                // each square represents ~8.33%
+                greenSquare = Math.round(unratedStats.matchesWinPct.value / 8.33)
+                redSquare = 12 - greenSquare
+
+                winRate = "<:greenline:839562756930797598>".repeat(greenSquare) + "<:redline:839562438760071298>".repeat(redSquare)
+
+                const unratedEmbed1 = new MessageEmbed()
+                    .setColor('#11806A')
+                    .setTitle(`Unrated Career Stats`)
+                    .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                    .setThumbnail(userAvatar)
+                    .addFields(
+                        { name: 'KDR', value: "```yaml\n" + unratedStats.kDRatio.displayValue + "\n```", inline: true },
+                        { name: 'KDA', value: "```yaml\n" + unratedStats.kDARatio.displayValue + "\n```", inline: true },
+                        { name: 'KAD', value: "```yaml\n" + unratedStats.kADRatio.displayValue + "\n```", inline: true },
+                        { name: 'Kills', value: "```yaml\n" + unratedStats.kills.displayValue + "\n```", inline: true },
+                        { name: 'Deaths', value: "```yaml\n" + unratedStats.deaths.displayValue + "```", inline: true },
+                        { name: 'Assists', value: "```yaml\n" + unratedStats.assists.displayValue + "\n```", inline: true },
+                        { name: 'Most Kills', value: "```yaml\n" + unratedStats.mostKillsInMatch.displayValue + "\n```", inline: true },
+                        { name: 'Playtime', value: "```yaml\n" + unratedStats.timePlayed.displayValue + "\n```", inline: true },
+                        {
+                            name: 'Win Rate - ' + unratedStats.matchesWinPct.displayValue, value: winRate + " ```yaml\n" + "    W: "
+                                + unratedStats.matchesWon.displayValue + "   |   L: " + unratedStats.matchesLost.displayValue + "\n```", inline: false
+                        },
+                    )
+
+                const unratedEmbed2 = new MessageEmbed()
+                    .setColor('#11806A')
+                    .setTitle(`Unrated Career Stats`)
+                    .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                    .setThumbnail(userAvatar)
+                    .addFields(
+                        { name: 'Kills/Match', value: "```yaml\n" + unratedStats.killsPerMatch.displayValue + "\n```", inline: true },
+                        { name: 'Deaths/Match ', value: "```yaml\n" + unratedStats.deathsPerMatch.displayValue + "\n```", inline: true },
+                        { name: 'Assists/Match', value: "```yaml\n" + unratedStats.assistsPerMatch.displayValue + "\n```", inline: true },
+                        { name: 'Headshot %', value: "```yaml\n" + unratedStats.headshotsPercentage.displayValue + "%\n```", inline: true },
+                        { name: 'DMG/Round', value: "```yaml\n" + unratedStats.damagePerRound.displayValue + "\n```", inline: true },
+                        { name: 'Avg Combat Score', value: "```yaml\n" + unratedStats.scorePerRound.displayValue + "\n```", inline: true },
+                        { name: 'Plants', value: "```yaml\n" + unratedStats.plants.displayValue + "\n```", inline: true },
+                        { name: 'Defuses', value: "```yaml\n" + unratedStats.defuses.displayValue + "\n```", inline: true },
+                        { name: 'Avg Econ Rating', value: "```yaml\n" + unratedStats.econRatingPerMatch.displayValue + "\n```", inline: true },
+                        { name: 'Aces', value: "```yaml\n" + unratedStats.aces.displayValue + "\n```", inline: true },
+                        { name: 'First Bloods', value: "```yaml\n" + unratedStats.firstBloods.displayValue + "\n```", inline: true },
+                        { name: 'First Deaths', value: "```yaml\n" + unratedStats.deathsFirst.displayValue + "\n```", inline: true },
+                    )
+
+                // Pages
+                const unratedPages = [
+                    unratedEmbed1,
+                    unratedEmbed2
+                ]
+
+                const flipPage = ["⬅️", "➡️"]
+
+                const timeout = '200000' // 20 seconds
+
+                pagination(message, unratedPages, flipPage, timeout)
+
+            }
+
+            else if (command === 'spikerush') {
+
+                // each square represents ~8.33%
+                greenSquare = Math.round(spikeRushStats.matchesWinPct.value / 8.33)
+                redSquare = 12 - greenSquare
+
+                winRate = "<:greenline:839562756930797598>".repeat(greenSquare) + "<:redline:839562438760071298>".repeat(redSquare)
+
+                const spikeRushEmbed1 = new MessageEmbed()
+                    .setColor('#11806A')
+                    .setTitle(`Spike Rush Career Stats`)
+                    .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                    .setThumbnail(userAvatar)
+                    .addFields(
+                        { name: 'KDR', value: "```yaml\n" + spikeRushStats.kDRatio.displayValue + "\n```", inline: true },
+                        { name: 'KDA', value: "```yaml\n" + spikeRushStats.kDARatio.displayValue + "\n```", inline: true },
+                        { name: 'KAD', value: "```yaml\n" + spikeRushStats.kADRatio.displayValue + "\n```", inline: true },
+                        { name: 'Kills', value: "```yaml\n" + spikeRushStats.kills.displayValue + "\n```", inline: true },
+                        { name: 'Deaths', value: "```yaml\n" + spikeRushStats.deaths.displayValue + "```", inline: true },
+                        { name: 'Assists', value: "```yaml\n" + spikeRushStats.assists.displayValue + "\n```", inline: true },
+                        { name: 'Most Kills', value: "```yaml\n" + spikeRushStats.mostKillsInMatch.displayValue + "\n```", inline: true },
+                        { name: 'Playtime', value: "```yaml\n" + spikeRushStats.timePlayed.displayValue + "\n```", inline: true },
+                        {
+                            name: 'Win Rate - ' + spikeRushStats.matchesWinPct.displayValue, value: winRate + " ```yaml\n" + "    W: "
+                                + spikeRushStats.matchesWon.displayValue + "   |   L: " + spikeRushStats.matchesLost.displayValue + "\n```", inline: false
+                        },
+                    )
+
+                const spikeRushEmbed2 = new MessageEmbed()
+                    .setColor('#11806A')
+                    .setTitle(`Spike Rush Career Stats`)
+                    .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                    .setThumbnail(userAvatar)
+                    .addFields(
+                        { name: 'Kills/Match', value: "```yaml\n" + spikeRushStats.killsPerMatch.displayValue + "\n```", inline: true },
+                        { name: 'Deaths/Match ', value: "```yaml\n" + spikeRushStats.deathsPerMatch.displayValue + "\n```", inline: true },
+                        { name: 'Assists/Match', value: "```yaml\n" + spikeRushStats.assistsPerMatch.displayValue + "\n```", inline: true },
+                        { name: 'Headshot %', value: "```yaml\n" + spikeRushStats.headshotsPercentage.displayValue + "%\n```", inline: true },
+                        { name: 'DMG/Round', value: "```yaml\n" + spikeRushStats.damagePerRound.displayValue + "\n```", inline: true },
+                        { name: 'Aces', value: "```yaml\n" + spikeRushStats.aces.displayValue + "\n```", inline: true },
+                        { name: 'Plants', value: "```yaml\n" + spikeRushStats.plants.displayValue + "\n```", inline: true },
+                        { name: 'Defuses', value: "```yaml\n" + spikeRushStats.defuses.displayValue + "\n```", inline: true },
+                        { name: '\u200B', value: "```yaml\n" + " " + "\n```", inline: true },
+                        { name: 'First Bloods', value: "```yaml\n" + spikeRushStats.firstBloods.displayValue + "\n```", inline: true },
+                        { name: 'First Deaths', value: "```yaml\n" + spikeRushStats.deathsFirst.displayValue + "\n```", inline: true },
+                    )
+
+                // Pages
+                const spikeRushPages = [
+                    spikeRushEmbed1,
+                    spikeRushEmbed2
+                ]
+
+                const flipPage = ["⬅️", "➡️"]
+
+                const timeout = '200000' // 20 seconds
+
+                pagination(message, spikeRushPages, flipPage, timeout)
+
+            }
+
+            else if (command === 'deathmatch' || command === 'dm') {
+
+                // each square represents ~8.33%
+                greenSquare = Math.round(dmStats.matchesWinPct.value / 8.33)
+                redSquare = 12 - greenSquare
+
+                winRate = "<:greenline:839562756930797598>".repeat(greenSquare) + "<:redline:839562438760071298>".repeat(redSquare)
+
+                const deathmatchEmbed = new MessageEmbed()
+                    .setColor('#11806A')
+                    .setTitle(`Deathmatch Career Stats`)
+                    .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                    .setThumbnail(userAvatar)
+                    .addFields(
+                        { name: 'KDR', value: "```yaml\n" + dmStats.kDRatio.displayValue + "\n```", inline: true },
+                        { name: 'KDA ', value: "```yaml\n" + dmStats.kDARatio.displayValue + "\n```", inline: true },
+                        { name: 'KAD ', value: "```yaml\n" + dmStats.kADRatio.displayValue + "\n```", inline: true },
+                        { name: 'Kills', value: "```yaml\n" + dmStats.kills.displayValue + "\n```", inline: true },
+                        { name: 'Deaths', value: "```yaml\n" + dmStats.deaths.displayValue + "```", inline: true },
+                        { name: 'Assists', value: "```yaml\n" + dmStats.assists.displayValue + "\n```", inline: true },
+                        { name: 'Headshot %', value: "```yaml\n" + dmStats.headshotsPercentage.displayValue + "%\n```", inline: true },
+                        { name: 'Playtime', value: "```yaml\n" + dmStats.timePlayed.displayValue + "\n```", inline: true },
+                        {
+                            name: 'Win Rate - ' + dmStats.matchesWinPct.displayValue, value: winRate + " ```yaml\n" + "    W: "
+                                + dmStats.matchesWon.displayValue + "   |   L: " + dmStats.matchesLost.displayValue + "\n```", inline: false
+                        },
+                    )
+
+                message.channel.send(deathmatchEmbed)
+
+            }
+
+            else if (command === 'escalation') {
+                
+                // each square represents ~8.33%
+                greenSquare = Math.round(escalationStats.matchesWinPct.value / 8.33)
+                redSquare = 12 - greenSquare
+
+                winRate = "<:greenline:839562756930797598>".repeat(greenSquare) + "<:redline:839562438760071298>".repeat(redSquare)
+
+                const escalationEmbed = new MessageEmbed()
+                    .setColor('#11806A')
+                    .setTitle(`Escalation Career Stats`)
+                    .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                    .setThumbnail(userAvatar)
+                    .addFields(
+                        { name: 'KDR', value: "```yaml\n" + escalationStats.kDRatio.displayValue + "\n```", inline: true },
+                        { name: 'KDA ', value: "```yaml\n" + escalationStats.kDARatio.displayValue + "\n```", inline: true },
+                        { name: 'KAD ', value: "```yaml\n" + escalationStats.kADRatio.displayValue + "\n```", inline: true },
+                        { name: 'Kills', value: "```yaml\n" + escalationStats.kills.displayValue + "\n```", inline: true },
+                        { name: 'Deaths', value: "```yaml\n" + escalationStats.deaths.displayValue + "```", inline: true },
+                        { name: 'Assists', value: "```yaml\n" + escalationStats.assists.displayValue + "\n```", inline: true },
+                        { name: 'Headshot %', value: "```yaml\n" + escalationStats.headshotsPercentage.displayValue + "%\n```", inline: true },
+                        { name: 'Playtime', value: "```yaml\n" + escalationStats.timePlayed.displayValue + "\n```", inline: true },
+                        {
+                            name: 'Win Rate - ' + escalationStats.matchesWinPct.displayValue, value: winRate + " ```yaml\n" + "    W: "
+                                + escalationStats.matchesWon.displayValue + "   |   L: " + escalationStats.matchesLost.displayValue + "\n```", inline: false
+                        },
+                    )
+
+                message.channel.send(escalationEmbed)
 
             }
 
