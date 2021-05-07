@@ -17,8 +17,12 @@
 | Command        | Description    | 
 | :-----------: | :--------: | 
 | v!help      | Display a list of avaliable commands      | 
-| v!stats      | Display competitive career stats of a Valorant player | 
-| v!lastmatch, v!lm      | Display last match information of a Valorant player |  
+| v!competitive    | Display competitive career stats of a Valorant player | 
+| v!unrated     | Display unrated career stats of a Valorant player | 
+| v!spikerush    | Display spike rush career stats of a Valorant player | 
+| v!deathmatch    | Display deathmatch career stats of a Valorant player | 
+| v!escalation    | Display escalation career stats of a Valorant player | 
+| v!lm      | Display last match information of a Valorant player |  
 | v!link | Link a Valorant user to your Discord ID    |
 | v!invite | Get Discord bot invite link |
 
