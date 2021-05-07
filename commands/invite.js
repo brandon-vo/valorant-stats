@@ -6,7 +6,7 @@ module.exports = {
 
     execute(message) {
 
-        message.channel.send('https://discord.com/oauth2/authorize?client_id=833535533287866398&permissions=2417093728&scope=bot');
+        message.channel.send('https://discord.com/api/oauth2/authorize?client_id=833535533287866398&permissions=3224894528&scope=bot');
 
     }
 
