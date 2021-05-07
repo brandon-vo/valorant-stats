@@ -3,10 +3,11 @@ const pagination = require('discord.js-pagination')
 const assets = require('../assets.json')
 const fs = require('fs')
 const axios = require('axios').default;
+const { profile } = require('console');
 
 module.exports = {
     name: "valorant",
-    aliases: ['stats', 'competitive', 'comp', 'unrated', 'unranked', 'lastmatch', 'lm', 'deathmatch', 'dm', 'escalation', 'spikerush'],
+    aliases: ['stats', 'competitive', 'comp', 'unrated', 'unranked', 'lastmatch', 'lm', 'deathmatch', 'dm', 'escalation', 'spikerush', 'agents', 'agent'],
     description: "Get statistics for a Valorant player",
     async execute(message, args, command) {
 
@@ -56,6 +57,7 @@ module.exports = {
             const escalationStats = trackerProfile.data.data.segments[2].stats // access overall escalation stats
             const spikeRushStats = trackerProfile.data.data.segments[3].stats // access overall spike rush stats
             const unratedStats = trackerProfile.data.data.segments[4].stats // access overall unrated stats 
+            const profileStats = trackerProfile.data.data.segments
             const userHandle = trackerProfile.data.data.platformInfo.platformUserHandle // access username and tag
             const userAvatar = trackerProfile.data.data.platformInfo.avatarUrl // access valorant avatar image
             const lastMatch = trackerMatch.data.data.matches[0] // access last match info
@@ -134,7 +136,7 @@ module.exports = {
 
                 const flipPage = ["⬅️", "➡️"]
 
-                const timeout = '200000' // 20 seconds
+                const timeout = '100000'
 
                 pagination(message, statsPages, flipPage, timeout)
 
@@ -196,7 +198,7 @@ module.exports = {
 
                 const flipPage = ["⬅️", "➡️"]
 
-                const timeout = '200000' // 20 seconds
+                const timeout = '100000'
 
                 pagination(message, unratedPages, flipPage, timeout)
 
@@ -257,7 +259,7 @@ module.exports = {
 
                 const flipPage = ["⬅️", "➡️"]
 
-                const timeout = '200000' // 20 seconds
+                const timeout = '100000'
 
                 pagination(message, spikeRushPages, flipPage, timeout)
 
@@ -296,7 +298,7 @@ module.exports = {
             }
 
             else if (command === 'escalation') {
-                
+
                 // each square represents ~8.33%
                 greenSquare = Math.round(escalationStats.matchesWinPct.value / 8.33)
                 redSquare = 12 - greenSquare
@@ -551,9 +553,56 @@ module.exports = {
 
                 const flipPage = ["⬅️", "➡️"]
 
-                const timeout = '200000' // 20 seconds
+                const timeout = '100000'
 
                 pagination(message, lastMatchPages, flipPage, timeout)
+            }
+
+            else if (command === 'agents' || command === 'agent') {
+                console.log(trackerProfile.data.data.segments[5].stats.timePlayed.value) //playtime for 1 agent
+                console.log(profileStats[5])
+
+                agentInfo = []
+                // get all agents the player played
+                for (x = 5; x < profileStats.length; x++) {
+                    if (profileStats[x].type === 'agent') {
+                        agentInfo.push([profileStats[x].metadata.name, profileStats[x].stats.timePlayed.value, profileStats[x].stats.timePlayed.displayValue,
+                        profileStats[x].stats.kills.displayValue, profileStats[x].stats.deaths.displayValue, profileStats[x].stats.assists.displayValue,
+                        profileStats[x].stats.kDRatio.displayValue, profileStats[x].stats.damagePerRound.displayValue, profileStats[x].stats.matchesWinPct.displayValue])
+                    }
+                }
+
+                agentInfo.sort(function (a, b) { return b[1] - a[1] }) // Sort agents by playtime
+
+                const agentEmbed = new MessageEmbed()
+                    .setColor('#11806A')
+                    .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                    .setThumbnail(userAvatar)
+                    .setDescription("```grey\n      " + "         Agents Played" + "\n```")
+
+                for (i = 0; i < agentInfo.length; i++) {
+                    let agentName = agentInfo[i][0]
+                    let timePlayed = agentInfo[i][2]
+                    let kills = agentInfo[i][3]
+                    let deaths = agentInfo[i][4]
+                    let assists = agentInfo[i][5]
+                    let kdr = agentInfo[i][6]
+                    let dmg = agentInfo[i][7]
+                    let winRate = agentInfo[i][8]
+
+                    var agentEmoji = assets.agentEmojis[agentName].emoji
+
+                    agentEmbed.addFields(
+                        {
+                            name: agentName + " " + agentEmoji + " | " + timePlayed + " | Win Rate: " + parseInt(winRate).toFixed(0) + " %", value: "```yaml\nK:" + 
+                            kills + " / D:" + deaths + " / A:" + assists  + " / R:" + parseFloat(kdr).toFixed(2) + " | DMG/R: " + parseInt(dmg).toFixed(0) + "\n```", inline: false
+                        },
+                    )
+                }
+
+                message.channel.send(agentEmbed)
+
+
             }
 
         } catch (error) {
