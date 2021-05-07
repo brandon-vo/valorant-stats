@@ -559,8 +559,6 @@ module.exports = {
             }
 
             else if (command === 'agents' || command === 'agent') {
-                console.log(trackerProfile.data.data.segments[5].stats.timePlayed.value) //playtime for 1 agent
-                console.log(profileStats[5])
 
                 agentInfo = []
                 // get all agents the player played
@@ -578,9 +576,15 @@ module.exports = {
                     .setColor('#11806A')
                     .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
                     .setThumbnail(userAvatar)
-                    .setDescription("```grey\n      " + "         Agents Played" + "\n```")
+                    .setDescription("```grey\n      " + "      Top 5 - Agents Played" + "\n```")
 
-                for (i = 0; i < agentInfo.length; i++) {
+
+                x = agentInfo.length
+                if (x > 5)
+                    x = 5
+
+                for (i = 0; i < x; i++) {
+
                     let agentName = agentInfo[i][0]
                     let timePlayed = agentInfo[i][2]
                     let kills = agentInfo[i][3]
@@ -594,8 +598,8 @@ module.exports = {
 
                     agentEmbed.addFields(
                         {
-                            name: agentName + " " + agentEmoji + " | " + timePlayed + " | Win Rate: " + parseInt(winRate).toFixed(0) + " %", value: "```yaml\nK:" + 
-                            kills + " / D:" + deaths + " / A:" + assists  + " / R:" + parseFloat(kdr).toFixed(2) + " | DMG/R: " + parseInt(dmg).toFixed(0) + "\n```", inline: false
+                            name: agentName + " " + agentEmoji + " | " + timePlayed + " | Win Rate: " + parseInt(winRate).toFixed(0) + "%", value: "```yaml\nK:" +
+                                kills + " / D:" + deaths + " / A:" + assists + " / R:" + parseFloat(kdr).toFixed(2) + " | DMG/R: " + parseInt(dmg).toFixed(0) + "\n```", inline: false
                         },
                     )
                 }
