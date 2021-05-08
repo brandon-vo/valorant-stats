@@ -302,5 +302,22 @@
         "Yoru": {
             "emoji": "<:yoru:839142769686478888>"
         }
+    },
+    "modeEmojis": {
+        "Competitive": {
+            "emoji": "<:normal:840652327160381460>"
+        },
+        "Unrated": {
+            "emoji": "<:normal:840652327160381460>"
+        },
+        "Spike Rush": {
+            "emoji": "<:spikerush:840652327447035934>"
+        },
+        "Deathmatch": {
+            "emoji": "<:deathmatch:840652327231946803>"
+        },
+        "Escalation": {
+            "emoji": "<:escalation:840652327139540993>"
+        }
     }
 }

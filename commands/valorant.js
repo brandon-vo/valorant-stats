@@ -356,11 +356,12 @@ module.exports = {
                     playerMatchInfo.sort(function (a, b) { return b[3] - a[3] }) // Sort players by kills
 
                     var mapImage = assets.maps[lastMap].img // Set map image
+                    var deathmatchEmoji = assets.modeEmojis[lastMatch.metadata.modeName].emoji
 
                     const deathmatchEmbed = new MessageEmbed()
 
                     deathmatchEmbed.setColor('#11806A')
-                    deathmatchEmbed.setTitle('Last Match Stats - ' + lastMap)
+                    deathmatchEmbed.setTitle('Last Match Stats - ' + lastMap + " " + deathmatchEmoji)
                     deathmatchEmbed.setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
                     deathmatchEmbed.setThumbnail(lastMatch.segments[0].metadata.agentImageUrl)
                     deathmatchEmbed.setDescription("`" + lastMatch.metadata.timestamp + "`")
@@ -444,6 +445,11 @@ module.exports = {
 
                 redTeam.sort(function (a, b) { return b[7] - a[7] }) // Sort team players by ACS
                 blueTeam.sort(function (a, b) { return b[7] - a[7] }) // Sort team players by ACS
+                
+                var time = lastMatch.metadata.timestamp
+                var timeStamp = time.split('T', 2) // get date of match
+
+                var modeEmoji = assets.modeEmojis[lastMatch.metadata.modeName].emoji
 
                 const lastMatchEmbed1 = new MessageEmbed()
 
@@ -453,13 +459,14 @@ module.exports = {
                     lastMatchEmbed1.setTitle('Last Match Stats - ' + lastMap)
                     lastMatchEmbed1.setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
                     lastMatchEmbed1.setThumbnail(lastMatch.segments[0].metadata.agentImageUrl)
-                    lastMatchEmbed1.setDescription("`" + lastMatch.metadata.timestamp + "`")
+                    lastMatchEmbed1.setDescription("`              " + timeStamp[0] + "             `")
                     lastMatchEmbed1.addFields(
-                        { name: 'Mode', value: "```yaml\n" + lastMatch.metadata.modeName + "\n```", inline: true },
+                        { name: 'Mode ' + modeEmoji, value: "```yaml\n" + lastMatch.metadata.modeName + "\n```", inline: true },
                         { name: 'Length', value: "```yaml\n" + lmStats.playtime.displayValue + "\n```", inline: true },
                         { name: 'Rank' + rankEmoji, value: "```grey\n" + lmStats.rank.metadata.tierName + "\n```", inline: false },
                         { name: 'K / D / A', value: "```yaml\n" + lmStats.kills.displayValue + "/" + lmStats.deaths.displayValue + "/" + lmStats.assists.displayValue + "\n```", inline: true },
                         { name: 'KDR', value: "```yaml\n" + lmStats.kdRatio.displayValue + "\n```", inline: true },
+                        { name: 'Score', value: "```yaml\n" + lmStats.score.displayValue + "\n```", inline: true},
                         { name: 'ACS', value: "```yaml\n" + lmStats.scorePerRound.displayValue + "\n```", inline: true },
                         { name: 'Econ Rating', value: "```yaml\n" + lmStats.econRating.displayValue + "\n```", inline: true },
                         { name: 'Headshot %', value: "```yaml\n" + lmStats.headshotsPercentage.displayValue + "%\n```", inline: true },
@@ -477,7 +484,7 @@ module.exports = {
                     lastMatchEmbed1.setThumbnail(lastMatch.segments[0].metadata.agentImageUrl)
                     lastMatchEmbed1.setDescription("`" + lastMatch.metadata.timestamp + "`")
                     lastMatchEmbed1.addFields(
-                        { name: 'Mode', value: "```yaml\n" + lastMatch.metadata.modeName + "\n```", inline: true },
+                        { name: 'Mode ' + modeEmoji, value: "```yaml\n" + lastMatch.metadata.modeName + "\n```", inline: true },
                         { name: 'Length', value: "```yaml\n" + lmStats.playtime.displayValue + "\n```", inline: true },
                         { name: '\u200B', value: '\u200B', inline: true },
                         { name: 'K / D / A', value: "```yaml\n" + lmStats.kills.displayValue + "/" + lmStats.deaths.displayValue + "/" + lmStats.assists.displayValue + "\n```", inline: true },
@@ -605,7 +612,6 @@ module.exports = {
                 }
 
                 message.channel.send(agentEmbed)
-
 
             }
 
