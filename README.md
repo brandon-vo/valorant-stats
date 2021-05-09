@@ -32,7 +32,6 @@
 | $ping      | Pong!             | 
 
 # TODO ✅
-- [ ] Agent stats command (playtime, win/loss, kdr...)
 - [ ] Weapon stats command (kills, accuracy...)
 - [ ] Map stats command (win/loss ratio)
 - [ ] Command to compare two Valorant players stats
