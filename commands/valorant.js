@@ -39,17 +39,11 @@ module.exports = {
 
             // Check if account exists
             try {
-                trackerProfile = await axios.get(
-                    `https://api.tracker.gg/api/v2/valorant/standard/profile/riot/${playerID}`
-                )
-
-                trackerMatch = await axios.get(
-                    `https://api.tracker.gg/api/v2/valorant/rap-matches/riot/${playerID}`
-                )
+                trackerProfile = await axios.get(`https://api.tracker.gg/api/v2/valorant/standard/profile/riot/${playerID}`)
+                trackerMatch = await axios.get(`https://api.tracker.gg/api/v2/valorant/rap-matches/riot/${playerID}`)
 
             } catch (error) {
-                message.reply("Please ensure the player you are viewing has logged into tracker.gg! https://tracker.gg/valorant")
-                return
+                return message.reply("Please ensure the player you are viewing has logged into tracker.gg! https://tracker.gg/valorant")
             }
 
             const compStats = trackerProfile.data.data.segments[0].stats // access overall comp stats
@@ -65,21 +59,26 @@ module.exports = {
             const matchID = lastMatch.attributes.id // match id
 
             try {
-                matchInfo = await axios.get(
-                    `https://api.tracker.gg/api/v2/valorant/rap-matches/${matchID}`
-                )
+                matchInfo = await axios.get(`https://api.tracker.gg/api/v2/valorant/rap-matches/${matchID}`)
             } catch (error) {
-                message.reply("There is no match to retrieve. Please try again.")
-                return
+                return message.reply("There is no match to retrieve. Please try again.")
             }
 
-            // Set rank emojis
-            rankEmoji = assets.rankEmojis[compStats.rank.metadata.tierName].emoji
-
+            // Set rank emojis and name
+            rankEmoji = '<:unranked:839140865666318346>'
+            rankName = 'Unranked'
+            if (compStats.rank) {
+                rankName = compStats.rank.metadata.tierName
+                rankEmoji = assets.rankEmojis[rankName].emoji
+            }
+                
             // Set agent emoji for the user
             agentEmoji = assets.agentEmojis[lastMatch.segments[0].metadata.agentName].emoji
 
             if (command === 'stats') {
+
+                if (trackerProfile.data.data.segments[0].metadata.name !== 'Competitive') 
+                    return message.reply('You have never played a competitive game!')
 
                 // each square represents ~8.33%
                 greenSquare = Math.round(compStats.matchesWinPct.value / 8.33)
@@ -95,7 +94,7 @@ module.exports = {
                     .addFields(
                         { name: 'KDR', value: "```yaml\n" + compStats.kDRatio.displayValue + "\n```", inline: true },
                         { name: 'KDA ', value: "```yaml\n" + compStats.kDARatio.displayValue + "\n```", inline: true },
-                        { name: 'Rank ' + rankEmoji, value: "```grey\n" + compStats.rank.metadata.tierName + "\n```", inline: true },
+                        { name: 'Rank ' + rankEmoji, value: "```grey\n" + rankName + "\n```", inline: true },
                         { name: 'Kills', value: "```yaml\n" + compStats.kills.displayValue + "\n```", inline: true },
                         { name: 'Deaths', value: "```yaml\n" + compStats.deaths.displayValue + "```", inline: true },
                         { name: 'Assists', value: "```yaml\n" + compStats.assists.displayValue + "\n```", inline: true },
@@ -106,7 +105,6 @@ module.exports = {
                                 + compStats.matchesWon.displayValue + "   |   L: " + compStats.matchesLost.displayValue + "\n```", inline: false
                         },
                     )
-                    .setFooter(compStats.rank.metadata.tierName, compStats.rank.metadata.iconUrl);
 
                 const statsEmbed2 = new MessageEmbed()
                     .setColor('#11806A')
@@ -358,16 +356,27 @@ module.exports = {
                     var mapImage = assets.maps[lastMap].img // Set map image
                     var deathmatchEmoji = assets.modeEmojis[lastMatch.metadata.modeName].emoji
 
-                    const deathmatchEmbed = new MessageEmbed()
+                    if (lmStats.placement.displayValue === 1)
+                        lmStats.placement.displayValue = '1st'
+                    else if (lmStats.placement.displayValue === 2)
+                        lmStats.placement.displayValue = '2nd'
+                    else if (lmStats.placement.displayValue === 3)
+                        lmStats.placement.displayValue = '3rd'
+                    else
+                        lmStats.placement.displayValue = lmStats.placement.displayValue + 'th'
 
-                    deathmatchEmbed.setColor('#11806A')
-                    deathmatchEmbed.setTitle('Last Match Stats - ' + lastMap + " " + deathmatchEmoji)
-                    deathmatchEmbed.setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
-                    deathmatchEmbed.setThumbnail(lastMatch.segments[0].metadata.agentImageUrl)
-                    deathmatchEmbed.setDescription("`" + lastMatch.metadata.timestamp + "`")
-                    deathmatchEmbed.setDescription("```\n     " + lastMatch.metadata.modeName + " - " + lmStats.playtime.displayValue + "\n```")
-                    deathmatchEmbed.setTimestamp()
-                    deathmatchEmbed.setImage(mapImage)
+                    console.log(lmStats)
+
+                    const deathmatchEmbed = new MessageEmbed()
+                        .setColor('#11806A')
+                        .setTitle('Last Match Stats - ' + lastMap + " " + deathmatchEmoji)
+                        .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                        .setThumbnail(lastMatch.segments[0].metadata.agentImageUrl)
+                        .setDescription("`" + lastMatch.metadata.timestamp + "`")
+                        .setDescription("```\n     " + lastMatch.metadata.modeName + " - " + lmStats.playtime.displayValue + "\n```")
+                        .setTimestamp()
+                        .setImage(mapImage)
+                        .setFooter("You placed " + lmStats.placement.displayValue)
 
                     var count = 0
 
@@ -387,7 +396,7 @@ module.exports = {
                         count++
 
                         deathmatchEmbed.addFields(
-                            { name: username[0] + playerAgentEmoji, value: "```yaml\nPts: " + score + "\n" + kills + " / " + deaths + " / " + assists + "\n```", inline: true },
+                            { name: username[0] + playerAgentEmoji, value: "```yaml\nPts: " + score + "     \n" + kills + " / " + deaths + " / " + assists + "\n```", inline: true },
                         )
 
                         // For 2 column formatting
@@ -445,7 +454,7 @@ module.exports = {
 
                 redTeam.sort(function (a, b) { return b[7] - a[7] }) // Sort team players by ACS
                 blueTeam.sort(function (a, b) { return b[7] - a[7] }) // Sort team players by ACS
-                
+
                 var time = lastMatch.metadata.timestamp
                 var timeStamp = time.split('T', 2) // get date of match
 
@@ -466,7 +475,7 @@ module.exports = {
                         { name: 'Rank' + rankEmoji, value: "```grey\n" + lmStats.rank.metadata.tierName + "\n```", inline: false },
                         { name: 'K / D / A', value: "```yaml\n" + lmStats.kills.displayValue + "/" + lmStats.deaths.displayValue + "/" + lmStats.assists.displayValue + "\n```", inline: true },
                         { name: 'KDR', value: "```yaml\n" + lmStats.kdRatio.displayValue + "\n```", inline: true },
-                        { name: 'Score', value: "```yaml\n" + lmStats.score.displayValue + "\n```", inline: true},
+                        { name: 'Score', value: "```yaml\n" + lmStats.score.displayValue + "\n```", inline: true },
                         { name: 'ACS', value: "```yaml\n" + lmStats.scorePerRound.displayValue + "\n```", inline: true },
                         { name: 'Econ Rating', value: "```yaml\n" + lmStats.econRating.displayValue + "\n```", inline: true },
                         { name: 'Headshot %', value: "```yaml\n" + lmStats.headshotsPercentage.displayValue + "%\n```", inline: true },
