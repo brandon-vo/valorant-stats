@@ -36,7 +36,7 @@ module.exports = {
                 { name: '\u200B', value: "```md\n" + "#                         Other                           #" + "\n```" },
                 { name: 'Note', value: "The bot must have access to the default permissions in order to function properly"},
                 { name: 'KDR', value: "kills / deaths", inline: true },
-                { name: 'KDA', value: "(kills + assists) / deaths)", inline: true },
+                { name: 'KDA', value: "(kills + assists) / deaths", inline: true },
                 { name: 'KAD', value: "(kills / deaths) + assists", inline: true },
                 { name: 'Known Bugs', value: 'Link command resets\nPlayers who have not played all gamemodes may receive errors\nStats not being retrieved by the bot - Try again later' },
                 { name: 'Found Bugs? ', value: "Contact CMDRVo#3496 on Discord" },
