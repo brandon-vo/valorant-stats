@@ -3,7 +3,7 @@ const pagination = require('discord.js-pagination')
 const assets = require('../assets.json')
 const fs = require('fs')
 const axios = require('axios').default;
-const { profile } = require('console');
+const { profile, Console } = require('console');
 
 module.exports = {
     name: "valorant",
@@ -78,7 +78,7 @@ module.exports = {
             if (command === 'stats') {
 
                 if (trackerProfile.data.data.segments[0].metadata.name !== 'Competitive') 
-                    return message.reply('You have never played a competitive game!')
+                    return message.reply('This player has never played a competitive game!')
 
                 // each square represents ~8.33%
                 greenSquare = Math.round(compStats.matchesWinPct.value / 8.33)
@@ -271,6 +271,8 @@ module.exports = {
 
                 winRate = "<:greenline:839562756930797598>".repeat(greenSquare) + "<:redline:839562438760071298>".repeat(redSquare)
 
+                console.log(dmStats)
+
                 const deathmatchEmbed = new MessageEmbed()
                     .setColor('#11806A')
                     .setTitle(`Deathmatch Career Stats`)
@@ -283,7 +285,7 @@ module.exports = {
                         { name: 'Kills', value: "```yaml\n" + dmStats.kills.displayValue + "\n```", inline: true },
                         { name: 'Deaths', value: "```yaml\n" + dmStats.deaths.displayValue + "```", inline: true },
                         { name: 'Assists', value: "```yaml\n" + dmStats.assists.displayValue + "\n```", inline: true },
-                        { name: 'Headshot %', value: "```yaml\n" + dmStats.headshotsPercentage.displayValue + "%\n```", inline: true },
+                        //{ name: 'Headshot %', value: "```yaml\n" + dmStats.headshotsPercentage.displayValue + "%\n```", inline: true },
                         { name: 'Playtime', value: "```yaml\n" + dmStats.timePlayed.displayValue + "\n```", inline: true },
                         {
                             name: 'Win Rate - ' + dmStats.matchesWinPct.displayValue, value: winRate + " ```yaml\n" + "    W: "
@@ -315,7 +317,7 @@ module.exports = {
                         { name: 'Kills', value: "```yaml\n" + escalationStats.kills.displayValue + "\n```", inline: true },
                         { name: 'Deaths', value: "```yaml\n" + escalationStats.deaths.displayValue + "```", inline: true },
                         { name: 'Assists', value: "```yaml\n" + escalationStats.assists.displayValue + "\n```", inline: true },
-                        { name: 'Headshot %', value: "```yaml\n" + escalationStats.headshotsPercentage.displayValue + "%\n```", inline: true },
+                        //{ name: 'Headshot %', value: "```yaml\n" + escalationStats.headshotsPercentage.displayValue + "%\n```", inline: true },
                         { name: 'Playtime', value: "```yaml\n" + escalationStats.timePlayed.displayValue + "\n```", inline: true },
                         {
                             name: 'Win Rate - ' + escalationStats.matchesWinPct.displayValue, value: winRate + " ```yaml\n" + "    W: "
@@ -374,7 +376,6 @@ module.exports = {
                         .setThumbnail(lastMatch.segments[0].metadata.agentImageUrl)
                         .setDescription("`" + lastMatch.metadata.timestamp + "`")
                         .setDescription("```\n     " + lastMatch.metadata.modeName + " - " + lmStats.playtime.displayValue + "\n```")
-                        .setTimestamp()
                         .setImage(mapImage)
                         .setFooter("You placed " + lmStats.placement.displayValue)
 
@@ -462,6 +463,8 @@ module.exports = {
 
                 const lastMatchEmbed1 = new MessageEmbed()
 
+                console.log(lmStats)
+
                 // Competitive game embed
                 if (lastMatch.metadata.modeName === 'Competitive') {
                     lastMatchEmbed1.setColor('#11806A')
@@ -472,16 +475,16 @@ module.exports = {
                     lastMatchEmbed1.addFields(
                         { name: 'Mode ' + modeEmoji, value: "```yaml\n" + lastMatch.metadata.modeName + "\n```", inline: true },
                         { name: 'Length', value: "```yaml\n" + lmStats.playtime.displayValue + "\n```", inline: true },
-                        { name: 'Rank' + rankEmoji, value: "```grey\n" + lmStats.rank.metadata.tierName + "\n```", inline: false },
-                        { name: 'K / D / A', value: "```yaml\n" + lmStats.kills.displayValue + "/" + lmStats.deaths.displayValue + "/" + lmStats.assists.displayValue + "\n```", inline: true },
-                        { name: 'KDR', value: "```yaml\n" + lmStats.kdRatio.displayValue + "\n```", inline: true },
-                        { name: 'Score', value: "```yaml\n" + lmStats.score.displayValue + "\n```", inline: true },
+                        { name: 'Rank' + rankEmoji + "               K / D / A              KDR", value: "```grey\n" + lmStats.rank.metadata.tierName 
+                        + "    " + lmStats.kills.displayValue + "/" + lmStats.deaths.displayValue + "/" + lmStats.assists.displayValue + 
+                        "      " + lmStats.kdRatio.displayValue + "\n```", inline: false },
+                        { name: 'Combat Score', value: "```yaml\n" + lmStats.score.displayValue + "\n```", inline: true },
                         { name: 'ACS', value: "```yaml\n" + lmStats.scorePerRound.displayValue + "\n```", inline: true },
                         { name: 'Econ Rating', value: "```yaml\n" + lmStats.econRating.displayValue + "\n```", inline: true },
                         { name: 'Headshot %', value: "```yaml\n" + lmStats.headshotsPercentage.displayValue + "%\n```", inline: true },
+                        { name: 'First Bloods', value: "```yaml\n" + lmStats.firstBloods.displayValue + "\n```", inline: true},
                         { name: 'Score', value: scoreVisualized + "```yaml\n             " + lmStats.roundsWon.displayValue + " - " + lmStats.roundsLost.displayValue + "\n```", inline: false },
                     )
-                    lastMatchEmbed1.setTimestamp()
                     lastMatchEmbed1.setImage(mapImage)
                 }
 
@@ -503,13 +506,12 @@ module.exports = {
                         { name: 'Headshot %', value: "```yaml\n" + lmStats.headshotsPercentage.displayValue + "%\n```", inline: true },
                         { name: 'Score', value: scoreVisualized + "```yaml\n             " + lmStats.roundsWon.displayValue + " - " + lmStats.roundsLost.displayValue + "\n```", inline: false },
                     )
-                    lastMatchEmbed1.setTimestamp()
                     lastMatchEmbed1.setImage(mapImage)
                 }
 
                 const lastMatchEmbed2 = new MessageEmbed()
                     .setColor('#11806A')
-                    .setTitle('Last Match Stats - ' + lastMap)
+                    .setTitle('Last Match Stats - ' + lastMap + " | " + lmStats.roundsWon.displayValue + " - " + lmStats.roundsLost.displayValue)
                     .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
                     .setDescription('```\n                Players in your game\n```')
 
@@ -593,7 +595,7 @@ module.exports = {
                     .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
                     .setThumbnail(userAvatar)
                     .setDescription("```grey\n      " + "      Top 5 - Agents Played" + "\n```")
-
+                    .setFooter('Competitive Agents Only')
 
                 x = agentInfo.length
                 if (x > 5)
@@ -614,7 +616,7 @@ module.exports = {
 
                     agentEmbed.addFields(
                         {
-                            name: agentName + " " + agentEmoji + " | " + timePlayed + " | Win Rate: " + parseInt(winRate).toFixed(0) + "%", value: "```yaml\nK:" +
+                            name: agentName + " " + agentEmoji + "     |     " + timePlayed + "     |     Win Rate: " + parseInt(winRate).toFixed(0) + "%", value: "```yaml\nK:" +
                                 kills + " / D:" + deaths + " / A:" + assists + " / R:" + parseFloat(kdr).toFixed(2) + " | DMG/R: " + parseInt(dmg).toFixed(0) + "\n```", inline: false
                         },
                     )
