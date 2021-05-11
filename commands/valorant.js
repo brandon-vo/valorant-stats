@@ -69,12 +69,6 @@ module.exports = {
             const lmStats = lastMatch.segments[0].stats // access last match stats for the player
             const matchID = lastMatch.attributes.id // match id
 
-            try {
-                matchInfo = await axios.get(`https://api.tracker.gg/api/v2/valorant/rap-matches/${matchID}`)
-            } catch (error) {
-                return message.reply("There is no match to retrieve. Please try again.")
-            }
-
             // Set rank emojis and name
             rankEmoji = '<:unranked:839140865666318346>'
             rankName = 'Unranked'
@@ -356,6 +350,12 @@ module.exports = {
 
             else if (command === 'lastmatch' || command === 'lm') {
 
+                try {
+                    matchInfo = await axios.get(`https://api.tracker.gg/api/v2/valorant/rap-matches/${matchID}`)
+                } catch (error) {
+                    return message.reply("There is no match to retrieve. Please try again.")
+                }
+
                 const lastMap = lastMatch.metadata.mapName // Map name
 
                 playerMatchInfo = [] // all players
@@ -605,9 +605,12 @@ module.exports = {
 
             else if (command === 'agents' || command === 'agent') {
 
+                if (!compStats)
+                    return message.reply('There are no agents to track. This player has never played a competitive game!')
+
                 agentInfo = []
                 // get all agents the player played
-                for (x = 5; x < profileStats.length; x++) {
+                for (x = 0; x < profileStats.length; x++ && profileStats.type === 'agent') {
                     if (profileStats[x].type === 'agent') {
                         agentInfo.push([profileStats[x].metadata.name, profileStats[x].stats.timePlayed.value, profileStats[x].stats.timePlayed.displayValue,
                         profileStats[x].stats.kills.displayValue, profileStats[x].stats.deaths.displayValue, profileStats[x].stats.assists.displayValue,
@@ -617,18 +620,18 @@ module.exports = {
 
                 agentInfo.sort(function (a, b) { return b[1] - a[1] }) // Sort agents by playtime
 
+                agentLength = agentInfo.length
+                if (agentLength > 5)
+                    agentLength = 5
+
                 const agentEmbed = new MessageEmbed()
                     .setColor('#11806A')
                     .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
                     .setThumbnail(userAvatar)
-                    .setDescription("```grey\n      " + "      Top 5 - Agents Played" + "\n```")
+                    .setDescription("```grey\n      " + "      Top " + agentLength + " - Agents Played" + "\n```")
                     .setFooter('Competitive Agents Only')
 
-                x = agentInfo.length
-                if (x > 5)
-                    x = 5
-
-                for (i = 0; i < x; i++) {
+                for (i = 0; i < agentLength; i++) {
 
                     let agentName = agentInfo[i][0]
                     let timePlayed = agentInfo[i][2]
@@ -656,7 +659,7 @@ module.exports = {
             else if (command === 'compare') {
 
                 message.reply('Who would you like to compare ' + ID + ' to?')
-                // do this later
+
             }
 
         } catch (error) {
