@@ -7,7 +7,7 @@ const { profile, Console } = require('console');
 
 module.exports = {
     name: "valorant",
-    aliases: ['stats', 'competitive', 'comp', 'unrated', 'unranked', 'lastmatch', 'lm', 'deathmatch', 'dm', 'escalation', 'spikerush', 'agents', 'agent'],
+    aliases: ['stats', 'competitive', 'comp', 'unrated', 'unranked', 'lastmatch', 'lm', 'deathmatch', 'dm', 'escalation', 'spikerush', 'agents', 'agent', 'compare'],
     description: "Get statistics for a Valorant player",
     async execute(message, args, command) {
 
@@ -46,12 +46,23 @@ module.exports = {
                 return message.reply("Please ensure the player you are viewing has logged into tracker.gg! https://tracker.gg/valorant")
             }
 
-            const compStats = trackerProfile.data.data.segments[0].stats // access overall comp stats
-            const dmStats = trackerProfile.data.data.segments[1].stats // access overall deathmatch stats
-            const escalationStats = trackerProfile.data.data.segments[2].stats // access overall escalation stats
-            const spikeRushStats = trackerProfile.data.data.segments[3].stats // access overall spike rush stats
-            const unratedStats = trackerProfile.data.data.segments[4].stats // access overall unrated stats 
             const profileStats = trackerProfile.data.data.segments
+
+            console.log(profileStats)
+
+            for (x = 0; x < 5; x++) {
+                if (profileStats[x].metadata.name === 'Competitive' && profileStats[x].type === 'playlist')
+                    var compStats = profileStats[x].stats // access overall comp stats
+                else if (profileStats[x].metadata.name === 'Deathmatch' && profileStats[x].type === 'playlist')
+                    var dmStats = profileStats[x].stats // access overall deathmatch stats
+                else if (profileStats[x].metadata.name === 'Escalation' && profileStats[x].type === 'playlist')
+                    var escalationStats = profileStats[x].stats // access overall escalation stats
+                else if (profileStats[x].metadata.name === 'Spike Rush' && profileStats[x].type === 'playlist')
+                    var spikeRushStats = profileStats[x].stats // access overall spike rush stats
+                else if (profileStats[x].metadata.name === 'Unrated' && profileStats[x].type === 'playlist')
+                    var unratedStats = profileStats[x].stats // access overall unrated stats 
+            }
+
             const userHandle = trackerProfile.data.data.platformInfo.platformUserHandle // access username and tag
             const userAvatar = trackerProfile.data.data.platformInfo.avatarUrl // access valorant avatar image
             const lastMatch = trackerMatch.data.data.matches[0] // access last match info
@@ -67,17 +78,17 @@ module.exports = {
             // Set rank emojis and name
             rankEmoji = '<:unranked:839140865666318346>'
             rankName = 'Unranked'
-            if (compStats.rank) {
+            if (compStats) {
                 rankName = compStats.rank.metadata.tierName
                 rankEmoji = assets.rankEmojis[rankName].emoji
             }
-                
+
             // Set agent emoji for the user
             agentEmoji = assets.agentEmojis[lastMatch.segments[0].metadata.agentName].emoji
 
             if (command === 'stats') {
 
-                if (trackerProfile.data.data.segments[0].metadata.name !== 'Competitive') 
+                if (!compStats)
                     return message.reply('This player has never played a competitive game!')
 
                 // each square represents ~8.33%
@@ -142,6 +153,11 @@ module.exports = {
 
             else if (command === 'unrated' || command === 'unranked') {
 
+                if (!unratedStats)
+                    return message.reply('This player has never played an unrated game!')
+
+                console.log(unratedStats)
+
                 // each square represents ~8.33%
                 greenSquare = Math.round(unratedStats.matchesWinPct.value / 8.33)
                 redSquare = 12 - greenSquare
@@ -204,6 +220,9 @@ module.exports = {
 
             else if (command === 'spikerush') {
 
+                if (!spikeRushStats)
+                    return message.reply('This player has never played a spike rush game!')
+
                 // each square represents ~8.33%
                 greenSquare = Math.round(spikeRushStats.matchesWinPct.value / 8.33)
                 redSquare = 12 - greenSquare
@@ -265,6 +284,9 @@ module.exports = {
 
             else if (command === 'deathmatch' || command === 'dm') {
 
+                if (!dmStats)
+                    return message.reply('This player has never played a deathmatch game!')
+
                 // each square represents ~8.33%
                 greenSquare = Math.round(dmStats.matchesWinPct.value / 8.33)
                 redSquare = 12 - greenSquare
@@ -298,6 +320,9 @@ module.exports = {
             }
 
             else if (command === 'escalation') {
+
+                if (!escalationStats)
+                    return message.reply('This player has never played an escalation game!')
 
                 // each square represents ~8.33%
                 greenSquare = Math.round(escalationStats.matchesWinPct.value / 8.33)
@@ -475,14 +500,16 @@ module.exports = {
                     lastMatchEmbed1.addFields(
                         { name: 'Mode ' + modeEmoji, value: "```yaml\n" + lastMatch.metadata.modeName + "\n```", inline: true },
                         { name: 'Length', value: "```yaml\n" + lmStats.playtime.displayValue + "\n```", inline: true },
-                        { name: 'Rank' + rankEmoji + "               K / D / A              KDR", value: "```grey\n" + lmStats.rank.metadata.tierName 
-                        + "    " + lmStats.kills.displayValue + "/" + lmStats.deaths.displayValue + "/" + lmStats.assists.displayValue + 
-                        "      " + lmStats.kdRatio.displayValue + "\n```", inline: false },
+                        {
+                            name: 'Rank' + rankEmoji + "               K / D / A              KDR", value: "```grey\n" + lmStats.rank.metadata.tierName
+                                + "    " + lmStats.kills.displayValue + "/" + lmStats.deaths.displayValue + "/" + lmStats.assists.displayValue +
+                                "      " + lmStats.kdRatio.displayValue + "\n```", inline: false
+                        },
                         { name: 'Combat Score', value: "```yaml\n" + lmStats.score.displayValue + "\n```", inline: true },
                         { name: 'ACS', value: "```yaml\n" + lmStats.scorePerRound.displayValue + "\n```", inline: true },
                         { name: 'Econ Rating', value: "```yaml\n" + lmStats.econRating.displayValue + "\n```", inline: true },
                         { name: 'Headshot %', value: "```yaml\n" + lmStats.headshotsPercentage.displayValue + "%\n```", inline: true },
-                        { name: 'First Bloods', value: "```yaml\n" + lmStats.firstBloods.displayValue + "\n```", inline: true},
+                        { name: 'First Bloods', value: "```yaml\n" + lmStats.firstBloods.displayValue + "\n```", inline: true },
                         { name: 'Score', value: scoreVisualized + "```yaml\n             " + lmStats.roundsWon.displayValue + " - " + lmStats.roundsLost.displayValue + "\n```", inline: false },
                     )
                     lastMatchEmbed1.setImage(mapImage)
@@ -624,6 +651,12 @@ module.exports = {
 
                 message.channel.send(agentEmbed)
 
+            }
+
+            else if (command === 'compare') {
+
+                message.reply('Who would you like to compare ' + ID + ' to?')
+                // do this later
             }
 
         } catch (error) {
