@@ -38,7 +38,7 @@ module.exports = {
                 { name: 'KDR', value: "kills / deaths", inline: true },
                 { name: 'KDA', value: "(kills + assists) / deaths", inline: true },
                 { name: 'KAD', value: "(kills / deaths) + assists", inline: true },
-                { name: 'Known Bugs', value: 'Link command resets\nPlayers who have not played all gamemodes may receive errors\nStats not being retrieved by the bot - Try again later' },
+                { name: 'Known Bugs', value: 'Link command resets\nStats not being retrieved by the bot - Try again later' },
                 { name: 'Found Bugs? ', value: "Contact CMDRVo#3496 on Discord" },
             )
             .setTimestamp()
