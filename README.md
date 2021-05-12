@@ -1,5 +1,6 @@
 <h1 align="center">Valorant Stats Discord Bot Bot</h1>
 <p align="center">
+  <b>Used in 140+ Discord servers</b><br>
   <b>Created by Brandon Vo</b><br>
   <a href="https://discord.com/api/oauth2/authorize?client_id=833535533287866398&permissions=2417093728&scope=bot">Invite this bot to your Discord server</a> 
   <br><br>
@@ -37,5 +38,5 @@
 - [ ] Command to compare two Valorant players stats
 - [ ] Link accounts to a database, rather than a .json file
 
-This is the first Discord bot that I have ever created  
+This is my first Discord bot creation  
 Retrieves data from https://tracker.gg/valorant
