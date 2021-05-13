@@ -1,0 +1,323 @@
+{
+    "ranks": {
+        "0": {
+            "name": "Unranked",
+            "img": "https://bit.ly/3gASVEZ"
+        },
+        "3": {
+            "name": "Iron 1",
+            "img": "https://bit.ly/3vhTurm"
+        },
+        "4": {
+            "name": "Iron 2",
+            "img": "https://bit.ly/2PiWG6L"
+        },
+        "5": {
+            "name": "Iron 3",
+            "img": "https://bit.ly/3gxUgMV"
+        },
+        "6": {
+            "name": "Bronze 1",
+            "img": "https://bit.ly/3eoNKW2"
+        },
+        "7": {
+            "name": "Bronze 2",
+            "img": "https://bit.ly/3xv620L"
+        },
+        "8": {
+            "name": "Bronze 3",
+            "img": "https://static.wikia.nocookie.net/valorant/images/a/a8/TX_CompetitiveTier_Large_8.png/revision/latest/scale-to-width-down/250?cb=20200623203313"
+        },
+        "9": {
+            "name": "Silver 1",
+            "img": "https://bit.ly/3gzYSlJ"
+        },
+        "10": {
+            "name": "Silver 2",
+            "img": "https://bit.ly/3xpnpzJ"
+        },
+        "11": {
+            "name": "Silver 3",
+            "img": "https://bit.ly/3njh7Np"
+        },
+        "12": {
+            "name": "Gold 1",
+            "img": "https://bit.ly/3sQ4sTg"
+        },
+        "13": {
+            "name": "Gold 2",
+            "img": "https://bit.ly/3tOjB9f"
+        },
+        "14": {
+            "name": "Gold 3",
+            "img": "https://bit.ly/3ngODnL"
+        },
+        "15": {
+            "name": "Platnium 1",
+            "img": "https://bit.ly/3aBZVha"
+        },
+        "16": {
+            "name": "Platnium 2",
+            "img": "https://bit.ly/3dNODZ0"
+        },
+        "17": {
+            "name": "Platnium 3",
+            "img": "'https://bit.ly/3gAZGqz"
+        },
+        "18": {
+            "name": "Diamond 1",
+            "img": "https://bit.ly/3gBXA9W"
+        },
+        "19": {
+            "name": "Diamond 2",
+            "img": "https://bit.ly/3aybLJ6"
+        },
+        "20": {
+            "name": "Diamond 3",
+            "img": "'https://bit.ly/3u1Hevb"
+        },
+        "21": {
+            "name": "Immortal",
+            "img": "https://bit.ly/3tPKpWA"
+        },
+        "24": {
+            "name": "Radiant",
+            "img": "https://bit.ly/3gFlVLQ"
+        }
+    },
+    "agents": {
+        "5f8d3a7f-467b-97f3-062c-13acf203c006": {
+            "name": "Breach",
+            "img": "https://static.wikia.nocookie.net/valorant/images/5/53/Breach_icon.png/revision/latest/scale-to-width-down/99?cb=20201128234328"
+        },
+        "f94c3b30-42be-e959-889c-5aa313dba261": {
+            "name": "Raze",
+            "img": "'https://static.wikia.nocookie.net/valorant/images/9/9c/Raze_icon.png/revision/latest/scale-to-width-down/99?cb=20201128234400"
+        },
+        "add6443a-41bd-e414-f6ad-e58d267f4e95": {
+            "name": "Jett",
+            "img": "https://static.wikia.nocookie.net/valorant/images/3/35/Jett_icon.png/revision/latest/scale-to-width-down/185?cb=20201128234156"
+        },
+        "117ed9e3-49f3-6512-3ccf-0cada7e3823b": {
+            "name": "Cypher",
+            "img": "'https://static.wikia.nocookie.net/valorant/images/8/88/Cypher_icon.png/revision/latest/scale-to-width-down/99?cb=20201128234211"
+        },
+        "320b2a48-4d9b-a075-30f1-1f93a9b638fa": {
+            "name": "Sova",
+            "img": "https://titles.trackercdn.com/valorant-api/agents/320b2a48-4d9b-a075-30f1-1f93a9b638fa/displayicon.png"
+        },
+        "707eab51-4836-f488-046a-cda6bf494859": {
+            "name": "Viper",
+            "img": "'https://static.wikia.nocookie.net/valorant/images/5/5f/Viper_icon.png/revision/latest/scale-to-width-down/99?cb=20201128234408"
+        },
+        "eb93336a-449b-9c1b-0a54-a891f7921d69": {
+            "name": "Phoenix",
+            "img": "https://titles.trackercdn.com/valorant-api/agents/eb93336a-449b-9c1b-0a54-a891f7921d69/displayicon.png"
+        },
+        "9f0d8ba9-4140-b941-57d3-a7ad57c6b417": {
+            "name": "Brimstone",
+            "img": "https://titles.trackercdn.com/valorant-api/agents/9f0d8ba9-4140-b941-57d3-a7ad57c6b417/displayicon.png"
+        },
+        "569fdd95-4d10-43ab-ca70-79becc718b46": {
+            "name": "Sage",
+            "img": "https://static.wikia.nocookie.net/valorant/images/7/74/Sage_icon.png/revision/latest/scale-to-width-down/185?cb=20201128234057"
+        },
+        "a3bfb853-43b2-7238-a4f1-ad90e9e46bcc": {
+            "name": "Reyna",
+            "img": "https://static.wikia.nocookie.net/valorant/images/b/b0/Reyna_icon.png/revision/latest/scale-to-width-down/99?cb=20200607180311"
+        },
+        "8e253930-4c05-31dd-1b6c-968525494517": {
+            "name": "Omen",
+            "img": "https://static.wikia.nocookie.net/valorant/images/b/b0/Omen_icon.png/revision/latest/scale-to-width-down/99?cb=20201128234318"
+        },
+        "1e58de9c-4950-5125-93e9-a0aee9f98746": {
+            "name": "Killjoy",
+            "img": "https://static.wikia.nocookie.net/valorant/images/1/15/Killjoy_icon.png/revision/latest/scale-to-width-down/99?cb=20200805002141"
+        },
+        "6f2a04ca-43e0-be17-7f36-b3908627744d": {
+            "name": "Skye",
+            "img": "https://static.wikia.nocookie.net/valorant/images/3/33/Skye_icon.png/revision/latest/scale-to-width-down/99?cb=20201128234628"
+        },
+        "7f94d92c-4234-0a36-9646-3a87eb8b5c89": {
+            "name": "Yoru",
+            "img": "https://static.wikia.nocookie.net/valorant/images/d/d4/Yoru_icon.png/revision/latest/scale-to-width-down/99?cb=20210112211830"
+        },
+        "41fb69c1-4189-7b37-f117-bcaf1e96f1bf": {
+            "name": "Astra",
+            "img": "https://static.wikia.nocookie.net/valorant/images/0/08/Astra_icon.png/revision/latest/scale-to-width-down/99?cb=20210302164234"
+        }
+    },
+    "maps": {
+        "Bind": {
+            "name": "Bind",
+            "imgWon": "https://cdn.discordapp.com/attachments/834195818080108564/836293456003072020/bindVictory.jpg",
+            "imgLost": "https://cdn.discordapp.com/attachments/834195818080108564/836293453943275540/bindDefeat.jpg",
+            "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836293455277195284/bindDraw.jpg",
+            "img": "https://cdn.discordapp.com/attachments/834195818080108564/835586366720966797/bindImage.png"
+        },
+        "Split": {
+            "name": "Split",
+            "imgWon": "https://cdn.discordapp.com/attachments/834195818080108564/836293603235594240/splitVictory.jpg",
+            "imgLost": "https://cdn.discordapp.com/attachments/834195818080108564/836293604447354930/splitDefeat.jpg",
+            "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836293606045777961/splitDraw.jpg",
+            "img": "https://cdn.discordapp.com/attachments/834195818080108564/835588130857811998/splitImage.png"
+        },
+        "Haven": {
+            "name": "Haven",
+            "imgWon": "https://cdn.discordapp.com/attachments/834195818080108564/836293469050765433/havenVictory.jpg",
+            "imgLost": "https://cdn.discordapp.com/attachments/834195818080108564/836293469630627900/havenDefeat.jpg",
+            "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836293471915868218/havenDraw.jpg",
+            "img": "https://cdn.discordapp.com/attachments/834195818080108564/835588132224106576/havenImage.png"
+        },
+        "Ascent": {
+            "name": "Ascent",
+            "imgWon": "https://cdn.discordapp.com/attachments/834195818080108564/836293440891256862/ascentDefeat.jpg",
+            "imgLost": "https://cdn.discordapp.com/attachments/834195818080108564/836293440891256862/ascentDefeat.jpg",
+            "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836293442102624308/ascentDraw.jpg",
+            "img": "https://cdn.discordapp.com/attachments/834195818080108564/835588133453955082/ascentImage.png"
+        },
+        "Icebox": {
+            "name": "Icebox",
+            "imgWon": "https://cdn.discordapp.com/attachments/834195818080108564/836293576018886746/iceboxVictory.jpg",
+            "imgLost": "https://cdn.discordapp.com/attachments/834195818080108564/836293532364570695/iceboxDefeat.jpg",
+            "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836293588001488936/iceboxDraw.jpg",
+            "img": "https://cdn.discordapp.com/attachments/834195818080108564/835588129696120863/iceboxImage.png"
+        },
+        "Breeze": {
+            "name": "Breeze",
+            "imgWon": "https://cdn.discordapp.com/attachments/834195818080108564/836970400088457264/breezeVictory.jpg",
+            "imgLost": "https://cdn.discordapp.com/attachments/834195818080108564/836970397344858154/breezeDefeat.jpg",
+            "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836970398692016188/breezeDraw.jpg",
+            "img": "https://cdn.discordapp.com/attachments/834195818080108564/839591211358748713/breezeImage.png"
+        }
+    },
+    "rankEmojis": {
+        "Unrated": {
+            "emoji": "<:unranked:839140865666318346>"
+        },
+        "Iron 1": {
+            "emoji": "<:iron1:839142017078001725>"
+        },
+        "Iron 2": {
+            "emoji": "<:iron2:839142018541944852>"
+        },
+        "Iron 3": {
+            "emoji": "<:iron3:839142019263234058>"
+        },
+        "Bronze 1": {
+            "emoji": "<:bronze1:839142013349789789>"
+        },
+        "Bronze 2": {
+            "emoji": "<:bronze2:839142013319643236>"
+        },
+        "Bronze 3": {
+            "emoji": "<:bronze3:839142018877095996>"
+        },
+        "Silver 1": {
+            "emoji": "<:silver1:839142017078525953>"
+        },
+        "Silver 2": {
+            "emoji": "<:silver2:839142018541813830>"
+        },
+        "Silver 3": {
+            "emoji": "<:silver3:839142019225223230>"
+        },
+        "Gold 1": {
+            "emoji": "<:gold1:839142018521366528>"
+        },
+        "Gold 2": {
+            "emoji": "<:gold2:839142019367567440>"
+        },
+        "Gold 3": {
+            "emoji": "<:gold3:839142020093444116>"
+        },
+        "Platinum 1": {
+            "emoji": "<:platnium1:839167134712987688>"
+        },
+        "Platinum 2": {
+            "emoji": "<:platnium2:839142018986803271>"
+        },
+        "Platinum 3": {
+            "emoji": ":platnium3:839142019505848411>"
+        },
+        "Diamond 1": {
+            "emoji": "<:diamond1:839142018152005642>"
+        },
+        "Diamond 2": {
+            "emoji": "<:diamond2:839142018785607693>"
+        },
+        "Diamond 3": {
+            "emoji": "<:diamond3:839142019510566932>"
+        },
+        "Immortal": {
+            "emoji": "<:immortal:839142019942711376>"
+        },
+        "Radiant": {
+            "emoji": "<:radiant:839142018797273088>"
+        }
+    },
+    "agentEmojis": {
+        "Astra": {
+            "emoji": "<:astra:839142766986395648>"
+        },
+        "Breach": {
+            "emoji": "<:breach:839142767275671612>"
+        },
+        "Brimstone": {
+            "emoji": "<:brimstone:839142770165809192>"
+        },
+        "Cypher": {
+            "emoji": "<:cypher:839142768986554399>"
+        },
+        "Jett": {
+            "emoji": "<:jett:839142770576851006>"
+        },
+        "Killjoy": {
+            "emoji": "<:killjoy:839142769682808852>"
+        },
+        "Omen": {
+            "emoji": "<:omen:839142769343332394>"
+        },
+        "Phoenix": {
+            "emoji": "<:phoenix:839142770576064584>"
+        },
+        "Raze": {
+            "emoji": "<:raze:839142769690804275>"
+        },
+        "Reyna": {
+            "emoji": "<:reyna:839142769133617164>"
+        },
+        "Sage": {
+            "emoji": "<:sage:839142771025510417>"
+        },
+        "Skye": {
+            "emoji": "<:skye:839142769355260006>"
+        },
+        "Sova": {
+            "emoji": "<:sova:839142771100745738>"
+        },
+        "Viper": {
+            "emoji": "<:viper:839142769749655592>"
+        },
+        "Yoru": {
+            "emoji": "<:yoru:839142769686478888>"
+        }
+    },
+    "modeEmojis": {
+        "Competitive": {
+            "emoji": "<:normal:840652327160381460>"
+        },
+        "Unrated": {
+            "emoji": "<:normal:840652327160381460>"
+        },
+        "Spike Rush": {
+            "emoji": "<:spikerush:840652327447035934>"
+        },
+        "Deathmatch": {
+            "emoji": "<:deathmatch:840652327231946803>"
+        },
+        "Escalation": {
+            "emoji": "<:escalation:840652327139540993>"
+        }
+    }
+}
