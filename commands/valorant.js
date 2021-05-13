@@ -382,14 +382,16 @@ module.exports = {
                     var mapImage = assets.maps[lastMap].img // Set map image
                     var deathmatchEmoji = assets.modeEmojis[lastMatch.metadata.modeName].emoji
 
-                    if (lmStats.placement.displayValue === 1)
+                    console.log(lmStats.placement.displayValue)
+                    if (lmStats.placement.displayValue === '1')
                         lmStats.placement.displayValue = '1st'
-                    else if (lmStats.placement.displayValue === 2)
+                    else if (lmStats.placement.displayValue === '2')
                         lmStats.placement.displayValue = '2nd'
-                    else if (lmStats.placement.displayValue === 3)
+                    else if (lmStats.placement.displayValue === '3')
                         lmStats.placement.displayValue = '3rd'
                     else
                         lmStats.placement.displayValue = lmStats.placement.displayValue + 'th'
+
 
                     const deathmatchEmbed = new MessageEmbed()
                         .setColor('#11806A')
