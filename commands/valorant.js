@@ -43,12 +43,10 @@ module.exports = {
                 trackerMatch = await axios.get(`https://api.tracker.gg/api/v2/valorant/rap-matches/riot/${playerID}`)
 
             } catch (error) {
-                return message.reply("Please ensure the player you are viewing has logged into tracker.gg! https://tracker.gg/valorant")
+                return message.reply("Please ensure you have inputted the correct username#tag and logged into tracker.gg! (v!help)")
             }
 
-            const profileStats = trackerProfile.data.data.segments
-
-            console.log(profileStats)
+            const profileStats = trackerProfile.data.data.segments // access profile stats
 
             for (x = 0; x < 5; x++) {
                 if (profileStats[x].metadata.name === 'Competitive' && profileStats[x].type === 'playlist')
