@@ -3,6 +3,14 @@ require('dotenv').config()
 const Discord = require('discord.js');
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
+const mongoose = require('mongoose')
+
+mongoose.connect(process.env.MONGODB_URI, {
+	useNewUrlParser: true,
+	useUnifiedTopology: true,
+}).then(() => {
+	console.log('Connected to MongoDB Database')
+}).catch((error) => console.log(error))
 
 // Check for Javascript file in the command folder
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
@@ -15,13 +23,13 @@ for (const file of commandFiles) {
 
 client.on('ready', () => {
 	console.log(`Logged in as ${client.user.tag}!`);
-	client.user.setActivity(`${client.guilds.cache.size} servers | v!help`, { type: "WATCHING"})
+	client.user.setActivity(`${client.guilds.cache.size} servers | v!help`, { type: "WATCHING" })
 	//let activities = [ `${client.guilds.cache.size} servers`, `${client.channels.cache.size} chnls`, `${client.users.cache.size} users` ], i = 0;
 	//setInterval(() => client.user.setActivity(`${activities[i ++ % activities.length]} | v!help`, { type: "WATCHING"}),`20000`)
-  })
+})
 
 client.on('message', async message => {
-    if(!message.content.startsWith(process.env.PREFIX) || message.author.bot) return; // Return nothing if there is no prefix or if the bot is messaging
+	if (!message.content.startsWith(process.env.PREFIX) || message.author.bot) return; // Return nothing if there is no prefix or if the bot is messaging
 
 	const args = message.content.slice(process.env.PREFIX.length).trim().split(/ +/);
 	const commandName = args.shift().toLowerCase();
@@ -30,7 +38,7 @@ client.on('message', async message => {
 	try {
 		command.execute(message, args, commandName)
 	} catch (error) {
-        console.log(error);
+		console.log(error);
 	}
 
 });

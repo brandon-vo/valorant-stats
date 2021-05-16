@@ -1,8 +1,8 @@
 const { MessageEmbed, Message } = require('discord.js');
 const pagination = require('discord.js-pagination')
 const assets = require('../assets.json')
-const fs = require('fs')
 const axios = require('axios').default;
+const Account = require('../schemas/AccountSchema')
 
 module.exports = {
     name: "valorant",
@@ -15,16 +15,12 @@ module.exports = {
         for (i = 1; i < args.length; i++)
             str += '%20' + args[i];
 
-        // Read accounts file
-        const accounts = JSON.parse(
-            fs.readFileSync("./accounts.json", "utf8", function (error) {
-                if (error) console.log(error);
-            })
-        );
+        // Get accounts
+        const accounts = await Account.find({ discordId: message.author.id })
 
         // If theres no argument provided by user, check if they linked a Valorant account to their Discord ID
-        if (!args[0] && accounts[message.author.id])
-            str = accounts[message.author.id].username
+        if (!args[0] && accounts.length > 0)
+            str = accounts[0].valorantAccount
         else if (!args[0])
             return message.reply('Please include your Valorant username and tag (USERNAME#TAG)')
 
@@ -146,8 +142,6 @@ module.exports = {
 
                 if (!unratedStats)
                     return message.reply('This player has never played an unrated game!')
-
-                console.log(unratedStats)
 
                 // each square represents ~8.33%
                 greenSquare = Math.round(unratedStats.matchesWinPct.value / 8.33)
@@ -345,7 +339,6 @@ module.exports = {
 
             else if (command === 'lastmatch' || command === 'lm') {
 
-                console.log(lastMatch.attributes)
                 if (lastMatch.metadata.modeName === 'Unknown')
                     return message.reply("This player has played a new VALORANT gamemode. I am unable to track this match at the moment!")
 
@@ -382,7 +375,6 @@ module.exports = {
                     var mapImage = assets.maps[lastMap].img // Set map image
                     var deathmatchEmoji = assets.modeEmojis[lastMatch.metadata.modeName].emoji
 
-                    console.log(lmStats.placement.displayValue)
                     if (lmStats.placement.displayValue === '1')
                         lmStats.placement.displayValue = '1st'
                     else if (lmStats.placement.displayValue === '2')

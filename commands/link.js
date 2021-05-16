@@ -1,42 +1,43 @@
-const fs = require('fs');
+const DiscordUser = require('../schemas/AccountSchema')
+const Account = require('../schemas/AccountSchema')
+const mongoose = require('mongoose')
 
 module.exports = {
-    name: "link",
-    description: "Link a Valorant username to a Discord ID",
+    name: 'link',
+    description: 'Link Valorant account to your Discord ID',
+    async execute(message, args) {
 
-    execute(message) {
+        if (!args[0])
+            return message.reply('Please include your Valorant username and tag (USERNAME#TAG)')
 
-        // Read file
-        const accounts = JSON.parse(
-            fs.readFileSync("./accounts.json", "utf8", function (error) {
-                if (error) console.log(error);
-            })
-        );
-
-        const args = message.content
-            .slice(6)
-            .trim()
-            .split(/ +/g);
-
-        if (!args[0]) return message.reply('Please include your Valorant username and tag (USERNAME-TAG)')
-
-        let str = args[0]
-
+        // Space to %20
+        var str = args[0];
         for (i = 1; i < args.length; i++)
             str += '%20' + args[i];
 
-        var username = str.toLowerCase();
+        // Convert characters to lowercase
+        var ID = str.toLowerCase();
 
-        accounts[message.author.id] = {
-            username: username
-        };
+        // # to %23
+        var playerID = ID.replace(/#/g, "%23")
 
-        // Write to file
-        fs.writeFile("./accounts.json", JSON.stringify(accounts), error => {
-            if (error) console.error(error);
-        });
-        message.reply("You have successfully linked your Valorant account!");
+        const accounts = await Account.find({ discordId: message.author.id })
 
-    }
-
-}
+        // Check if the user has a linked account and delete it
+        if (accounts.length > 0) 
+            await Account.deleteMany({ discordId: message.author.id })
+        
+        // Add linked account to Discord ID
+        try {
+            const newUser = await DiscordUser.create({
+                username: message.author.username,
+                discordId: message.author.id,
+                valorantAccount: playerID
+            })
+            message.reply('Successfuly linked Valorant account to your Discord ID')
+        } catch (error) {
+            console.log(error)
+            return message.reply("Failed to link Valorant account to your Discord ID")
+        }
+    },
+};

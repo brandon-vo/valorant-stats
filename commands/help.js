@@ -56,8 +56,12 @@ module.exports = {
           value: "Display agent stats of a user",
         },
         {
-          name: "Link Account `v!link username#tag` (does not save at the moment)",
+          name: "Link Account `v!link username#tag` (Note: Working)",
           value: "Link a Valorant account to your Discord ID",
+        },
+        {
+          name: "Check Linked Account `v!linked`",
+          value: "Check which Valorant account is linked to your Discord ID",
         },
         {
           name: "Invite Link `v!invite`",
