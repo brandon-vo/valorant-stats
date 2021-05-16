@@ -171,8 +171,6 @@
         },
         "Ascent": {
             "name": "Ascent",
-
-            "imgWon": "hhttps://cdn.discordapp.com/attachments/834195818080108564/836293439770984500/ascentVictory.jpg",
             "imgWon": "https://cdn.discordapp.com/attachments/834195818080108564/836293439770984500/ascentVictory.jpg",
             "imgLost": "https://cdn.discordapp.com/attachments/834195818080108564/836293440891256862/ascentDefeat.jpg",
             "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836293442102624308/ascentDraw.jpg",
