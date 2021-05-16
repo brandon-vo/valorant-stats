@@ -25,6 +25,7 @@
 | v!escalation    | Display escalation career stats of a Valorant player | 
 | v!lm      | Display last match information of a Valorant player |  
 | v!link | Link a Valorant user to your Discord ID    |
+| v!linked | Check which Valorant account has been linked to your Discord ID    |
 | v!invite | Get Discord bot invite link |
 
 | Extra        | Description    | 
@@ -36,7 +37,9 @@
 - [ ] Weapon stats command (kills, accuracy...)
 - [ ] Map stats command (win/loss ratio)
 - [ ] Command to compare two Valorant players stats
-- [ ] Link accounts to a database, rather than a .json file
+- [ ] Add Replication Mode
 
-This is my first Discord bot creation  
-Retrieves data from https://tracker.gg/valorant
+This is my first Discord bot project build. Created by Brandon Vo.  
+Retrieves data from https://tracker.gg/valorant  
+Built with Discord.js, uses MongoDB database to store users
+
