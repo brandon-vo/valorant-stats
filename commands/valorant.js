@@ -73,7 +73,7 @@ module.exports = {
             // Set agent emoji for the user
             agentEmoji = assets.agentEmojis[lastMatch.segments[0].metadata.agentName].emoji
 
-            if (command === 'stats') {
+            if (command === 'stats' | command === 'comp' | command === 'competitive') {
 
                 if (!compStats)
                     return message.reply('This player has never played a competitive game!')
@@ -135,6 +135,8 @@ module.exports = {
                 const timeout = '100000'
 
                 pagination(message, statsPages, flipPage, timeout)
+                message.channel.send('```yaml\n               5/16/2021 UPDATE: The v!link command is officially working.\n' 
+                + '         You may use this command to link a Valorant account to your Discord ID.\n```')
 
             }
 
@@ -343,7 +345,7 @@ module.exports = {
                     return message.reply("This player has played a new VALORANT gamemode. I am unable to track this match at the moment!")
 
                 try {
-                    matchInfo = await axios.get(process.env.MATCH_INFO+`${matchID}`)
+                    matchInfo = await axios.get(process.env.MATCH_INFO + `${matchID}`)
                 } catch (error) {
                     return message.reply("There is no match to retrieve. Please try again later.")
                 }
@@ -590,6 +592,8 @@ module.exports = {
                 const timeout = '100000'
 
                 pagination(message, lastMatchPages, flipPage, timeout)
+                message.channel.send('```yaml\n               5/16/2021 UPDATE: The v!link command is officially working.\n' 
+                + '         You may use this command to link a Valorant account to your Discord ID.\n```')
             }
 
             else if (command === 'agents' || command === 'agent') {
