@@ -135,8 +135,8 @@ module.exports = {
                 const timeout = '100000'
 
                 pagination(message, statsPages, flipPage, timeout)
-                message.channel.send('```yaml\n               5/16/2021 UPDATE: The v!link command is officially working.\n' 
-                + '         You may use this command to link a Valorant account to your Discord ID.\n```')
+                message.channel.send('```yaml\n               5/16/2021 UPDATE: The v!link command is officially working.\n'
+                    + '         You may use this command to link a Valorant account to your Discord ID.\n```')
 
             }
 
@@ -456,12 +456,15 @@ module.exports = {
                     lastMatch.segments[0].metadata.result = 'Victory'
                     var mapImage = assets.maps[lastMap].imgWon
                 } else if (lastMatch.segments[0].metadata.result === 'defeat') {
-                    lastMatch.segments[0].metadata.result = 'Defeat'
-                    var mapImage = assets.maps[lastMap].imgLost
-                } else if (lastMatch.segments[0].metadata.result === 'draw') {
-                    lastMatch.segments[0].metadata.result = 'Draw'
-                    var mapImage = assets.maps[lastMap.imgDraw]
+                    if (lmStats.roundsWon.value == lmStats.roundsLost.value) {
+                        lastMatch.segments[0].metadata.result === 'Draw'
+                        var mapImage = assets.maps[lastMap].imgDraw
+                    } else {
+                        lastMatch.segments[0].metadata.result = 'Defeat'
+                        var mapImage = assets.maps[lastMap].imgLost
+                    }
                 }
+
 
                 if (lastMatch.metadata.modeName === 'Normal')
                     lastMatch.metadata.modeName = 'Unrated'
@@ -592,8 +595,8 @@ module.exports = {
                 const timeout = '100000'
 
                 pagination(message, lastMatchPages, flipPage, timeout)
-                message.channel.send('```yaml\n               5/16/2021 UPDATE: The v!link command is officially working.\n' 
-                + '         You may use this command to link a Valorant account to your Discord ID.\n```')
+                message.channel.send('```yaml\n               5/16/2021 UPDATE: The v!link command is officially working.\n'
+                    + '         You may use this command to link a Valorant account to your Discord ID.\n```')
             }
 
             else if (command === 'agents' || command === 'agent') {
