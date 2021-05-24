@@ -6,7 +6,8 @@ const Account = require('../schemas/AccountSchema')
 
 module.exports = {
     name: "valorant",
-    aliases: ['stats', 'competitive', 'comp', 'unrated', 'unranked', 'lastmatch', 'lm', 'deathmatch', 'dm', 'escalation', 'spikerush', 'agents', 'agent', 'compare'],
+    aliases: ['stats', 'competitive', 'comp', 'unrated', 'unranked', 'lastmatch', 'lm', 'deathmatch',
+     'dm', 'escalation', 'spikerush', 'agents', 'agent', 'map', 'maps', 'weapons', 'guns','compare'],
     description: "Get statistics for a Valorant player",
     async execute(message, args, command) {
 
@@ -36,8 +37,11 @@ module.exports = {
             try {
                 trackerProfile = await axios.get(process.env.TRACKER_PROFILE + `${playerID}`)
                 trackerMatch = await axios.get(process.env.TRACKER_MATCH + `${playerID}`)
+                trackerMap = await axios.get(process.env.TRACKER_PROFILE + `${playerID}`+'/segments/map')
+                trackerWeapon = await axios.get(process.env.TRACKER_PROFILE + `${playerID}`+'/segments/weapon')
 
             } catch (error) {
+                console.log(playerID)
                 return message.reply("Please ensure you have inputted the correct username#tag and logged into tracker.gg! (v!help)")
             }
 
@@ -61,6 +65,8 @@ module.exports = {
             const lastMatch = trackerMatch.data.data.matches[0] // access last match info
             const lmStats = lastMatch.segments[0].stats // access last match stats for the player
             const matchID = lastMatch.attributes.id // match id
+            const mapStats = trackerMap.data.data // map stats
+            const weaponStats = trackerWeapon.data.data // weapon stats
 
             // Set rank emojis and name
             rankEmoji = '<:unranked:839140865666318346>'
@@ -135,8 +141,6 @@ module.exports = {
                 const timeout = '100000'
 
                 pagination(message, statsPages, flipPage, timeout)
-                message.channel.send('```yaml\n               5/16/2021 UPDATE: The v!link command is officially working.\n'
-                    + '         You may use this command to link a Valorant account to your Discord ID.\n```')
 
             }
 
@@ -595,8 +599,6 @@ module.exports = {
                 const timeout = '100000'
 
                 pagination(message, lastMatchPages, flipPage, timeout)
-                message.channel.send('```yaml\n               5/16/2021 UPDATE: The v!link command is officially working.\n'
-                    + '         You may use this command to link a Valorant account to your Discord ID.\n```')
             }
 
             else if (command === 'agents' || command === 'agent') {
@@ -652,10 +654,85 @@ module.exports = {
 
             }
 
+            else if (command == 'map' || command == 'maps') {
+
+                mapInfo = []
+                for (x = 0; x < mapStats.length; x++) {
+
+                    if (x != 4) { // Skip index 4
+                        mapInfo.push([mapStats[x].metadata.name, mapStats[x].stats.timePlayed.displayValue, mapStats[x].stats.matchesWon.value, mapStats[x].stats.matchesWon.displayValue,
+                        mapStats[x].stats.matchesLost.value, mapStats[x].stats.matchesLost.displayValue, mapStats[x].stats.matchesWinPct.value, mapStats[x].stats.matchesWinPct.displayValue])
+                    }
+                }
+
+                const mapEmbed = new MessageEmbed()
+                    .setColor('#11806A')
+                    .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                    .setThumbnail(userAvatar)
+                    .setDescription("```grey\n      " + "        Map Stats" + "\n```")
+                    .setFooter('Competitive Maps Only')
+
+                for (i = 0; i < mapInfo.length; i++) {
+                
+                    greenSquare = parseInt((mapInfo[i][6]/100) * 16)
+                    redSquare =  16 - greenSquare
+                    winRateVisualized = "<:greenline:839562756930797598>".repeat(greenSquare) + "<:redline:839562438760071298>".repeat(redSquare)
+
+                    let mapName = mapInfo[i][0]
+                    let timePlayed = mapInfo[i][1]
+                    let winRate = mapInfo[i][7]
+
+                    mapEmbed.addFields(
+                        {
+                            name: mapName + " " + "    |    " + timePlayed + "    |    Win Rate: " + parseInt(winRate).toFixed(0) + "%", value: winRateVisualized, inline: false
+                        },
+                    )
+                }
+
+                message.channel.send(mapEmbed)
+
+            }
+
+            else if (command == 'weapons' || command == 'guns') {
+
+                // TODO weapon stats
+                console.log(weaponStats)
+                // weaponInfo = []
+                // for (x = 0; x < weaponStats.length; x++) {
+
+                //     if (x != 4) { // Skip index 4
+                //         mapInfo.push([mapStats[x].metadata.name, mapStats[x].stats.timePlayed.displayValue, mapStats[x].stats.matchesWon.value, mapStats[x].stats.matchesWon.displayValue,
+                //         mapStats[x].stats.matchesLost.value, mapStats[x].stats.matchesLost.displayValue, mapStats[x].stats.matchesWinPct.value, mapStats[x].stats.matchesWinPct.displayValue])
+                //     }
+                // }
+
+                // const weaponEmbed = new MessageEmbed()
+                //     .setColor('#11806A')
+                //     .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                //     .setThumbnail(userAvatar)
+                //     .setDescription("```grey\n      " + "     Top 5 - Weapon Stats" + "\n```")
+                //     .setFooter('Competitive Weapons Only')
+
+                // for (i = 0; i < weaponInfo.length; i++) {
+                
+                //     let mapName = mapInfo[i][0]
+                //     let timePlayed = mapInfo[i][1]
+                //     let winRate = mapInfo[i][7]
+
+                //     weaponEmbed.addFields(
+                //         {
+                //             name: mapName + " " + "    |    " + timePlayed + "    |    Win Rate: " + parseInt(winRate).toFixed(0) + "%", value: winRateVisualized, inline: false
+                //         },
+                //     )
+                // }
+
+                // message.channel.send(weaponEmbed)
+            }
+
             else if (command === 'compare') {
 
                 message.reply('Who would you like to compare ' + ID + ' to?')
-
+                // TODO compare command
             }
 
         } catch (error) {

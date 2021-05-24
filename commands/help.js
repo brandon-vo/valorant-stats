@@ -56,6 +56,10 @@ module.exports = {
           value: "Display agent stats of a user",
         },
         {
+          name: "Map Stats `v!map username#tag` `v!maps username#tag`",
+          value: "Display map stats of a user"
+        },
+        {
           name: "Link Account `v!link username#tag` (Note: Working)",
           value: "Link a Valorant account to your Discord ID",
         },
