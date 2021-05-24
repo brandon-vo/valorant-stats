@@ -7,7 +7,7 @@ const Account = require('../schemas/AccountSchema')
 module.exports = {
     name: "valorant",
     aliases: ['stats', 'competitive', 'comp', 'unrated', 'unranked', 'lastmatch', 'lm', 'deathmatch',
-     'dm', 'escalation', 'spikerush', 'agents', 'agent', 'map', 'maps', 'weapons', 'guns','compare'],
+        'dm', 'escalation', 'spikerush', 'agents', 'agent', 'map', 'maps', 'weapons', 'guns', 'compare'],
     description: "Get statistics for a Valorant player",
     async execute(message, args, command) {
 
@@ -23,7 +23,7 @@ module.exports = {
         if (!args[0] && accounts.length > 0)
             str = accounts[0].valorantAccount
         else if (!args[0])
-            return message.reply('Please include your Valorant username and tag (USERNAME#TAG)')
+            return message.reply('Please include your Valorant username and tag (USERNAME#TAG)\nYou may link a Valorant account to your Discord ID using the v!link command.')
 
         // Convert characters to lowercase
         var ID = str.toLowerCase();
@@ -37,8 +37,8 @@ module.exports = {
             try {
                 trackerProfile = await axios.get(process.env.TRACKER_PROFILE + `${playerID}`)
                 trackerMatch = await axios.get(process.env.TRACKER_MATCH + `${playerID}`)
-                trackerMap = await axios.get(process.env.TRACKER_PROFILE + `${playerID}`+'/segments/map')
-                trackerWeapon = await axios.get(process.env.TRACKER_PROFILE + `${playerID}`+'/segments/weapon')
+                trackerMap = await axios.get(process.env.TRACKER_PROFILE + `${playerID}` + '/segments/map')
+                trackerWeapon = await axios.get(process.env.TRACKER_PROFILE + `${playerID}` + '/segments/weapon')
 
             } catch (error) {
                 console.log(playerID)
@@ -146,8 +146,7 @@ module.exports = {
 
             else if (command === 'unrated' || command === 'unranked') {
 
-                if (!unratedStats)
-                    return message.reply('This player has never played an unrated game!')
+                if (!unratedStats) return message.reply('This player has never played an unrated game!')
 
                 // each square represents ~8.33%
                 greenSquare = Math.round(unratedStats.matchesWinPct.value / 8.33)
@@ -211,8 +210,7 @@ module.exports = {
 
             else if (command === 'spikerush') {
 
-                if (!spikeRushStats)
-                    return message.reply('This player has never played a spike rush game!')
+                if (!spikeRushStats) return message.reply('This player has never played a spike rush game!')
 
                 // each square represents ~8.33%
                 greenSquare = Math.round(spikeRushStats.matchesWinPct.value / 8.33)
@@ -275,8 +273,7 @@ module.exports = {
 
             else if (command === 'deathmatch' || command === 'dm') {
 
-                if (!dmStats)
-                    return message.reply('This player has never played a deathmatch game!')
+                if (!dmStats) return message.reply('This player has never played a deathmatch game!')
 
                 // each square represents ~8.33%
                 greenSquare = Math.round(dmStats.matchesWinPct.value / 8.33)
@@ -310,8 +307,7 @@ module.exports = {
 
             else if (command === 'escalation') {
 
-                if (!escalationStats)
-                    return message.reply('This player has never played an escalation game!')
+                if (!escalationStats) return message.reply('This player has never played an escalation game!')
 
                 // each square represents ~8.33%
                 greenSquare = Math.round(escalationStats.matchesWinPct.value / 8.33)
@@ -345,8 +341,7 @@ module.exports = {
 
             else if (command === 'lastmatch' || command === 'lm') {
 
-                if (lastMatch.metadata.modeName === 'Unknown')
-                    return message.reply("This player has played a new VALORANT gamemode. I am unable to track this match at the moment!")
+                if (lastMatch.metadata.modeName === 'Unknown') return message.reply("This player has played a Valorant gamemode that I am unable to track!")
 
                 try {
                     matchInfo = await axios.get(process.env.MATCH_INFO + `${matchID}`)
@@ -603,8 +598,7 @@ module.exports = {
 
             else if (command === 'agents' || command === 'agent') {
 
-                if (!compStats)
-                    return message.reply('There are no agents to track. This player has never played a competitive game!')
+                if (!compStats) return message.reply('There are no agents to track. This player has never played a competitive game!')
 
                 agentInfo = []
                 // get all agents the player played
@@ -673,9 +667,9 @@ module.exports = {
                     .setFooter('Competitive Maps Only')
 
                 for (i = 0; i < mapInfo.length; i++) {
-                
-                    greenSquare = parseInt((mapInfo[i][6]/100) * 16)
-                    redSquare =  16 - greenSquare
+
+                    greenSquare = parseInt((mapInfo[i][6] / 100) * 16)
+                    redSquare = 16 - greenSquare
                     winRateVisualized = "<:greenline:839562756930797598>".repeat(greenSquare) + "<:redline:839562438760071298>".repeat(redSquare)
 
                     let mapName = mapInfo[i][0]
@@ -714,7 +708,7 @@ module.exports = {
                 //     .setFooter('Competitive Weapons Only')
 
                 // for (i = 0; i < weaponInfo.length; i++) {
-                
+
                 //     let mapName = mapInfo[i][0]
                 //     let timePlayed = mapInfo[i][1]
                 //     let winRate = mapInfo[i][7]
