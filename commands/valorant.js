@@ -11,9 +11,10 @@ module.exports = {
     description: "Get statistics for a Valorant player",
     async execute(message, args, command) {
 
+
         // Argument formatting to access Valorant usernames with spaces
-         var str = args[0];
-         for (i = 1; i < args.length; i++)
+        var str = args[0];
+        for (i = 1; i < args.length; i++)
             str += args[i];
 
         // Get accounts
@@ -27,7 +28,12 @@ module.exports = {
 
         // Convert characters to lowercase and encode input to correct format
         var ID = str.toLowerCase();
-        playerID = encodeURIComponent(ID)
+        console.log(ID)
+
+        if (ID.includes('#'))
+            playerID = encodeURIComponent(ID)
+        else
+            playerID = ID
 
         try {
 
