@@ -12,9 +12,9 @@ module.exports = {
     async execute(message, args, command) {
 
         // Argument formatting to access Valorant usernames with spaces
-        var str = args[0];
-        for (i = 1; i < args.length; i++)
-            str += '%20' + args[i];
+         var str = args[0];
+         for (i = 1; i < args.length; i++)
+            str += args[i];
 
         // Get accounts
         const accounts = await Account.find({ discordId: message.author.id })
@@ -25,11 +25,9 @@ module.exports = {
         else if (!args[0])
             return message.reply('Please include your Valorant username and tag (USERNAME#TAG)\nYou may link a Valorant account to your Discord ID using the v!link command.')
 
-        // Convert characters to lowercase
+        // Convert characters to lowercase and encode input to correct format
         var ID = str.toLowerCase();
-
-        // # to %23
-        var playerID = ID.replace(/#/g, "%23")
+        playerID = encodeURIComponent(ID)
 
         try {
 
