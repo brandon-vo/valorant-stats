@@ -1,6 +1,6 @@
 <h1 align="center">Valorant Stats Discord Bot Bot</h1>
 <p align="center">
-  <b>Used in 140+ Discord servers</b><br>
+  <b>Used in over 150 Discord servers</b><br>
   <b>Created by Brandon Vo</b><br>
   <a href="https://discord.com/api/oauth2/authorize?client_id=833535533287866398&permissions=2417093728&scope=bot">Invite this bot to your Discord server</a> 
   <br><br>
@@ -24,18 +24,20 @@
 | v!deathmatch    | Display deathmatch career stats of a Valorant player | 
 | v!escalation    | Display escalation career stats of a Valorant player | 
 | v!lm      | Display last match information of a Valorant player |  
+| v!agents  | Display agent stats of a Valorant player |
+| v!map     | Display map stats of a user |
 | v!link | Link a Valorant user to your Discord ID    |
 | v!linked | Check which Valorant account has been linked to your Discord ID    |
 | v!invite | Get Discord bot invite link |
 
 | Extra        | Description    | 
 | ------------- |-------------| 
-| $joke      | Tell a joke      | 
-| $ping      | Pong!             | 
+| v!joke      | Tell a joke      | 
+| v!ping      | Pong!             | 
+| v!help      | Display commands   |
 
 # TODO ✅
 - [ ] Weapon stats command (kills, accuracy...)
-- [ ] Map stats command (win/loss ratio)
 - [ ] Command to compare two Valorant players stats
 - [ ] Add Replication Mode
 
