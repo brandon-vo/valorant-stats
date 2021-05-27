@@ -1,17 +1,17 @@
 <h1 align="center">Valorant Stats Discord Bot Bot</h1>
 <p align="center">
   <b>Used in over 150 Discord servers</b><br>
-  <b>Created by Brandon Vo</b><br>
   <a href="https://discord.com/api/oauth2/authorize?client_id=833535533287866398&permissions=2417093728&scope=bot">Invite this bot to your Discord server</a> 
   <br><br>
   <img src="https://static.wikia.nocookie.net/valorant/images/b/b5/Precision_Spray.gif/revision/latest/scale-to-width-down/250?cb=20210110011244">
 </p>
 
 ---
-# Images 📷
-![stats](https://user-images.githubusercontent.com/76707560/117216117-44da7300-adcd-11eb-9ad8-3681d30fa005.png)
-![lm](https://user-images.githubusercontent.com/76707560/117197555-f2da2300-adb5-11eb-9bd1-024281472275.png)
-![lmdeathmatch](https://user-images.githubusercontent.com/76707560/117216135-499f2700-adcd-11eb-84d3-7be064905268.png)
+# Screenshots 📷
+![stats](https://user-images.githubusercontent.com/76707560/119845265-1d139200-bed7-11eb-8d21-3beecb9adc8d.png)
+![lm](https://user-images.githubusercontent.com/76707560/119845365-3288bc00-bed7-11eb-85d0-3181e29a505f.png)
+![agent map](https://user-images.githubusercontent.com/76707560/119845272-1edd5580-bed7-11eb-9f41-e80c5e1893c1.png)
+
 
 
 # Commands ⌨️
