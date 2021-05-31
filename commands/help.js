@@ -97,7 +97,7 @@ module.exports = {
         {
           name: "Known Bugs",
           value:
-            "Link command resets\nStats not being retrieved by the bot - Try again later",
+            "Stats not being retrieved by the bot - Try again later",
         },
         { name: "Found Bugs? ", value: "Contact CMDRVo#3496 on Discord" }
       )
