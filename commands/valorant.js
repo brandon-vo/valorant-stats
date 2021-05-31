@@ -28,7 +28,6 @@ module.exports = {
 
         // Convert characters to lowercase and encode input to correct format
         var ID = str.toLowerCase();
-        console.log(ID)
 
         if (ID.includes('#'))
             playerID = encodeURIComponent(ID)
@@ -51,7 +50,7 @@ module.exports = {
 
             const profileStats = trackerProfile.data.data.segments // access profile stats
 
-            for (x = 0; x < 5; x++) {
+            for (x = 0; x < profileStats.length; x++) {
                 if (profileStats[x].metadata.name === 'Competitive' && profileStats[x].type === 'playlist')
                     var compStats = profileStats[x].stats // access overall comp stats
                 else if (profileStats[x].metadata.name === 'Deathmatch' && profileStats[x].type === 'playlist')
@@ -734,7 +733,7 @@ module.exports = {
             }
 
         } catch (error) {
-            message.reply('An unknown error has occurred. Please try again later.')
+            message.reply('An error has occurred. Please try again later or contact CMDRVo#3496 for assistance.')
             throw error;
         }
     }
