@@ -5,6 +5,7 @@ const client = new Discord.Client();
 client.commands = new Discord.Collection();
 const mongoose = require('mongoose')
 
+// Connecting to database
 mongoose.connect(process.env.MONGODB_URI, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
@@ -21,13 +22,15 @@ for (const file of commandFiles) {
 	client.commands.set(command.name, command);
 }
 
+// Set bot activity
 client.on('ready', () => {
 	console.log(`Logged in as ${client.user.tag}!`);
 	client.user.setActivity(`${client.guilds.cache.size} servers | v!help`, { type: "WATCHING" })
-	//let activities = [ `${client.guilds.cache.size} servers`, `${client.channels.cache.size} chnls`, `${client.users.cache.size} users` ], i = 0;
-	//setInterval(() => client.user.setActivity(`${activities[i ++ % activities.length]} | v!help`, { type: "WATCHING"}),`20000`)
+	// let activities = [ `${client.guilds.cache.size} servers`, `${client.channels.cache.size} chnls`, `${client.users.cache.size} users` ], i = 0;
+	// setInterval(() => client.user.setActivity(`${activities[i ++ % activities.length]} | v!help`, { type: "WATCHING"}),`5000`)
 })
 
+// Checking messages and executing commands
 client.on('message', async message => {
 	if (!message.content.startsWith(process.env.PREFIX) || message.author.bot) return; // Return nothing if there is no prefix or if the bot is messaging
 
@@ -38,7 +41,7 @@ client.on('message', async message => {
 	try {
 		command.execute(message, args, commandName)
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 	}
 
 });

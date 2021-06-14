@@ -36,7 +36,7 @@ module.exports = {
           value: "Display unrated career stats of a user",
         },
         {
-          name: "Spike Rush Stats `v!spikerush username#tag`",
+          name: "Spike Rush Stats `v!sr username#tag` `v!spikerush username#tag`",
           value: "Display unrated career stats of a user",
         },
         {
@@ -56,11 +56,15 @@ module.exports = {
           value: "Display agent stats of a user",
         },
         {
+          name: "Weapon Stats `v!weapons username#tag` `v!guns username#tag`",
+          value: "Display weapon stats of a user",
+        },
+        {
           name: "Map Stats `v!map username#tag` `v!maps username#tag`",
           value: "Display map stats of a user"
         },
         {
-          name: "Link Account `v!link username#tag` (Note: Working)",
+          name: "Link Account `v!link username#tag`",
           value: "Link a Valorant account to your Discord ID",
         },
         {
@@ -92,8 +96,8 @@ module.exports = {
             "The bot must have access to the default permissions in order to function properly",
         },
         { name: "KDR", value: "kills / deaths", inline: true },
-        { name: "KDA", value: "(kills + assists) / deaths", inline: true },
-        { name: "KAD", value: "(kills / deaths) + assists", inline: true },
+        { name: "KDA", value: "(kills + (assists/2)) / deaths", inline: true },
+        { name: "KAD", value: "(kills / assists) + deaths", inline: true },
         {
           name: "Known Bugs",
           value:
@@ -103,12 +107,11 @@ module.exports = {
       )
       .setTimestamp();
 
-    // Pages
-    const helpPages = [helpEmbed1, helpEmbed2];
+    const helpPages = [helpEmbed1, helpEmbed2]; // Pages
 
-    const flipPage = ["⬅️", "➡️"];
+    const flipPage = ["⬅️", "➡️"]; // Flip Pags
 
-    const timeout = "100000";
+    const timeout = "100000"; // Timeout
 
     pagination(message, helpPages, flipPage, timeout);
   },
