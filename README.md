@@ -25,7 +25,8 @@
 | v!escalation    | Display escalation career stats of a Valorant player | 
 | v!lm      | Display last match information of a Valorant player |  
 | v!agents  | Display agent stats of a Valorant player |
-| v!map     | Display map stats of a user |
+| v!weapons  | Display weapon stats of a Valorant player |
+| v!map     | Display map stats of a Valorant player |
 | v!link | Link a Valorant user to your Discord ID    |
 | v!linked | Check which Valorant account has been linked to your Discord ID    |
 | v!invite | Get Discord bot invite link |
