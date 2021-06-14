@@ -37,12 +37,12 @@
 | v!help      | Display commands   |
 
 # TODO ✅
-- [ ] Weapon stats command (kills, accuracy...)
 - [ ] Command to compare two Valorant players stats
-- [ ] Add Replication Mode
+- [ ] Add replication mode (limited by API)
+- [ ] View stats of a linked player through @username
 
 This is my first Discord bot project build. Created by Brandon Vo.  
-Currently in the process of being verified by Discord.
+Currently in the process of being verified by Discord.  
 Retrieves data from https://tracker.gg/valorant  
 Built with Discord.js, uses MongoDB database to store users
 
