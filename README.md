@@ -1,8 +1,8 @@
-<h1 align="center">Valorant Stats Discord Bot Bot</h1>
+<h1 align="center">Valorant Stats Discord Bot</h1>
 <p align="center">
   <b>Used in 250 Discord servers</b><br>
   <a href="https://discord.com/api/oauth2/authorize?client_id=833535533287866398&permissions=2417093728&scope=bot">Invite this bot to your Discord server</a> 
-  <br><br>
+  <br>
   <img src="https://static.wikia.nocookie.net/valorant/images/b/b5/Precision_Spray.gif/revision/latest/scale-to-width-down/250?cb=20210110011244">
 </p>
 
@@ -42,8 +42,8 @@
 - [ ] Add replication mode (limited by API)
 - [ ] View stats of a linked player through @username
 
-This is my first Discord bot project build. Created by Brandon Vo.  
+First Discord bot project. Created by Brandon Vo.  
 Currently in the process of being verified by Discord.  
 Retrieves data from https://tracker.gg/valorant  
-Built with Discord.js, uses MongoDB database to store users
+Built with Discord.js, uses MongoDB database to store usernames
 
