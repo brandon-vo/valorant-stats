@@ -23,7 +23,8 @@ module.exports = {
         if (!args[0] && accounts.length > 0)
             str = accounts[0].valorantAccount
         else if (!args[0])
-            return message.reply('Please include your Valorant username and tag (USERNAME#TAG)\nYou may link a Valorant account to your Discord ID using the v!link command.')
+            return message.reply('Please include your Valorant username and tag (USERNAME#TAG)\n' 
+            + 'You may link a Valorant account to your Discord ID using the v!link command.')
 
         // Convert characters to lowercase and encode input to correct format
         var ID = str.toLowerCase();
@@ -406,7 +407,6 @@ module.exports = {
                     else
                         lmStats.placement.displayValue = lmStats.placement.displayValue + 'th'
 
-
                     // Embed
                     const deathmatchEmbed = new MessageEmbed()
                         .setColor('#11806A')
@@ -436,7 +436,8 @@ module.exports = {
                         count++
 
                         deathmatchEmbed.addFields(
-                            { name: username[0] + playerAgentEmoji, value: "```yaml\nPts: " + score + "     \n" + kills + " / " + deaths + " / " + assists + "\n```", inline: true },
+                            { name: username[0] + playerAgentEmoji, value: "```yaml\nPts: " + score + "     \n" 
+                            + kills + " / " + deaths + " / " + assists + "\n```", inline: true },
                         )
 
                         // For 2 column formatting
@@ -525,7 +526,8 @@ module.exports = {
                         { name: 'Econ Rating', value: "```yaml\n" + lmStats.econRating.displayValue + "\n```", inline: true },
                         { name: 'Headshot %', value: "```yaml\n" + lmStats.headshotsPercentage.displayValue + "%\n```", inline: true },
                         { name: 'First Bloods', value: "```yaml\n" + lmStats.firstBloods.displayValue + "\n```", inline: true },
-                        { name: 'Score', value: scoreVisualized + "```yaml\n             " + lmStats.roundsWon.displayValue + " - " + lmStats.roundsLost.displayValue + "\n```", inline: false },
+                        { name: 'Score', value: scoreVisualized + "```yaml\n             " + lmStats.roundsWon.displayValue + " - " 
+                        + lmStats.roundsLost.displayValue + "\n```", inline: false },
                     )
                     lastMatchEmbed1.setImage(mapImage)
                 }
@@ -541,12 +543,14 @@ module.exports = {
                         { name: 'Mode ' + modeEmoji, value: "```yaml\n" + lastMatch.metadata.modeName + "\n```", inline: true },
                         { name: 'Length', value: "```yaml\n" + lmStats.playtime.displayValue + "\n```", inline: true },
                         { name: '\u200B', value: '\u200B', inline: true },
-                        { name: 'K / D / A', value: "```yaml\n" + lmStats.kills.displayValue + "/" + lmStats.deaths.displayValue + "/" + lmStats.assists.displayValue + "\n```", inline: true },
+                        { name: 'K / D / A', value: "```yaml\n" + lmStats.kills.displayValue + "/" + lmStats.deaths.displayValue 
+                        + "/" + lmStats.assists.displayValue + "\n```", inline: true },
                         { name: 'KDR', value: "```yaml\n" + lmStats.kdRatio.displayValue + "\n```", inline: true },
                         { name: 'ACS', value: "```yaml\n" + lmStats.scorePerRound.displayValue + "\n```", inline: true },
                         { name: 'Econ Rating', value: "```yaml\n" + lmStats.econRating.displayValue + "\n```", inline: true },
                         { name: 'Headshot %', value: "```yaml\n" + lmStats.headshotsPercentage.displayValue + "%\n```", inline: true },
-                        { name: 'Score', value: scoreVisualized + "```yaml\n             " + lmStats.roundsWon.displayValue + " - " + lmStats.roundsLost.displayValue + "\n```", inline: false },
+                        { name: 'Score', value: scoreVisualized + "```yaml\n             " + lmStats.roundsWon.displayValue 
+                        + " - " + lmStats.roundsLost.displayValue + "\n```", inline: false },
                     )
                     lastMatchEmbed1.setImage(mapImage)
                 }
@@ -659,8 +663,10 @@ module.exports = {
 
                     agentEmbed.addFields(
                         {
-                            name: agentName + " " + agentEmoji + "     |     " + timePlayed + "     |     Win Rate: " + parseInt(winRate).toFixed(0) + "%", value: "```yaml\nK:" +
-                                kills + " / D:" + deaths + " / A:" + assists + " / R:" + parseFloat(kdr).toFixed(2) + " | DMG/R: " + parseInt(dmg).toFixed(0) + "\n```", inline: false
+                            name: agentName + " " + agentEmoji + "     |     " + timePlayed 
+                            + "     |     Win Rate: " + parseInt(winRate).toFixed(0) + "%", value: "```yaml\nK:" +
+                                kills + " / D:" + deaths + " / A:" + assists + " / R:" + parseFloat(kdr).toFixed(2) 
+                                + " | DMG/R: " + parseInt(dmg).toFixed(0) + "\n```", inline: false
                         },
                     )
                 }
@@ -676,8 +682,10 @@ module.exports = {
                 for (x = 0; x < mapStats.length; x++) {
 
                     if (x != 4) { // Skip index 4, old Icebox
-                        mapInfo.push([mapStats[x].metadata.name, mapStats[x].stats.timePlayed.displayValue, mapStats[x].stats.matchesWon.value, mapStats[x].stats.matchesWon.displayValue,
-                        mapStats[x].stats.matchesLost.value, mapStats[x].stats.matchesLost.displayValue, mapStats[x].stats.matchesWinPct.value, mapStats[x].stats.matchesWinPct.displayValue])
+                        mapInfo.push([mapStats[x].metadata.name, mapStats[x].stats.timePlayed.displayValue,
+                             mapStats[x].stats.matchesWon.value, mapStats[x].stats.matchesWon.displayValue,
+                        mapStats[x].stats.matchesLost.value, mapStats[x].stats.matchesLost.displayValue,
+                         mapStats[x].stats.matchesWinPct.value, mapStats[x].stats.matchesWinPct.displayValue])
                     }
                 }
 
@@ -697,10 +705,16 @@ module.exports = {
                     let mapName = mapInfo[i][0]
                     let timePlayed = mapInfo[i][1]
                     let winRate = mapInfo[i][7]
+                    let mapEmoji = '▫️'
+
+                    // Implemented to prevent errors if new maps are released
+                    if (mapName === 'Ascent' || mapName === 'Bind' || mapName === 'Breeze' || mapName === 'Haven' || mapName === 'Icebox' || mapName === 'Split')
+                        mapEmoji = assets.mapEmojis[mapName].emoji
 
                     mapEmbed.addFields(
                         {
-                            name: mapName + " " + "    |    " + timePlayed + "    |    Win Rate: " + parseInt(winRate).toFixed(0) + "%", value: winRateVisualized, inline: false
+                            name: mapName + " " + mapEmoji + "    |    " + timePlayed + "    |    Win Rate: " + parseInt(winRate).toFixed(0) + "%",
+                             value: winRateVisualized, inline: false
                         },
                     )
                 }
@@ -709,6 +723,7 @@ module.exports = {
 
             }
 
+            // Weapon stats command
             else if (command == 'weapons' || command == 'guns') {
 
                 topWeapons = [] // Store weapons in a 2D array
@@ -724,7 +739,8 @@ module.exports = {
                     weaponFirstBloodCount = weaponStats[x].stats.firstBloods.displayValue
                     weaponLongestKillDistance = weaponStats[x].stats.longestKillDistance.value
 
-                    topWeapons.push([weaponName, weaponKills, weaponKillsValue, weaponDeathsBy, weaponHeadshotPct, weaponDamageRound, weaponFirstBloodCount, weaponLongestKillDistance])
+                    topWeapons.push([weaponName, weaponKills, weaponKillsValue, weaponDeathsBy, weaponHeadshotPct,
+                         weaponDamageRound, weaponFirstBloodCount, weaponLongestKillDistance])
                 }
 
                 topWeapons.sort(function (a, b) { return b[2] - a[2] }) // Sort weapons by kills
@@ -753,8 +769,10 @@ module.exports = {
 
                     weaponEmbed.addFields(
                         {
-                            name: weaponName + "     |     First Bloods: " + weaponFirstBlood + "     |     " + "Longest Kill Dist: " + parseInt(weaponKillDistance / 100).toFixed(0) + " m", 
-                            value: "```yaml\nK:" + weaponKills + " / D:" + weaponDeathsBy + " | HS : " + weaponHeadshot + "% | DMG/R: " + weaponDamage + "\n```", inline: false
+                            name: weaponName + "     |     First Bloods: " + weaponFirstBlood + "     |     " 
+                            + "Longest Kill Dist: " + parseInt(weaponKillDistance / 100).toFixed(0) + " m", 
+                            value: "```yaml\nK:" + weaponKills + " / D:" + weaponDeathsBy + " | HS: " 
+                            + weaponHeadshot + "% | DMG/R: " + weaponDamage + "\n```", inline: false
                         },
                     )
                 }

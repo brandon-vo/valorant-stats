@@ -319,5 +319,25 @@
         "Escalation": {
             "emoji": "<:escalation:840652327139540993>"
         }
+    },
+    "mapEmojis": {
+        "Ascent": {
+            "emoji":"<:ascent:854916943194619934>"
+        },
+        "Bind": {
+            "emoji":"<:bind:854916975276195861>"
+        },
+        "Breeze": {
+            "emoji":"<:breeze:854916976405119027>"
+        },
+        "Haven": {
+            "emoji":"<:haven:854916978329780265>"
+        },
+        "Icebox": {
+            "emoji":"<:icebox:854916979852443679>"
+        },
+        "Split": {
+            "emoji":"<:split:854916978640945162>"
+        }
     }
 }
