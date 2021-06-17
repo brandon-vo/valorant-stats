@@ -13,7 +13,7 @@ module.exports = {
         if (accounts.length > 0) 
             await Account.deleteMany({ discordId: message.author.id })
         
-        // Add linked account to Discord ID
+        // Remove linked account from Discord ID
         try {
             const newUser = await DiscordUser.remove({
                 username: message.author.username,

@@ -68,6 +68,10 @@ module.exports = {
           value: "Link a Valorant account to your Discord ID",
         },
         {
+          name: "Unlink Account `v!unlink`",
+          value: "Unlink a Valorant account from your Discord ID",
+        },
+        {
           name: "Check Linked Account `v!linked`",
           value: "Check which Valorant account is linked to your Discord ID",
         },
