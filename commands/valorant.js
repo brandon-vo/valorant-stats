@@ -91,8 +91,16 @@ module.exports = {
                 rankEmoji = assets.rankEmojis[rankName].emoji
             }
 
+            lastAgent = lastMatch.segments[0].metadata.agentName
+
             // Set agent emoji for the user
-            agentEmoji = assets.agentEmojis[lastMatch.segments[0].metadata.agentName].emoji
+            agentEmoji = ":white_small_square:"
+
+            if (lastAgent === "Astra" || lastAgent === "Breach" || lastAgent === "Brimstone" || lastAgent === "Cypher" || lastAgent === "Jett"
+                || lastAgent === "Killjoy" || lastAgent === "Omen" || lastAgent === "Phoenix" || lastAgent === "Raze" || lastAgent === "Reyna"
+                || lastAgent === "Sage" || lastAgent === "Skye" || lastAgent === "Sova" || lastAgent === "Viper" || lastAgent === "Yoru") {
+                agentEmoji = assets.agentEmojis[lastAgent].emoji
+            }
 
             // Check if competitive stats command is used
             if (command === 'stats' | command === 'comp' | command === 'competitive') {
@@ -440,7 +448,13 @@ module.exports = {
 
                         var username = name.split('#', 2) // Username without tag
 
-                        var playerAgentEmoji = assets.agentEmojis[agent].emoji // Set emoji to played agent
+                        var playerAgentEmoji = ":white_small_square:"
+
+                        if (agent === "Astra" || agent === "Breach" || agent === "Brimstone" || agent === "Cypher" || agent === "Jett"
+                            || agent === "Killjoy" || agent === "Omen" || agent === "Phoenix" || agent === "Raze" || agent === "Reyna"
+                            || agent === "Sage" || agent === "Skye" || agent === "Sova" || agent === "Viper" || agent === "Yoru") {
+                            var playerAgentEmoji = assets.agentEmojis[agent].emoji // Set emoji to played agent
+                        }
 
                         count++
 
@@ -600,11 +614,22 @@ module.exports = {
                     let kdrB = redTeam[x][6]
                     let acsB = redTeam[x][7]
 
-                    var playerAgentEmojiA = assets.agentEmojis[agentA].emoji
-                    var playerRankEmojiA = assets.rankEmojis[rankA].emoji
+                    var playerAgentEmojiA = ":white_small_square:"
+                    var playerAgentEmojiB = ":white_small_square:"
 
-                    var playerAgentEmojiB = assets.agentEmojis[agentB].emoji
-                    var playerRankEmojiB = assets.rankEmojis[rankB].emoji
+                    if (agentA === "Astra" || agentA === "Breach" || agentA === "Brimstone" || agentA === "Cypher" || agentA === "Jett"
+                        || agentA === "Killjoy" || agentA === "Omen" || agentA === "Phoenix" || agentA === "Raze" || agentA === "Reyna"
+                        || agentA === "Sage" || agentA === "Skye" || agentA === "Sova" || agentA === "Viper" || agentA === "Yoru") {
+                        var playerAgentEmojiA = assets.agentEmojis[agentA].emoji
+                        var playerRankEmojiA = assets.rankEmojis[rankA].emoji
+                    }
+
+                    if (agentB === "Astra" || agentB === "Breach" || agentB === "Brimstone" || agentB === "Cypher" || agentB === "Jett"
+                        || agentB === "Killjoy" || agentB === "Omen" || agentB === "Phoenix" || agentB === "Raze" || agentB === "Reyna"
+                        || agentB === "Sage" || agentB === "Skye" || agentB === "Sova" || agentB === "Viper" || agentB === "Yoru") {
+                        var playerAgentEmojiB = assets.agentEmojis[agentB].emoji
+                        var playerRankEmojiB = assets.rankEmojis[rankB].emoji
+                    }
 
                     count++
 
@@ -676,7 +701,13 @@ module.exports = {
                     let dmg = agentInfo[i][7]
                     let winRate = agentInfo[i][8]
 
-                    var agentEmoji = assets.agentEmojis[agentName].emoji
+                    var agentEmoji = ":white_small_square:"
+
+                    if (agentName === "Astra" || agentName === "Breach" || agentName === "Brimstone" || agentName === "Cypher" || agentName === "Jett"
+                        || agentName === "Killjoy" || agentName === "Omen" || agentName === "Phoenix" || agentName === "Raze" || agentName === "Reyna"
+                        || agentName === "Sage" || agentName === "Skye" || agentName === "Sova" || agentName === "Viper" || agentName === "Yoru") {
+                        var agentEmoji = assets.agentEmojis[agentName].emoji
+                    }
 
                     agentEmbed.addFields(
                         {
