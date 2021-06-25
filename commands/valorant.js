@@ -98,7 +98,7 @@ module.exports = {
 
             if (lastAgent === "Astra" || lastAgent === "Breach" || lastAgent === "Brimstone" || lastAgent === "Cypher" || lastAgent === "Jett"
                 || lastAgent === "Killjoy" || lastAgent === "Omen" || lastAgent === "Phoenix" || lastAgent === "Raze" || lastAgent === "Reyna"
-                || lastAgent === "Sage" || lastAgent === "Skye" || lastAgent === "Sova" || lastAgent === "Viper" || lastAgent === "Yoru") {
+                || lastAgent === "Sage" || lastAgent === "Skye" || lastAgent === "Sova" || lastAgent === "Viper" || lastAgent === "Yoru" || lastAgent === "KAY/O") {
                 agentEmoji = assets.agentEmojis[lastAgent].emoji
             }
 
@@ -452,7 +452,7 @@ module.exports = {
 
                         if (agent === "Astra" || agent === "Breach" || agent === "Brimstone" || agent === "Cypher" || agent === "Jett"
                             || agent === "Killjoy" || agent === "Omen" || agent === "Phoenix" || agent === "Raze" || agent === "Reyna"
-                            || agent === "Sage" || agent === "Skye" || agent === "Sova" || agent === "Viper" || agent === "Yoru") {
+                            || agent === "Sage" || agent === "Skye" || agent === "Sova" || agent === "Viper" || agent === "Yoru" || agent === "KAY/O") {
                             var playerAgentEmoji = assets.agentEmojis[agent].emoji // Set emoji to played agent
                         }
 
@@ -619,17 +619,18 @@ module.exports = {
 
                     if (agentA === "Astra" || agentA === "Breach" || agentA === "Brimstone" || agentA === "Cypher" || agentA === "Jett"
                         || agentA === "Killjoy" || agentA === "Omen" || agentA === "Phoenix" || agentA === "Raze" || agentA === "Reyna"
-                        || agentA === "Sage" || agentA === "Skye" || agentA === "Sova" || agentA === "Viper" || agentA === "Yoru") {
+                        || agentA === "Sage" || agentA === "Skye" || agentA === "Sova" || agentA === "Viper" || agentA === "Yoru" || agentA === 'KAY/O') {
                         var playerAgentEmojiA = assets.agentEmojis[agentA].emoji
-                        var playerRankEmojiA = assets.rankEmojis[rankA].emoji
                     }
+                    var playerRankEmojiA = assets.rankEmojis[rankA].emoji
 
                     if (agentB === "Astra" || agentB === "Breach" || agentB === "Brimstone" || agentB === "Cypher" || agentB === "Jett"
                         || agentB === "Killjoy" || agentB === "Omen" || agentB === "Phoenix" || agentB === "Raze" || agentB === "Reyna"
-                        || agentB === "Sage" || agentB === "Skye" || agentB === "Sova" || agentB === "Viper" || agentB === "Yoru") {
+                        || agentB === "Sage" || agentB === "Skye" || agentB === "Sova" || agentB === "Viper" || agentB === "Yoru" || agentB === 'KAY/O') {
                         var playerAgentEmojiB = assets.agentEmojis[agentB].emoji
-                        var playerRankEmojiB = assets.rankEmojis[rankB].emoji
+
                     }
+                    var playerRankEmojiB = assets.rankEmojis[rankB].emoji
 
                     count++
 
@@ -705,7 +706,7 @@ module.exports = {
 
                     if (agentName === "Astra" || agentName === "Breach" || agentName === "Brimstone" || agentName === "Cypher" || agentName === "Jett"
                         || agentName === "Killjoy" || agentName === "Omen" || agentName === "Phoenix" || agentName === "Raze" || agentName === "Reyna"
-                        || agentName === "Sage" || agentName === "Skye" || agentName === "Sova" || agentName === "Viper" || agentName === "Yoru") {
+                        || agentName === "Sage" || agentName === "Skye" || agentName === "Sova" || agentName === "Viper" || agentName === "Yoru" || agentName === "KAY/O") {
                         var agentEmoji = assets.agentEmojis[agentName].emoji
                     }
 
