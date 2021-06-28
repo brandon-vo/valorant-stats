@@ -1,17 +1,18 @@
 <h1 align="center">Valorant Stats Discord Bot</h1>
 <p align="center">
-  <b>Verified and used in over 250 Discord servers</b><br>
-  <a href="https://discord.com/api/oauth2/authorize?client_id=833535533287866398&permissions=2417093728&scope=bot">Invite this bot to your Discord server</a> 
+  <b>Verified by Discord</b>
+      <img src="https://emoji.gg/assets/emoji/6817_Discord_Verified.png" width="12" height="12"><br>
+  <a href="https://discord.com/api/oauth2/authorize?client_id=833535533287866398&permissions=2417093728&scope=bot">Invite this bot to your server</a> 
   <br>
   <img src="https://static.wikia.nocookie.net/valorant/images/b/b5/Precision_Spray.gif/revision/latest/scale-to-width-down/250?cb=20210110011244">
+   <br>Used in over 250 Discord servers<br>
 </p>
 
 ---
 # Screenshots 📷
-![stats](https://user-images.githubusercontent.com/76707560/119845265-1d139200-bed7-11eb-8d21-3beecb9adc8d.png)
-![lm](https://user-images.githubusercontent.com/76707560/119845365-3288bc00-bed7-11eb-85d0-3181e29a505f.png)
-![agent map](https://user-images.githubusercontent.com/76707560/119845272-1edd5580-bed7-11eb-9f41-e80c5e1893c1.png)
-
+![stats](https://user-images.githubusercontent.com/76707560/123704292-83bc0080-d833-11eb-8256-fbc30e317e18.png)
+![lastmatch](https://user-images.githubusercontent.com/76707560/123704304-8585c400-d833-11eb-828c-06a246597104.png)
+![agentandmap](https://user-images.githubusercontent.com/76707560/123704310-86b6f100-d833-11eb-92cd-102cc42c63d9.png)
 
 
 # Commands ⌨️
