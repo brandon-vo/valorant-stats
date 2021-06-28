@@ -3,7 +3,7 @@ const { MessageEmbed } = require('discord.js')
 
 module.exports = {
   name: "joke",
-  description: "Display a joke a user",
+  description: "Display a joke to a user",
   async execute(message) {
 
     let joke = await fetch('http://official-joke-api.appspot.com/random_joke').then(res => res.json())

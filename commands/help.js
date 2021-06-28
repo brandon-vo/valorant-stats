@@ -3,8 +3,7 @@ const pagination = require("discord.js-pagination");
 
 module.exports = {
   name: "help",
-  description:
-    "Display avaliable commands and other helpful information to the user.",
+  description: "Display avaliable commands and other helpful information to the user.",
 
   execute(message) {
     const helpEmbed1 = new MessageEmbed()
@@ -64,16 +63,8 @@ module.exports = {
           value: "Display map stats of a user"
         },
         {
-          name: "Link Account `v!link username#tag`",
-          value: "Link a Valorant account to your Discord ID",
-        },
-        {
-          name: "Unlink Account `v!unlink`",
-          value: "Unlink a Valorant account from your Discord ID",
-        },
-        {
-          name: "Check Linked Account `v!linked`",
-          value: "Check which Valorant account is linked to your Discord ID",
+          name: "Link Account `v!link username#tag` `v!unlink` `v!linked`",
+          value: "Link/Unlink a Valorant account to/from your Discord ID",
         },
         {
           name: "Invite Link `v!invite`",
