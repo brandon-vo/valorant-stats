@@ -15,8 +15,9 @@ module.exports = {
           value:
             "```fix\n" +
             "1. Sign in with your Riot ID on https://tracker.gg/valorant\n" +
-            "2. Track your Valorant stats with the following commands\n" +
-            "Test Server: https://discord.gg/8bY6nFaVEY" +
+            "2. Track your Valorant stats with the following commands\n```" +
+            "```yaml\n" +
+            "         Test Server: https://discord.gg/8bY6nFaVEY" +
             "\n```",
         },
         {
@@ -27,50 +28,50 @@ module.exports = {
             "\n```",
         },
         {
-          name: "Competitive Stats `v!stats username#tag` `v!comp username#tag`",
+          name: "<:normal:840652327160381460> Competitive Stats `v!stats username#tag` | `v!comp username#tag`",
           value: "Display competitive career stats of a user",
         },
         {
-          name: "Unrated Stats `v!unrated username#tag`",
+          name: "<:normal:840652327160381460> Unrated Stats `v!unrated username#tag`",
           value: "Display unrated career stats of a user",
         },
         {
-          name: "Spike Rush Stats `v!sr username#tag` `v!spikerush username#tag`",
+          name: "<:spikerush:840652327447035934> Spike Rush Stats `v!sr username#tag` | `v!spikerush username#tag`",
           value: "Display unrated career stats of a user",
         },
         {
-          name: "Deathmatch Stats `v!dm username#tag` `v!deathmatch username#tag`",
+          name: "<:deathmatch:840652327231946803> Deathmatch Stats `v!dm username#tag` | `v!deathmatch username#tag`",
           value: "Display deathmatch career stats of a user",
         },
         {
-          name: "Escalation Stats `v!escalation username#tag`",
+          name: "<:escalation:840652327139540993> Escalation Stats `v!escalation username#tag`",
           value: "Display escalation career stats of a user",
         },
         {
-          name: "Last Game `v!lm username#tag`",
+          name: ":leftwards_arrow_with_hook: Last Game `v!lm username#tag`",
           value: "Display last match information of a user",
         },
         {
-          name: "Agents Played `v!agents username#tag`",
-          value: "Display agent stats of a user",
+          name: "<:jett:839142770576851006> Agents Played `v!agent username#tag`",
+          value: "Display competitive agent stats of a user",
         },
         {
-          name: "Weapon Stats `v!weapons username#tag` `v!guns username#tag`",
-          value: "Display weapon stats of a user",
+          name: "<:vandal:861082251508580394> Weapon Stats `v!weapon username#tag`",
+          value: "Display competitive weapon stats of a user",
         },
         {
-          name: "Map Stats `v!map username#tag` `v!maps username#tag`",
-          value: "Display map stats of a user"
+          name: "<:ascent:854916943194619934> Map Stats `v!map username#tag`",
+          value: "Display competitive map stats of a user"
         },
         {
-          name: "Link Account `v!link username#tag` `v!unlink` `v!linked`",
+          name: ":link: Link Account `v!link username#tag` | `v!unlink` | `v!linked`",
           value: "Link/Unlink a Valorant account to/from your Discord ID",
         },
         {
-          name: "Invite Link `v!invite`",
+          name: ":e_mail: Invite Link `v!invite`",
           value: "Get Discord bot invite link",
         },
-        { name: "Extra `v!joke` `v!ping` `v!help`", value: "\u200B" }
+        { name: ":white_circle: Extra `v!joke` | `v!ping` | `v!help`", value: "\u200B" }
       )
       .setTimestamp();
 
@@ -86,19 +87,19 @@ module.exports = {
             "\n```",
         },
         {
-          name: "Note",
+          name: "Notes",
           value:
-            "The bot must have access to the default permissions in order to function properly",
+            "- The bot must have access to the default permissions in order to function properly\n" + 
+            "- You can view stats of a linked user by mentioning their username in the command",
         },
         { name: "KDR", value: "kills / deaths", inline: true },
         { name: "KDA", value: "(kills + (assists/2)) / deaths", inline: true },
         { name: "KAD", value: "(kills / assists) + deaths", inline: true },
-        {
-          name: "Known Bugs",
-          value:
-            "Stats not being retrieved by the bot - Try again later",
-        },
-        { name: "Found Bugs? ", value: "Contact CMDRVo#3496 on Discord" }
+        { name: "Known Bugs", value: "Stats not being retrieved - Try Again", inline: true },
+        { name: "Found Bugs? ", value: "Contact CMDRVo#3496 on Discord", inline: true  },
+        { name: "Common Mistake", value: "When linking an account to your Discord ID, you must type the command properly.\n" +
+        "Do not include `< >` in between your username and tag. Not case sensitive.\n" + 
+        "Command: `v!link username#tag`" + "\n" + "Examples: `v!link sen tenz#0505` `v!link CMDRVo#CMDR` `v!link 100t aSUnA#1111`"},
       )
       .setTimestamp();
 
