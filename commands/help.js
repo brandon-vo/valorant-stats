@@ -92,9 +92,9 @@ module.exports = {
             "- The bot must have access to the default permissions in order to function properly\n" + 
             "- You can view stats of a linked user by mentioning their username in the command",
         },
-        { name: "KDR", value: "kills / deaths", inline: true },
-        { name: "KDA", value: "(kills + (assists/2)) / deaths", inline: true },
-        { name: "KAD", value: "(kills / assists) + deaths", inline: true },
+        { name: "KDR", value: "kills ÷ deaths", inline: true },
+        { name: "KDA", value: "(kills + (assists ÷ 2)) ÷ deaths", inline: true },
+        { name: "KAD", value: "(kills + assists) ÷ deaths", inline: true },
         { name: "Known Bugs", value: "Stats not being retrieved - Try Again", inline: true },
         { name: "Found Bugs? ", value: "Contact CMDRVo#3496 on Discord", inline: true  },
         { name: "Common Mistake", value: "When linking an account to your Discord ID, you must type the command properly.\n" +
