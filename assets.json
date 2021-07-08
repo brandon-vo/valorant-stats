@@ -53,15 +53,15 @@
             "img": "https://bit.ly/3ngODnL"
         },
         "15": {
-            "name": "Platnium 1",
+            "name": "Platinum 1",
             "img": "https://bit.ly/3aBZVha"
         },
         "16": {
-            "name": "Platnium 2",
+            "name": "Platinum 2",
             "img": "https://bit.ly/3dNODZ0"
         },
         "17": {
-            "name": "Platnium 3",
+            "name": "Platinum 3",
             "img": "'https://bit.ly/3gAZGqz"
         },
         "18": {
@@ -232,13 +232,13 @@
             "emoji": "<:gold3:839142020093444116>"
         },
         "Platinum 1": {
-            "emoji": "<:platnium1:839167134712987688>"
+            "emoji": "<:platinum1:839167134712987688>"
         },
         "Platinum 2": {
-            "emoji": "<:platnium2:839142018986803271>"
+            "emoji": "<:platinum2:839142018986803271>"
         },
         "Platinum 3": {
-            "emoji": "<:platnium3:839142019505848411>"
+            "emoji": "<:platinum3:839142019505848411>"
         },
         "Diamond 1": {
             "emoji": "<:diamond1:839142018152005642>"
