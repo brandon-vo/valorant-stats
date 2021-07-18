@@ -84,11 +84,17 @@ module.exports = {
             const weaponStats = trackerWeapon.data.data // Weapon stats
 
             // Set rank emojis and name
-            rankEmoji = '<:unranked:839140865666318346>'
-            rankName = 'Unranked'
-            if (compStats) { // Player has competitive stats
+            rankName = ''
+            rankEmoji = ''
+            if (compStats) {
                 rankName = compStats.rank.metadata.tierName
                 rankEmoji = assets.rankEmojis[rankName].emoji
+                if (rankName.includes('Immortal')) {
+                    rankName = rankName.split(' ')[0] + ' #' + compStats.rank.rank;
+                }
+                else if (rankName.includes('Radiant')) {
+                    rankName = rankName + ' #' + compStats.rank.rank;
+                }
             }
 
             lastAgent = lastMatch.segments[0].metadata.agentName

@@ -192,6 +192,9 @@
         }
     },
     "rankEmojis": {
+        "Unranked": {
+            "emoji": "<:unranked:839140865666318346>"
+        },
         "Unrated": {
             "emoji": "<:unranked:839140865666318346>"
         },
@@ -250,6 +253,15 @@
             "emoji": "<:diamond3:839142019510566932>"
         },
         "Immortal": {
+            "emoji": "<:immortal:839142019942711376>"
+        },
+        "Immortal 1": {
+            "emoji": "<:immortal:839142019942711376>"
+        },
+        "Immortal 2": {
+            "emoji": "<:immortal:839142019942711376>"
+        },
+        "Immortal 3": {
             "emoji": "<:immortal:839142019942711376>"
         },
         "Radiant": {
