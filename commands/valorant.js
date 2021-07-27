@@ -7,7 +7,7 @@ const Account = require('../schemas/AccountSchema')
 module.exports = {
     name: "valorant",
     aliases: ['stats', 'competitive', 'comp', 'unrated', 'unranked', 'lastmatch', 'lm', 'deathmatch',
-        'dm', 'escalation', 'spikerush', 'sr', 'agents', 'agent', 'map', 'maps', 'weapons', 'guns'],
+        'dm', 'escalation', 'spikerush', 'sr', 'agents', 'agent', 'map', 'maps', `weapon`, 'weapons', 'guns'],
     description: "Get statistics for a Valorant player",
     async execute(message, args, command) {
 
@@ -779,7 +779,7 @@ module.exports = {
             }
 
             // Weapon stats command
-            else if (command == 'weapons' || command == 'guns') {
+            else if (command == 'weapon' || command == 'weapons' || command == 'guns') {
 
                 topWeapons = [] // Store weapons in a 2D array
 
