@@ -5,7 +5,7 @@
   <a href="https://discord.com/api/oauth2/authorize?client_id=833535533287866398&permissions=2417093728&scope=bot">Invite this bot to your server</a> 
   <br>
   <img src="https://static.wikia.nocookie.net/valorant/images/b/b5/Precision_Spray.gif/revision/latest/scale-to-width-down/250?cb=20210110011244">
-   <br>Used in over 600 Discord servers<br>
+   <br>Used in over 1,000 Discord servers<br>
 </p>
 
 ---
