@@ -3,7 +3,7 @@
   <b>Verified by Discord</b>
       <img src="https://emoji.gg/assets/emoji/6817_Discord_Verified.png" width="12" height="12"><br>
   <a href="https://discord.com/api/oauth2/authorize?client_id=833535533287866398&permissions=2417093728&scope=bot">Invite this bot to your server</a> 
-   <br>Used in over 1,600 Discord servers<br>
+   <br>Used in over 2,000 Discord servers<br>
 </p>
 
 ---
