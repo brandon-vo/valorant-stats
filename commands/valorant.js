@@ -419,7 +419,7 @@ module.exports = {
 
                     playerMatchInfo.sort(function (a, b) { return b[3] - a[3] }) // Sort players by kills
 
-                    if (lastMap != 'Bind' || lastMap != 'Split' || lastMap != 'Haven' || lastMap != 'Ascent' || lastMap != 'Icebox' || lastMap != 'Breeze') {
+                    if (lastMap != 'Bind' && lastMap != 'Split' && lastMap != 'Haven' && lastMap != 'Ascent' && lastMap != 'Icebox' && lastMap != 'Breeze') {
                         var mapImage = assets.maps['Unknown'].img
                     } else {
                         var mapImage = assets.maps[lastMap].img // Set map image
@@ -513,7 +513,7 @@ module.exports = {
                 // Text format
                 if (lastMatch.segments[0].metadata.result == 'victory') {
                     lastMatch.segments[0].metadata.result = 'Victory'
-                    if (lastMap != 'Bind' || lastMap != 'Split' || lastMap != 'Haven' || lastMap != 'Ascent' || lastMap != 'Icebox' || lastMap != 'Breeze') {
+                    if (lastMap != 'Bind' && lastMap != 'Split' && lastMap != 'Haven' && lastMap != 'Ascent' && lastMap != 'Icebox' && lastMap != 'Breeze') {
                         var mapImage = assets.maps['Unknown'].imgWon
                     } else {
                         var mapImage = assets.maps[lastMap].imgWon
@@ -521,14 +521,14 @@ module.exports = {
                 } else if (lastMatch.segments[0].metadata.result == 'defeat') {
                     if (lmStats.roundsWon.value == lmStats.roundsLost.value) {
                         lastMatch.segments[0].metadata.result == 'Draw'
-                        if (lastMap != 'Bind' || lastMap != 'Split' || lastMap != 'Haven' || lastMap != 'Ascent' || lastMap != 'Icebox' || lastMap != 'Breeze') {
+                        if (lastMap != 'Bind' && lastMap != 'Split' && lastMap != 'Haven' && lastMap != 'Ascent' && lastMap != 'Icebox' && lastMap != 'Breeze') {
                             var mapImage = assets.maps['Unknown'].imgDraw
                         } else {
                             var mapImage = assets.maps[lastMap].imgDraw
                         }
                     } else {
                         lastMatch.segments[0].metadata.result = 'Defeat'
-                        if (lastMap != 'Bind' || lastMap != 'Split' || lastMap != 'Haven' || lastMap != 'Ascent' || lastMap != 'Icebox' || lastMap != 'Breeze') {
+                        if (lastMap != 'Bind' && lastMap != 'Split' && lastMap != 'Haven' && lastMap != 'Ascent' && lastMap != 'Icebox' && lastMap != 'Breeze') {
                             var mapImage = assets.maps['Unknown'].imgLost
                         } else {
                             var mapImage = assets.maps[lastMap].imgLost
