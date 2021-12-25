@@ -189,6 +189,13 @@
             "imgLost": "https://cdn.discordapp.com/attachments/834195818080108564/836970397344858154/breezeDefeat.jpg",
             "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836970398692016188/breezeDraw.jpg",
             "img": "https://cdn.discordapp.com/attachments/834195818080108564/839591211358748713/breezeImage.png"
+        },
+        "Unknown": {
+            "name": "Unknown",
+            "imgWon": "https://cdn.discordapp.com/attachments/834195818080108564/924407916973395968/victory.jpg",
+            "imgLost": "https://cdn.discordapp.com/attachments/834195818080108564/924407917233463386/defeat.jpg",
+            "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/924407916730150932/draw.jpg",
+            "img": "https://cdn.discordapp.com/attachments/834195818080108564/924408585671295016/unknown.jpg"
         }
     },
     "rankEmojis": {

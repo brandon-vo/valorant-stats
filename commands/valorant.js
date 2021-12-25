@@ -239,7 +239,7 @@ module.exports = {
             }
 
             // Check if user uses spikerush command
-            else if (command === 'spikerush' || command == 'sr') {
+            else if (command == 'spikerush' || command == 'sr') {
 
                 // Check if the user does not have spike rush stats
                 if (!spikeRushStats) return message.reply('This player has never played a spike rush game!')
@@ -303,7 +303,7 @@ module.exports = {
             }
 
             // Check if user uses deathmatch command
-            else if (command === 'deathmatch' || command === 'dm') {
+            else if (command == 'deathmatch' || command == 'dm') {
 
                 // Check if the user does not have deathmatch stats
                 if (!dmStats) return message.reply('This player has never played a deathmatch game!')
@@ -341,7 +341,7 @@ module.exports = {
             }
 
             // Check if user uses escalation command
-            else if (command === 'escalation') {
+            else if (command == 'escalation') {
 
                 // Check if user has escalation stats
                 if (!escalationStats) return message.reply('This player has never played an escalation game!')
@@ -379,7 +379,9 @@ module.exports = {
             }
 
             // Check if user uses last match stats command
-            else if (command === 'lastmatch' || command === 'lm') {
+            else if (command == 'lastmatch' || command == 'lm') {
+
+                console.log(trackerMatch.data.data.matches[1])
 
                 // Check last match mode
                 if (lastMatch.metadata.modeName === 'Unknown') return message.reply("This player has played a Valorant gamemode that I am unable to track!")
@@ -417,7 +419,11 @@ module.exports = {
 
                     playerMatchInfo.sort(function (a, b) { return b[3] - a[3] }) // Sort players by kills
 
-                    var mapImage = assets.maps[lastMap].img // Set map image
+                    if (lastMap != 'Bind' || lastMap != 'Split' || lastMap != 'Haven' || lastMap != 'Ascent' || lastMap != 'Icebox' || lastMap != 'Breeze') {
+                        var mapImage = assets.maps['Unknown'].img
+                    } else {
+                        var mapImage = assets.maps[lastMap].img // Set map image
+                    }
                     var deathmatchEmoji = assets.modeEmojis[lastMatch.metadata.modeName].emoji
 
                     // Placement text formatting
@@ -498,28 +504,40 @@ module.exports = {
 
                 // Separate both teams
                 for (x = 0; x < playerMatchInfo.length; x++) {
-                    if (playerMatchInfo[x][8] === 'Red')
+                    if (playerMatchInfo[x][8] == 'Red')
                         redTeam.push(playerMatchInfo[x])
-                    if (playerMatchInfo[x][8] === 'Blue')
+                    if (playerMatchInfo[x][8] == 'Blue')
                         blueTeam.push(playerMatchInfo[x])
                 }
 
                 // Text format
-                if (lastMatch.segments[0].metadata.result === 'victory') {
+                if (lastMatch.segments[0].metadata.result == 'victory') {
                     lastMatch.segments[0].metadata.result = 'Victory'
-                    var mapImage = assets.maps[lastMap].imgWon
-                } else if (lastMatch.segments[0].metadata.result === 'defeat') {
+                    if (lastMap != 'Bind' || lastMap != 'Split' || lastMap != 'Haven' || lastMap != 'Ascent' || lastMap != 'Icebox' || lastMap != 'Breeze') {
+                        var mapImage = assets.maps['Unknown'].imgWon
+                    } else {
+                        var mapImage = assets.maps[lastMap].imgWon
+                    }
+                } else if (lastMatch.segments[0].metadata.result == 'defeat') {
                     if (lmStats.roundsWon.value == lmStats.roundsLost.value) {
-                        lastMatch.segments[0].metadata.result === 'Draw'
-                        var mapImage = assets.maps[lastMap].imgDraw
+                        lastMatch.segments[0].metadata.result == 'Draw'
+                        if (lastMap != 'Bind' || lastMap != 'Split' || lastMap != 'Haven' || lastMap != 'Ascent' || lastMap != 'Icebox' || lastMap != 'Breeze') {
+                            var mapImage = assets.maps['Unknown'].imgDraw
+                        } else {
+                            var mapImage = assets.maps[lastMap].imgDraw
+                        }
                     } else {
                         lastMatch.segments[0].metadata.result = 'Defeat'
-                        var mapImage = assets.maps[lastMap].imgLost
+                        if (lastMap != 'Bind' || lastMap != 'Split' || lastMap != 'Haven' || lastMap != 'Ascent' || lastMap != 'Icebox' || lastMap != 'Breeze') {
+                            var mapImage = assets.maps['Unknown'].imgLost
+                        } else {
+                            var mapImage = assets.maps[lastMap].imgLost
+                        }
                     }
                 }
 
                 // Text format
-                if (lastMatch.metadata.modeName === 'Normal')
+                if (lastMatch.metadata.modeName == 'Normal')
                     lastMatch.metadata.modeName = 'Unrated'
 
                 // Score
