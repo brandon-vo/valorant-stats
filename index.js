@@ -1,49 +1,12 @@
-const fs = require('fs');
+const { ShardingManager } = require('discord.js');
 require('dotenv').config()
-const Discord = require('discord.js');
-const client = new Discord.Client();
-client.commands = new Discord.Collection();
-const mongoose = require('mongoose')
 
-// Connecting to database
-mongoose.connect(process.env.MONGODB_URI, {
-	useNewUrlParser: true,
-	useUnifiedTopology: true,
-}).then(() => {
-	console.log('Connected to MongoDB Database')
-}).catch((error) => console.log(error))
+const manager = new ShardingManager('./bot.js', { token: process.env.DISCORD_TOKEN});
 
-// Check for Javascript file in the command folder
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+manager.on('shardCreate', shard => console.log(`Launched shard ${shard.id}`));
 
-// Check through all files in the commands folder
-for (const file of commandFiles) {
-	const command = require(`./commands/${file}`);
-	client.commands.set(command.name, command);
-}
+manager.spawn();
 
-// Set bot activity
-client.on('ready', () => {
-	console.log(`Logged in as ${client.user.tag}!`);
-	client.user.setActivity(`${client.guilds.cache.size} servers | v!help`, { type: "WATCHING" })
-	// let activities = [ `${client.guilds.cache.size} servers`, `${client.channels.cache.size} chnls`, `${client.users.cache.size} users` ], i = 0;
-	// setInterval(() => client.user.setActivity(`${activities[i ++ % activities.length]} | v!help`, { type: "WATCHING"}),`5000`)
-})
-
-// Checking messages and executing commands
-client.on('message', async message => {
-	if (!message.content.startsWith(process.env.PREFIX) || message.author.bot) return; // Return nothing if there is no prefix or if the bot is messaging
-
-	const args = message.content.slice(process.env.PREFIX.length).trim().split(/ +/);
-	const commandName = args.shift().toLowerCase();
-	const command = client.commands.get(commandName) || client.commands.find(a => a.aliases && a.aliases.includes(commandName))
-
-	try {
-		command.execute(message, args, commandName)
-	} catch (error) {
-		console.error(error);
-	}
-
+manager.on('message', (shard, message) => {
+    console.log(`Shard[${shard.id}] : ${message._eval} : ${message._result}`);
 });
-
-client.login(process.env.DISCORD_TOKEN);
