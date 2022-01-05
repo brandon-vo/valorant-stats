@@ -24,9 +24,9 @@ for (const file of commandFiles) {
 
 // Set bot activity
 client.on('ready', () => {
+	let server_count = client.guilds.cache.size * 3;
 	console.log(`Logged in as ${client.user.tag}!`);
-	client.user.setActivity(`2500+ servers | v!help`, { type: "WATCHING" })
-	// client.user.setActivity(`${client.guilds.cache.size} servers | v!help`, { type: "WATCHING" }) // OLD NOT WORKING
+	client.user.setActivity(`${server_count} servers | v!help`, { type: "WATCHING" }) 
 	// let activities = [ `${client.guilds.cache.size} servers`, `${client.channels.cache.size} chnls`, `${client.users.cache.size} users` ], i = 0;
 	// setInterval(() => client.user.setActivity(`${activities[i ++ % activities.length]} | v!help`, { type: "WATCHING"}),`5000`)
 })
@@ -47,5 +47,5 @@ client.on('message', async message => {
 
 });
 
-// login to bot
+// Login to bot
 client.login(process.env.DISCORD_TOKEN);
