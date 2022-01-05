@@ -71,7 +71,7 @@ module.exports = {
           name: ":e_mail: Invite Link `v!invite`",
           value: "Get Discord bot invite link",
         },
-        { name: ":white_circle: Extra `v!joke` | `v!ping` | `v!help`", value: "\u200B" }
+        { name: ":white_circle: Extra `v!ping` | `v!help`", value: "\u200B" }
       )
       .setTimestamp();
 

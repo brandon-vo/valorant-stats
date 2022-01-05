@@ -12,7 +12,7 @@ module.exports = {
     async execute(message, args, command) {
 
         // Argument formatting to access Valorant usernames with spaces
-        var str = args[0];
+        let str = args[0];
         for (i = 1; i < args.length; i++)
             str += args[i];
 
@@ -36,7 +36,7 @@ module.exports = {
                 + 'You may link a Valorant account to your Discord ID using the v!link command.')
 
         // Convert characters to lowercase and encode input to correct format
-        var ID = str.toLowerCase();
+        let ID = str.toLowerCase();
 
         // Check if the ID has been encoded already through linked command
         if (ID.includes('#'))
@@ -51,27 +51,29 @@ module.exports = {
             try {
                 // Accessing REST API through Axios
                 trackerProfile = await axios.get(process.env.TRACKER_PROFILE + `${playerID}`)
-                trackerMatch = await axios.get(process.env.TRACKER_MATCH + `${playerID}`)
-                trackerMap = await axios.get(process.env.TRACKER_PROFILE + `${playerID}` + '/segments/map')
-                trackerWeapon = await axios.get(process.env.TRACKER_PROFILE + `${playerID}` + '/segments/weapon')
+                //trackerMatch = await axios.get(process.env.TRACKER_MATCH + `${playerID}`)
+                //trackerMap = await axios.get(process.env.TRACKER_PROFILE + `${playerID}` + '/segments/map')
+                //trackerWeapon = await axios.get(process.env.TRACKER_PROFILE + `${playerID}` + '/segments/weapon')
 
             } catch (error) {
-                return message.reply("Please ensure you have inputted the correct username#tag and logged into tracker.gg! (v!help)")
+                console.error(error)
+                return message.reply("ValoStats is currently under maintenance. I am unable to retrieve your stats.")
+                //return message.reply("Please ensure you have inputted the correct username#tag and logged into tracker.gg! (v!help)")
             }
 
             const profileStats = trackerProfile.data.data.segments // Access profile stats
 
             // Checking users playlist stats
             for (x = 0; x < profileStats.length; x++) {
-                if (profileStats[x].metadata.name === 'Competitive' && profileStats[x].type === 'playlist')
+                if (profileStats[x].metadata.name == 'Competitive' && profileStats[x].type == 'playlist')
                     var compStats = profileStats[x].stats // Access overall comp stats
-                else if (profileStats[x].metadata.name === 'Deathmatch' && profileStats[x].type === 'playlist')
+                else if (profileStats[x].metadata.name == 'Deathmatch' && profileStats[x].type == 'playlist')
                     var dmStats = profileStats[x].stats // Access overall deathmatch stats
-                else if (profileStats[x].metadata.name === 'Escalation' && profileStats[x].type === 'playlist')
+                else if (profileStats[x].metadata.name == 'Escalation' && profileStats[x].type == 'playlist')
                     var escalationStats = profileStats[x].stats // Access overall escalation stats
-                else if (profileStats[x].metadata.name === 'Spike Rush' && profileStats[x].type === 'playlist')
+                else if (profileStats[x].metadata.name == 'Spike Rush' && profileStats[x].type == 'playlist')
                     var spikeRushStats = profileStats[x].stats // Access overall spike rush stats
-                else if (profileStats[x].metadata.name === 'Unrated' && profileStats[x].type === 'playlist')
+                else if (profileStats[x].metadata.name == 'Unrated' && profileStats[x].type == 'playlist')
                     var unratedStats = profileStats[x].stats // Access overall unrated stats 
             }
 
@@ -102,14 +104,14 @@ module.exports = {
             // Set agent emoji for the user
             agentEmoji = ":white_small_square:"
 
-            if (lastAgent === "Astra" || lastAgent === "Breach" || lastAgent === "Brimstone" || lastAgent === "Cypher" || lastAgent === "Jett"
-                || lastAgent === "Killjoy" || lastAgent === "Omen" || lastAgent === "Phoenix" || lastAgent === "Raze" || lastAgent === "Reyna"
-                || lastAgent === "Sage" || lastAgent === "Skye" || lastAgent === "Sova" || lastAgent === "Viper" || lastAgent === "Yoru" || lastAgent === "KAY/O") {
+            if (lastAgent == "Astra" || lastAgent == "Breach" || lastAgent == "Brimstone" || lastAgent == "Cypher" || lastAgent == "Jett"
+                || lastAgent == "Killjoy" || lastAgent == "Omen" || lastAgent == "Phoenix" || lastAgent == "Raze" || lastAgent == "Reyna"
+                || lastAgent == "Sage" || lastAgent == "Skye" || lastAgent == "Sova" || lastAgent == "Viper" || lastAgent == "Yoru" || lastAgent == "KAY/O") {
                 agentEmoji = assets.agentEmojis[lastAgent].emoji
             }
 
             // Check if competitive stats command is used
-            if (command === 'stats' | command === 'comp' | command === 'competitive') {
+            if (command == 'stats' | command == 'comp' | command == 'competitive') {
 
                 // Check if the user does not have competitive stats
                 if (!compStats) return message.reply('This player has never played a competitive game!')
@@ -174,7 +176,7 @@ module.exports = {
             }
 
             // Check if unrated stats command is used
-            else if (command === 'unrated' || command === 'unranked') {
+            else if (command == 'unrated' || command == 'unranked') {
 
                 // Check if the user does not have unrated stats
                 if (!unratedStats) return message.reply('This player has never played an unrated game!')
@@ -462,9 +464,9 @@ module.exports = {
 
                         var playerAgentEmoji = ":white_small_square:"
 
-                        if (agent === "Astra" || agent === "Breach" || agent === "Brimstone" || agent === "Cypher" || agent === "Jett"
-                            || agent === "Killjoy" || agent === "Omen" || agent === "Phoenix" || agent === "Raze" || agent === "Reyna"
-                            || agent === "Sage" || agent === "Skye" || agent === "Sova" || agent === "Viper" || agent === "Yoru" || agent === "KAY/O") {
+                        if (agent == "Astra" || agent == "Breach" || agent == "Brimstone" || agent == "Cypher" || agent == "Jett"
+                            || agent == "Killjoy" || agent == "Omen" || agent == "Phoenix" || agent == "Raze" || agent == "Reyna"
+                            || agent == "Sage" || agent == "Skye" || agent == "Sova" || agent == "Viper" || agent == "Yoru" || agent == "KAY/O") {
                             var playerAgentEmoji = assets.agentEmojis[agent].emoji // Set emoji to played agent
                         }
 
@@ -641,16 +643,16 @@ module.exports = {
                     var playerAgentEmojiA = ":white_small_square:"
                     var playerAgentEmojiB = ":white_small_square:"
 
-                    if (agentA === "Astra" || agentA === "Breach" || agentA === "Brimstone" || agentA === "Cypher" || agentA === "Jett"
-                        || agentA === "Killjoy" || agentA === "Omen" || agentA === "Phoenix" || agentA === "Raze" || agentA === "Reyna"
-                        || agentA === "Sage" || agentA === "Skye" || agentA === "Sova" || agentA === "Viper" || agentA === "Yoru" || agentA === 'KAY/O') {
+                    if (agentA == "Astra" || agentA == "Breach" || agentA == "Brimstone" || agentA == "Cypher" || agentA == "Jett"
+                        || agentA == "Killjoy" || agentA == "Omen" || agentA == "Phoenix" || agentA == "Raze" || agentA == "Reyna"
+                        || agentA == "Sage" || agentA == "Skye" || agentA == "Sova" || agentA == "Viper" || agentA == "Yoru" || agentA == 'KAY/O') {
                         var playerAgentEmojiA = assets.agentEmojis[agentA].emoji
                     }
                     var playerRankEmojiA = assets.rankEmojis[rankA].emoji
 
-                    if (agentB === "Astra" || agentB === "Breach" || agentB === "Brimstone" || agentB === "Cypher" || agentB === "Jett"
-                        || agentB === "Killjoy" || agentB === "Omen" || agentB === "Phoenix" || agentB === "Raze" || agentB === "Reyna"
-                        || agentB === "Sage" || agentB === "Skye" || agentB === "Sova" || agentB === "Viper" || agentB === "Yoru" || agentB === 'KAY/O') {
+                    if (agentB == "Astra" || agentB == "Breach" || agentB == "Brimstone" || agentB == "Cypher" || agentB == "Jett"
+                        || agentB == "Killjoy" || agentB == "Omen" || agentB == "Phoenix" || agentB == "Raze" || agentB == "Reyna"
+                        || agentB == "Sage" || agentB == "Skye" || agentB == "Sova" || agentB == "Viper" || agentB == "Yoru" || agentB == 'KAY/O') {
                         var playerAgentEmojiB = assets.agentEmojis[agentB].emoji
 
                     }
@@ -686,7 +688,7 @@ module.exports = {
             }
 
             // Check if agent stats command is used
-            else if (command === 'agents' || command === 'agent') {
+            else if (command == 'agents' || command == 'agent') {
 
                 // Check if user never played a competitive game
                 if (!compStats) return message.reply('There are no agents to track. This player has never played a competitive game!')
@@ -728,9 +730,9 @@ module.exports = {
 
                     var agentEmoji = ":white_small_square:"
 
-                    if (agentName === "Astra" || agentName === "Breach" || agentName === "Brimstone" || agentName === "Cypher" || agentName === "Jett"
-                        || agentName === "Killjoy" || agentName === "Omen" || agentName === "Phoenix" || agentName === "Raze" || agentName === "Reyna"
-                        || agentName === "Sage" || agentName === "Skye" || agentName === "Sova" || agentName === "Viper" || agentName === "Yoru" || agentName === "KAY/O") {
+                    if (agentName == "Astra" || agentName == "Breach" || agentName == "Brimstone" || agentName == "Cypher" || agentName == "Jett"
+                        || agentName == "Killjoy" || agentName == "Omen" || agentName == "Phoenix" || agentName == "Raze" || agentName == "Reyna"
+                        || agentName == "Sage" || agentName == "Skye" || agentName == "Sova" || agentName == "Viper" || agentName == "Yoru" || agentName == "KAY/O") {
                         var agentEmoji = assets.agentEmojis[agentName].emoji
                     }
 
@@ -781,7 +783,7 @@ module.exports = {
                     let mapEmoji = '▫️'
 
                     // Implemented to prevent errors if new maps are released
-                    if (mapName === 'Ascent' || mapName === 'Bind' || mapName === 'Breeze' || mapName === 'Haven' || mapName === 'Icebox' || mapName === 'Split')
+                    if (mapName == 'Ascent' || mapName == 'Bind' || mapName == 'Breeze' || mapName == 'Haven' || mapName == 'Icebox' || mapName == 'Split')
                         mapEmoji = assets.mapEmojis[mapName].emoji
 
                     mapEmbed.addFields(
