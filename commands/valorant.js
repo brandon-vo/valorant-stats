@@ -51,20 +51,20 @@ module.exports = {
             try {
                 // Accessing REST API through Axios
                 trackerProfile = await axios.get(process.env.TRACKER_PROFILE + `${playerID}`)
-                //trackerMatch = await axios.get(process.env.TRACKER_MATCH + `${playerID}`)
-                //trackerMap = await axios.get(process.env.TRACKER_PROFILE + `${playerID}` + '/segments/map')
-                //trackerWeapon = await axios.get(process.env.TRACKER_PROFILE + `${playerID}` + '/segments/weapon')
+                trackerMatch = await axios.get(process.env.TRACKER_MATCH + `${playerID}`)
+                trackerMap = await axios.get(process.env.TRACKER_PROFILE + `${playerID}` + '/segments/map')
+                trackerWeapon = await axios.get(process.env.TRACKER_PROFILE + `${playerID}` + '/segments/weapon')
 
             } catch (error) {
                 console.error(error)
-                return message.reply("ValoStats is currently under maintenance. I am unable to retrieve your stats.")
-                //return message.reply("Please ensure you have inputted the correct username#tag and logged into tracker.gg! (v!help)")
+                //return message.reply("ValoStats is currently under maintenance. I am unable to retrieve your stats.")
+                return message.reply("Please ensure you have inputted the correct username#tag and logged into tracker.gg! (v!help)")
             }
 
             const profileStats = trackerProfile.data.data.segments // Access profile stats
 
             // Checking users playlist stats
-            for (x = 0; x < profileStats.length; x++) {
+            for (let x = 0; x < profileStats.length; x++) {
                 if (profileStats[x].metadata.name == 'Competitive' && profileStats[x].type == 'playlist')
                     var compStats = profileStats[x].stats // Access overall comp stats
                 else if (profileStats[x].metadata.name == 'Deathmatch' && profileStats[x].type == 'playlist')
@@ -451,7 +451,7 @@ module.exports = {
 
                     var count = 0 // Count columns for embed format
 
-                    for (x = 0; x < playerMatchInfo.length; x++) {
+                    for (let x = 0; x < playerMatchInfo.length; x++) {
 
                         let name = playerMatchInfo[x][0]
                         let agent = playerMatchInfo[x][1]
