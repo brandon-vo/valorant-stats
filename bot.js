@@ -2,8 +2,10 @@ const fs = require('fs');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const mongoose = require('mongoose')
-require('dotenv').config()
+require('dotenv').config();
 client.commands = new Discord.Collection();
+const { AutoPoster } = require('topgg-autoposter')
+const poster = AutoPoster(process.env.TOPGG_TOKEN, client)
 
 // Connecting to database
 mongoose.connect(process.env.MONGODB_URI, {
@@ -20,16 +22,20 @@ const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
 	client.commands.set(command.name, command);
-}
+};
+
+poster.on('posted', (stats) => {
+	console.log(`Posted stats to Top.gg | ${stats.serverCount} servers`)
+});
 
 // Set bot activity
 client.on('ready', () => {
 	let server_count = client.guilds.cache.size * 3;
 	console.log(`Logged in as ${client.user.tag}!`);
-	client.user.setActivity(`${server_count} servers | v!help`, { type: "WATCHING" }) 
+	client.user.setActivity(`${server_count} servers | v!help`, { type: "WATCHING" })
 	// let activities = [ `${client.guilds.cache.size} servers`, `${client.channels.cache.size} chnls`, `${client.users.cache.size} users` ], i = 0;
 	// setInterval(() => client.user.setActivity(`${activities[i ++ % activities.length]} | v!help`, { type: "WATCHING"}),`5000`)
-})
+});
 
 // Checking messages and executing commands
 client.on('message', async message => {
