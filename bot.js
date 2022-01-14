@@ -53,5 +53,28 @@ client.on('message', async message => {
 
 });
 
+// source: https://stackoverflow.com/questions/51447954/sending-a-message-the-first-channel-with-discord-js/53286788
+client.on("guildCreate", guild => {
+	let channelID;
+	let channels = guild.channels.cache;
+
+	channelLoop:
+	for (let key in channels) {
+		let c = channels[key];
+		if (c[1].type === "text") {
+			channelID = c[0];
+			break channelLoop;
+		}
+	}
+	// temp
+	let channel = guild.channels.cache.get(guild.systemChannelID || channelID);
+	channel.send("Thanks for the invite! \n To get started, connect your account to https://tracker.gg/valorant" + 
+	" \n You will want to use `v!link username#tag` to link your account" +
+	" \n Use `v!help` for a list of commands." +  
+	" \n Need help? Join the test server: https://discord.gg/8bY6nFaVEY" + 
+	" \n Please consider voting for my bot here: https://bit.ly/valostats-topgg" +
+	" \n Developed by CMDRVo")
+});
+
 // Login to bot
 client.login(process.env.DISCORD_TOKEN);
