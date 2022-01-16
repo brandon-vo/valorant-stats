@@ -3,6 +3,8 @@ const pagination = require('discord.js-pagination')
 const assets = require('../assets.json')
 const axios = require('axios').default;
 const Account = require('../schemas/AccountSchema')
+// const ButtonPages = require('discord-button-pages')
+const { MessageButton } = require('discord-buttons')
 
 module.exports = {
     name: "valorant",
@@ -12,8 +14,8 @@ module.exports = {
     async execute(message, args, command) {
 
         // Argument formatting to access Valorant usernames with spaces
-        let str = args[0];
-        for (i = 1; i < args.length; i++)
+        var str = args[0];
+        for (let i = 1; i < args.length; i++)
             str += args[i];
 
         // Get account
@@ -33,10 +35,10 @@ module.exports = {
         }
         else if (!args[0])
             return message.reply('Please include your Valorant username and tag (USERNAME#TAG)\n'
-                + 'You may link a Valorant account to your Discord ID using the v!link command.')
+                + 'For convenience, you may link a Valorant account to your Discord ID using the v!link command.')
 
         // Convert characters to lowercase and encode input to correct format
-        let ID = str.toLowerCase();
+        var ID = str.toLowerCase();
 
         // Check if the ID has been encoded already through linked command
         if (ID.includes('#'))
@@ -44,21 +46,46 @@ module.exports = {
         else
             playerID = ID
 
+        var helpButton = new MessageButton().setStyle("LINK").setLabel("Tracker.gg").setURL("https://tracker.gg")
+        var voteButton = new MessageButton().setStyle("LINK").setLabel("Vote").setURL("https://top.gg/bot/833535533287866398")
+
         // Run command
         try {
-
             // Check if account exists
             try {
-                // Accessing REST API through Axios
                 trackerProfile = await axios.get(process.env.TRACKER_PROFILE + `${playerID}`)
                 trackerMatch = await axios.get(process.env.TRACKER_MATCH + `${playerID}`)
                 trackerMap = await axios.get(process.env.TRACKER_PROFILE + `${playerID}` + '/segments/map')
                 trackerWeapon = await axios.get(process.env.TRACKER_PROFILE + `${playerID}` + '/segments/weapon')
 
             } catch (error) {
-                console.error(error)
-                //return message.reply("ValoStats is currently under maintenance. I am unable to retrieve your stats.")
-                return message.reply("Please ensure you have inputted the correct username#tag and logged into tracker.gg! (v!help)")
+
+                if (error.response.status === 403) {
+                    const maintenanceEmbed = new MessageEmbed()
+                        .setColor('#d1390f')
+                        .setThumbnail('https://cdn.discordapp.com/attachments/834195818080108564/932365602427920404/x-png-35400.png')
+                        .setFooter('Developed by CMDRVo')
+                        .addFields(
+                            {
+                                name: 'Maintenance Status', value: "```diff\n" + "ValoStats currently has issues in retrieving stats." +
+                                    " Please try again later." + "\n```", inline: true
+                            },
+                        )
+
+                    return message.reply(maintenanceEmbed, { buttons: [helpButton, voteButton] })
+                }
+                const errorEmbed = new MessageEmbed()
+                    .setColor('#d1390f')
+                    .setThumbnail('https://cdn.discordapp.com/attachments/834195818080108564/932365602427920404/x-png-35400.png')
+                    .setFooter('Developed by CMDRVo')
+                    .addFields(
+                        {
+                            name: 'Error Status', value: "```diff\n" + "Please ensure you have inputted the correct " +
+                                "username#tag and logged into tracker.gg! (v!help)" + "\n```", inline: true
+                        },
+                    )
+
+                return message.reply(errorEmbed, { buttons: [helpButton, voteButton] })
             }
 
             const profileStats = trackerProfile.data.data.segments // Access profile stats
@@ -86,8 +113,8 @@ module.exports = {
             const weaponStats = trackerWeapon.data.data // Weapon stats
 
             // Set rank emojis and name
-            rankName = ''
-            rankEmoji = ''
+            var rankName = ''
+            var rankEmoji = ''
             if (compStats) {
                 rankName = compStats.rank.metadata.tierName
                 rankEmoji = assets.rankEmojis[rankName].emoji
@@ -99,10 +126,10 @@ module.exports = {
                 }
             }
 
-            lastAgent = lastMatch.segments[0].metadata.agentName
+            var lastAgent = lastMatch.segments[0].metadata.agentName
 
             // Set agent emoji for the user
-            agentEmoji = ":white_small_square:"
+            var agentEmoji = ":white_small_square:"
 
             if (lastAgent == "Astra" || lastAgent == "Breach" || lastAgent == "Brimstone" || lastAgent == "Cypher" || lastAgent == "Jett"
                 || lastAgent == "Killjoy" || lastAgent == "Omen" || lastAgent == "Phoenix" || lastAgent == "Raze" || lastAgent == "Reyna"
@@ -695,7 +722,7 @@ module.exports = {
 
                 agentInfo = []
                 // Get all agents the player played
-                for (x = 0; x < profileStats.length; x++ && profileStats.type === 'agent') {
+                for (let x = 0; x < profileStats.length; x++ && profileStats.type === 'agent') {
                     if (profileStats[x].type === 'agent') {
                         agentInfo.push([profileStats[x].metadata.name, profileStats[x].stats.timePlayed.value, profileStats[x].stats.timePlayed.displayValue,
                         profileStats[x].stats.kills.displayValue, profileStats[x].stats.deaths.displayValue, profileStats[x].stats.assists.displayValue,
@@ -717,7 +744,7 @@ module.exports = {
                     .setDescription("```grey\n      " + "      Top " + agentLength + " - Agents Played" + "\n```")
                     .setFooter('Competitive Agents Only')
 
-                for (i = 0; i < agentLength; i++) {
+                for (let i = 0; i < agentLength; i++) {
 
                     let agentName = agentInfo[i][0]
                     let timePlayed = agentInfo[i][2]
@@ -754,7 +781,7 @@ module.exports = {
             else if (command == 'map' || command == 'maps') {
 
                 mapInfo = []
-                for (x = 0; x < mapStats.length; x++) {
+                for (let x = 0; x < mapStats.length; x++) {
 
                     if (x != 4) { // Skip index 4, old Icebox
                         mapInfo.push([mapStats[x].metadata.name, mapStats[x].stats.timePlayed.displayValue,
@@ -771,7 +798,7 @@ module.exports = {
                     .setDescription("```grey\n      " + "        Map Stats" + "\n```")
                     .setFooter('Competitive Maps Only')
 
-                for (i = 0; i < mapInfo.length; i++) { // For all avaliable maps
+                for (let i = 0; i < mapInfo.length; i++) { // For all avaliable maps
 
                     greenSquare = parseInt((mapInfo[i][6] / 100) * 16)
                     redSquare = 16 - greenSquare
@@ -804,7 +831,7 @@ module.exports = {
                 topWeapons = [] // Store weapons in a 2D array
 
                 // Add information to weapons array
-                for (x = 0; x < weaponStats.length; x++) {
+                for (let x = 0; x < weaponStats.length; x++) {
                     weaponName = weaponStats[x].metadata.name
                     weaponKills = weaponStats[x].stats.kills.displayValue
                     weaponKillsValue = weaponStats[x].stats.kills.value

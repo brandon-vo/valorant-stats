@@ -6,6 +6,7 @@ require('dotenv').config();
 client.commands = new Discord.Collection();
 const { AutoPoster } = require('topgg-autoposter')
 const poster = AutoPoster(process.env.TOPGG_TOKEN, client)
+require('discord-buttons')(client);
 
 // Connecting to database
 mongoose.connect(process.env.MONGODB_URI, {
@@ -68,12 +69,12 @@ client.on("guildCreate", guild => {
 	}
 	// temp
 	let channel = guild.channels.cache.get(guild.systemChannelID || channelID);
-	channel.send("Thanks for the invite! \n To get started, connect your account to https://tracker.gg/valorant" + 
-	" \n You will want to use `v!link username#tag` to link your account" +
-	" \n Use `v!help` for a list of commands." +  
-	" \n Need help? Join the test server: https://discord.gg/8bY6nFaVEY" + 
-	" \n Please consider voting for my bot here: https://bit.ly/valostats-topgg" +
-	" \n Developed by CMDRVo")
+	channel.send("Thanks for the invite! \n To get started, connect your account to https://tracker.gg/valorant" +
+		" \n You will want to use `v!link username#tag` to link your account" +
+		" \n Use `v!help` for a list of commands." +
+		" \n Need help? Join the test server: https://discord.gg/8bY6nFaVEY" +
+		" \n Please consider voting for my bot here: https://bit.ly/valostats-topgg" +
+		" \n Developed by CMDRVo")
 });
 
 // Login to bot
