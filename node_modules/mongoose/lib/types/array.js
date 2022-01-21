@@ -5,7 +5,6 @@
 'use strict';
 
 const CoreMongooseArray = require('./core_array');
-const Document = require('../document');
 
 const arrayAtomicsSymbol = require('../helpers/symbols').arrayAtomicsSymbol;
 const arrayParentSymbol = require('../helpers/symbols').arrayParentSymbol;
@@ -30,28 +29,44 @@ const _basePush = Array.prototype.push;
  */
 
 function MongooseArray(values, path, doc, schematype) {
-  const arr = new CoreMongooseArray();
-  arr[arrayAtomicsSymbol] = {};
+  let arr;
 
   if (Array.isArray(values)) {
     const len = values.length;
-    for (let i = 0; i < len; ++i) {
-      _basePush.call(arr, values[i]);
+
+    // Perf optimizations for small arrays: much faster to use `...` than `for` + `push`,
+    // but large arrays may cause stack overflows. And for arrays of length 0/1, just
+    // modifying the array is faster. Seems small, but adds up when you have a document
+    // with thousands of nested arrays.
+    if (len === 0) {
+      arr = new CoreMongooseArray();
+    } else if (len === 1) {
+      arr = new CoreMongooseArray(1);
+      arr[0] = values[0];
+    } else if (len < 10000) {
+      arr = new CoreMongooseArray();
+      _basePush.apply(arr, values);
+    } else {
+      arr = new CoreMongooseArray();
+      for (let i = 0; i < len; ++i) {
+        _basePush.call(arr, values[i]);
+      }
     }
 
     if (values[arrayAtomicsSymbol] != null) {
       arr[arrayAtomicsSymbol] = values[arrayAtomicsSymbol];
     }
+  } else {
+    arr = new CoreMongooseArray();
   }
 
   arr[arrayPathSymbol] = path;
-  arr[arraySchemaSymbol] = void 0;
 
   // Because doc comes from the context of another function, doc === global
   // can happen if there was a null somewhere up the chain (see #3020)
   // RB Jun 17, 2015 updated to check for presence of expected paths instead
   // to make more proof against unusual node environments
-  if (doc && doc instanceof Document) {
+  if (doc != null && doc.$__ != null) {
     arr[arrayParentSymbol] = doc;
     arr[arraySchemaSymbol] = schematype || doc.schema.path(path);
   }

@@ -70,31 +70,6 @@ class BulkWriteOperation extends OperationBase {
         return callback(err, null);
       }
 
-      r.insertedCount = r.nInserted;
-      r.matchedCount = r.nMatched;
-      r.modifiedCount = r.nModified || 0;
-      r.deletedCount = r.nRemoved;
-      r.upsertedCount = r.getUpsertedIds().length;
-      r.upsertedIds = {};
-      r.insertedIds = {};
-
-      // Update the n
-      r.n = r.insertedCount;
-
-      // Inserted documents
-      const inserted = r.getInsertedIds();
-      // Map inserted ids
-      for (let i = 0; i < inserted.length; i++) {
-        r.insertedIds[inserted[i].index] = inserted[i]._id;
-      }
-
-      // Upserted documents
-      const upserted = r.getUpsertedIds();
-      // Map upserted ids
-      for (let i = 0; i < upserted.length; i++) {
-        r.upsertedIds[upserted[i].index] = upserted[i]._id;
-      }
-
       // Return the results
       callback(null, r);
     });

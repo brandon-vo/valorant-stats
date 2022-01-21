@@ -16,6 +16,7 @@ var inherits = require('util').inherits,
   createCompressionInfo = require('./shared').createCompressionInfo,
   resolveClusterTime = require('./shared').resolveClusterTime,
   SessionMixins = require('./shared').SessionMixins,
+  extractCommand = require('../../command_utils').extractCommand,
   relayEvents = require('../utils').relayEvents;
 
 const collationNotSupported = require('../utils').collationNotSupported;
@@ -46,6 +47,7 @@ var debugFields = [
   'promoteLongs',
   'promoteValues',
   'promoteBuffers',
+  'bsonRegExp',
   'servername'
 ];
 
@@ -88,6 +90,7 @@ function topologyId(server) {
  * @param {boolean} [options.promoteLongs=true] Convert Long values from the db into Numbers if they fit into 53 bits
  * @param {boolean} [options.promoteValues=true] Promotes BSON values to native types where possible, set to false to only receive wrapper types.
  * @param {boolean} [options.promoteBuffers=false] Promotes Binary BSON values to native Node Buffers.
+ * @param {boolean} [options.bsonRegExp=false] By default, regex returned from MDB will be native to the language. Setting to true will ensure that a BSON.BSONRegExp object is returned.
  * @param {string} [options.appname=null] Application name, passed in on ismaster call and logged in mongod server logs. Maximum size 128 bytes.
  * @param {boolean} [options.domainsEnabled=false] Enable the wrapping of the callback in the current domain, disabled by default to avoid perf hit.
  * @param {boolean} [options.monitorCommands=false] Enable command monitoring for this topology
@@ -608,18 +611,20 @@ Server.prototype.command = function(ns, cmd, options, callback) {
   options = Object.assign({}, options, { wireProtocolCommand: false });
 
   // Debug log
-  if (self.s.logger.isDebug())
+  if (self.s.logger.isDebug()) {
+    const extractedCommand = extractCommand(cmd);
     self.s.logger.debug(
       f(
         'executing command [%s] against %s',
         JSON.stringify({
           ns: ns,
-          cmd: cmd,
+          cmd: extractedCommand.shouldRedact ? `${extractedCommand.name} details REDACTED` : cmd,
           options: debugOptions(debugFields, options)
         }),
         self.name
       )
     );
+  }
 
   // If we are not connected or have a disconnectHandler specified
   if (disconnectHandler(self, 'command', ns, cmd, options, callback)) return;
