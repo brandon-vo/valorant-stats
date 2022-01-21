@@ -1,20 +1,21 @@
 'use strict';
 
-const { parse } = require('path');
+const { parse } = require('node:path');
+const process = require('node:process');
+const { Collection } = require('@discordjs/collection');
 const fetch = require('node-fetch');
-const { Colors, DefaultOptions, Endpoints } = require('./Constants');
+const { Colors, Endpoints } = require('./Constants');
+const Options = require('./Options');
 const { Error: DiscordError, RangeError, TypeError } = require('../errors');
 const has = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
 const isObject = d => typeof d === 'object' && d !== null;
 
-/**
- * Contains various general-purpose utility methods. These functions are also available on the base `Discord` object.
- */
-class Util {
-  constructor() {
-    throw new Error(`The ${this.constructor.name} class may not be instantiated.`);
-  }
+let deprecationEmittedForRemoveMentions = false;
 
+/**
+ * Contains various general-purpose utility methods.
+ */
+class Util extends null {
   /**
    * Flatten an object. Any properties that are collections will get converted to an array of keys.
    * @param {Object} obj The object to flatten.
@@ -41,9 +42,9 @@ class Util {
       const valueOf = elemIsObj && typeof element.valueOf === 'function' ? element.valueOf() : null;
 
       // If it's a Collection, make the array of keys
-      if (element instanceof require('./Collection')) out[newProp] = Array.from(element.keys());
+      if (element instanceof Collection) out[newProp] = Array.from(element.keys());
       // If the valueOf is a Collection, use its array of keys
-      else if (valueOf instanceof require('./Collection')) out[newProp] = Array.from(valueOf.keys());
+      else if (valueOf instanceof Collection) out[newProp] = Array.from(valueOf.keys());
       // If it's an array, flatten each element
       else if (Array.isArray(element)) out[newProp] = element.map(e => Util.flatten(e));
       // If it's an object with a primitive `valueOf`, use that value
@@ -56,16 +57,38 @@ class Util {
   }
 
   /**
+   * Options for splitting a message.
+   * @typedef {Object} SplitOptions
+   * @property {number} [maxLength=2000] Maximum character length per message piece
+   * @property {string|string[]|RegExp|RegExp[]} [char='\n'] Character(s) or Regex(es) to split the message with,
+   * an array can be used to split multiple times
+   * @property {string} [prepend=''] Text to prepend to every piece except the first
+   * @property {string} [append=''] Text to append to every piece except the last
+   */
+
+  /**
    * Splits a string into multiple chunks at a designated character that do not exceed a specific length.
-   * @param {StringResolvable} text Content to split
+   * @param {string} text Content to split
    * @param {SplitOptions} [options] Options controlling the behavior of the split
    * @returns {string[]}
    */
-  static splitMessage(text, { maxLength = 2000, char = '\n', prepend = '', append = '' } = {}) {
-    text = Util.resolveString(text);
+  static splitMessage(text, { maxLength = 2_000, char = '\n', prepend = '', append = '' } = {}) {
+    text = Util.verifyString(text);
     if (text.length <= maxLength) return [text];
-    const splitText = text.split(char);
-    if (splitText.some(chunk => chunk.length > maxLength)) throw new RangeError('SPLIT_MAX_LEN');
+    let splitText = [text];
+    if (Array.isArray(char)) {
+      while (char.length > 0 && splitText.some(elem => elem.length > maxLength)) {
+        const currentChar = char.shift();
+        if (currentChar instanceof RegExp) {
+          splitText = splitText.flatMap(chunk => chunk.match(currentChar));
+        } else {
+          splitText = splitText.flatMap(chunk => chunk.split(currentChar));
+        }
+      }
+    } else {
+      splitText = text.split(char);
+    }
+    if (splitText.some(elem => elem.length > maxLength)) throw new RangeError('SPLIT_MAX_LEN');
     const messages = [];
     let msg = '';
     for (const chunk of splitText) {
@@ -79,18 +102,23 @@ class Util {
   }
 
   /**
+   * Options used to escape markdown.
+   * @typedef {Object} EscapeMarkdownOptions
+   * @property {boolean} [codeBlock=true] Whether to escape code blocks or not
+   * @property {boolean} [inlineCode=true] Whether to escape inline code or not
+   * @property {boolean} [bold=true] Whether to escape bolds or not
+   * @property {boolean} [italic=true] Whether to escape italics or not
+   * @property {boolean} [underline=true] Whether to escape underlines or not
+   * @property {boolean} [strikethrough=true] Whether to escape strikethroughs or not
+   * @property {boolean} [spoiler=true] Whether to escape spoilers or not
+   * @property {boolean} [codeBlockContent=true] Whether to escape text inside code blocks or not
+   * @property {boolean} [inlineCodeContent=true] Whether to escape text inside inline code or not
+   */
+
+  /**
    * Escapes any Discord-flavour markdown in a string.
    * @param {string} text Content to escape
-   * @param {Object} [options={}] What types of markdown to escape
-   * @param {boolean} [options.codeBlock=true] Whether to escape code blocks or not
-   * @param {boolean} [options.inlineCode=true] Whether to escape inline code or not
-   * @param {boolean} [options.bold=true] Whether to escape bolds or not
-   * @param {boolean} [options.italic=true] Whether to escape italics or not
-   * @param {boolean} [options.underline=true] Whether to escape underlines or not
-   * @param {boolean} [options.strikethrough=true] Whether to escape strikethroughs or not
-   * @param {boolean} [options.spoiler=true] Whether to escape spoilers or not
-   * @param {boolean} [options.codeBlockContent=true] Whether to escape text inside code blocks or not
-   * @param {boolean} [options.inlineCodeContent=true] Whether to escape text inside inline code or not
+   * @param {EscapeMarkdownOptions} [options={}] Options for escaping the markdown
    * @returns {string}
    */
   static escapeMarkdown(
@@ -156,7 +184,7 @@ class Util {
    * @returns {string}
    */
   static escapeCodeBlock(text) {
-    return text.replace(/```/g, '\\`\\`\\`');
+    return text.replaceAll('```', '\\`\\`\\`');
   }
 
   /**
@@ -218,7 +246,7 @@ class Util {
    * @returns {string}
    */
   static escapeStrikethrough(text) {
-    return text.replace(/~~/g, '\\~\\~');
+    return text.replaceAll('~~', '\\~\\~');
   }
 
   /**
@@ -227,44 +255,64 @@ class Util {
    * @returns {string}
    */
   static escapeSpoiler(text) {
-    return text.replace(/\|\|/g, '\\|\\|');
+    return text.replaceAll('||', '\\|\\|');
   }
+
+  /**
+   * @typedef {Object} FetchRecommendedShardsOptions
+   * @property {number} [guildsPerShard=1000] Number of guilds assigned per shard
+   * @property {number} [multipleOf=1] The multiple the shard count should round up to. (16 for large bot sharding)
+   */
 
   /**
    * Gets the recommended shard count from Discord.
    * @param {string} token Discord auth token
-   * @param {number} [guildsPerShard=1000] Number of guilds per shard
+   * @param {FetchRecommendedShardsOptions} [options] Options for fetching the recommended shard count
    * @returns {Promise<number>} The recommended number of shards
    */
-  static fetchRecommendedShards(token, guildsPerShard = 1000) {
+  static async fetchRecommendedShards(token, { guildsPerShard = 1_000, multipleOf = 1 } = {}) {
     if (!token) throw new DiscordError('TOKEN_MISSING');
-    return fetch(`${DefaultOptions.http.api}/v${DefaultOptions.http.version}${Endpoints.botGateway}`, {
+    const defaults = Options.createDefault();
+    const response = await fetch(`${defaults.http.api}/v${defaults.http.version}${Endpoints.botGateway}`, {
       method: 'GET',
       headers: { Authorization: `Bot ${token.replace(/^Bot\s*/i, '')}` },
-    })
-      .then(res => {
-        if (res.ok) return res.json();
-        if (res.status === 401) throw new DiscordError('TOKEN_INVALID');
-        throw res;
-      })
-      .then(data => data.shards * (1000 / guildsPerShard));
+    });
+    if (!response.ok) {
+      if (response.status === 401) throw new DiscordError('TOKEN_INVALID');
+      throw response;
+    }
+    const { shards } = await response.json();
+    return Math.ceil((shards * (1_000 / guildsPerShard)) / multipleOf) * multipleOf;
   }
 
   /**
    * Parses emoji info out of a string. The string must be one of:
-   * * A UTF-8 emoji (no ID)
-   * * A URL-encoded UTF-8 emoji (no ID)
+   * * A UTF-8 emoji (no id)
+   * * A URL-encoded UTF-8 emoji (no id)
    * * A Discord custom emoji (`<:name:id>` or `<a:name:id>`)
    * @param {string} text Emoji string to parse
-   * @returns {Object} Object with `animated`, `name`, and `id` properties
+   * @returns {APIEmoji} Object with `animated`, `name`, and `id` properties
    * @private
    */
   static parseEmoji(text) {
     if (text.includes('%')) text = decodeURIComponent(text);
     if (!text.includes(':')) return { animated: false, name: text, id: null };
-    const m = text.match(/<?(?:(a):)?(\w{2,32}):(\d{17,19})?>?/);
-    if (!m) return null;
-    return { animated: Boolean(m[1]), name: m[2], id: m[3] || null };
+    const match = text.match(/<?(?:(a):)?(\w{2,32}):(\d{17,19})?>?/);
+    return match && { animated: Boolean(match[1]), name: match[2], id: match[3] ?? null };
+  }
+
+  /**
+   * Resolves a partial emoji object from an {@link EmojiIdentifierResolvable}, without checking a Client.
+   * @param {EmojiIdentifierResolvable} emoji Emoji identifier to resolve
+   * @returns {?RawEmoji}
+   * @private
+   */
+  static resolvePartialEmoji(emoji) {
+    if (!emoji) return null;
+    if (typeof emoji === 'string') return /^\d{17,19}$/.test(emoji) ? { id: emoji } : Util.parseEmoji(emoji);
+    const { id, name, animated } = emoji;
+    if (!id && !name) return null;
+    return { id, name, animated: Boolean(animated) };
   }
 
   /**
@@ -298,35 +346,16 @@ class Util {
   }
 
   /**
-   * Converts an ArrayBuffer or string to a Buffer.
-   * @param {ArrayBuffer|string} ab ArrayBuffer to convert
-   * @returns {Buffer}
-   * @private
+   * Options used to make an error object.
+   * @typedef {Object} MakeErrorOptions
+   * @property {string} name Error type
+   * @property {string} message Message for the error
+   * @property {string} stack Stack for the error
    */
-  static convertToBuffer(ab) {
-    if (typeof ab === 'string') ab = Util.str2ab(ab);
-    return Buffer.from(ab);
-  }
-
-  /**
-   * Converts a string to an ArrayBuffer.
-   * @param {string} str String to convert
-   * @returns {ArrayBuffer}
-   * @private
-   */
-  static str2ab(str) {
-    const buffer = new ArrayBuffer(str.length * 2);
-    const view = new Uint16Array(buffer);
-    for (var i = 0, strLen = str.length; i < strLen; i++) view[i] = str.charCodeAt(i);
-    return buffer;
-  }
 
   /**
    * Makes an Error from a plain info object.
-   * @param {Object} obj Error info
-   * @param {string} obj.name Error type
-   * @param {string} obj.message Message for the error
-   * @param {string} obj.stack Stack for the error
+   * @param {MakeErrorOptions} obj Error info
    * @returns {Error}
    * @private
    */
@@ -340,7 +369,7 @@ class Util {
   /**
    * Makes a plain error info object from an Error.
    * @param {Error} err Error to get info from
-   * @returns {Object}
+   * @returns {MakeErrorOptions}
    * @private
    */
   static makePlainError(err) {
@@ -371,22 +400,22 @@ class Util {
   }
 
   /**
-   * Data that can be resolved to give a string. This can be:
-   * * A string
-   * * An array (joined with a new line delimiter to give a string)
-   * * Any value
-   * @typedef {string|Array|*} StringResolvable
-   */
-
-  /**
-   * Resolves a StringResolvable to a string.
-   * @param {StringResolvable} data The string resolvable to resolve
+   * Verifies the provided data is a string, otherwise throws provided error.
+   * @param {string} data The string resolvable to resolve
+   * @param {Function} [error] The Error constructor to instantiate. Defaults to Error
+   * @param {string} [errorMessage] The error message to throw with. Defaults to "Expected string, got <data> instead."
+   * @param {boolean} [allowEmpty=true] Whether an empty string should be allowed
    * @returns {string}
    */
-  static resolveString(data) {
-    if (typeof data === 'string') return data;
-    if (Array.isArray(data)) return data.join('\n');
-    return String(data);
+  static verifyString(
+    data,
+    error = Error,
+    errorMessage = `Expected a string, got ${data} instead.`,
+    allowEmpty = true,
+  ) {
+    if (typeof data !== 'string') throw new error(errorMessage);
+    if (!allowEmpty && data.length === 0) throw new error(errorMessage);
+    return data;
   }
 
   /**
@@ -403,11 +432,11 @@ class Util {
    * - `YELLOW`
    * - `PURPLE`
    * - `LUMINOUS_VIVID_PINK`
+   * - `FUCHSIA`
    * - `GOLD`
    * - `ORANGE`
    * - `RED`
    * - `GREY`
-   * - `DARKER_GREY`
    * - `NAVY`
    * - `DARK_AQUA`
    * - `DARK_GREEN`
@@ -418,6 +447,7 @@ class Util {
    * - `DARK_ORANGE`
    * - `DARK_RED`
    * - `DARK_GREY`
+   * - `DARKER_GREY`
    * - `LIGHT_GREY`
    * - `DARK_NAVY`
    * - `BLURPLE`
@@ -437,28 +467,28 @@ class Util {
     if (typeof color === 'string') {
       if (color === 'RANDOM') return Math.floor(Math.random() * (0xffffff + 1));
       if (color === 'DEFAULT') return 0;
-      color = Colors[color] || parseInt(color.replace('#', ''), 16);
+      color = Colors[color] ?? parseInt(color.replace('#', ''), 16);
     } else if (Array.isArray(color)) {
       color = (color[0] << 16) + (color[1] << 8) + color[2];
     }
 
     if (color < 0 || color > 0xffffff) throw new RangeError('COLOR_RANGE');
-    else if (color && isNaN(color)) throw new TypeError('COLOR_CONVERT');
+    else if (Number.isNaN(color)) throw new TypeError('COLOR_CONVERT');
 
     return color;
   }
 
   /**
-   * Sorts by Discord's position and ID.
-   * @param  {Collection} collection Collection of objects to sort
+   * Sorts by Discord's position and id.
+   * @param {Collection} collection Collection of objects to sort
    * @returns {Collection}
    */
   static discordSort(collection) {
+    const isGuildChannel = collection.first() instanceof GuildChannel;
     return collection.sorted(
-      (a, b) =>
-        a.rawPosition - b.rawPosition ||
-        parseInt(b.id.slice(0, -10)) - parseInt(a.id.slice(0, -10)) ||
-        parseInt(b.id.slice(10)) - parseInt(a.id.slice(10)),
+      isGuildChannel
+        ? (a, b) => a.rawPosition - b.rawPosition || Number(BigInt(a.id) - BigInt(b.id))
+        : (a, b) => a.rawPosition - b.rawPosition || Number(BigInt(b.id) - BigInt(a.id)),
     );
   }
 
@@ -470,14 +500,15 @@ class Util {
    * @param {Collection<string, Channel|Role>} sorted A collection of the objects sorted properly
    * @param {APIRouter} route Route to call PATCH on
    * @param {string} [reason] Reason for the change
-   * @returns {Promise<Object[]>} Updated item list, with `id` and `position` properties
+   * @returns {Promise<Channel[]|Role[]>} Updated item list, with `id` and `position` properties
    * @private
    */
-  static setPosition(item, position, relative, sorted, route, reason) {
-    let updatedItems = sorted.array();
+  static async setPosition(item, position, relative, sorted, route, reason) {
+    let updatedItems = [...sorted.values()];
     Util.moveElementInArray(updatedItems, item, position, relative);
     updatedItems = updatedItems.map((r, i) => ({ id: r.id, position: i }));
-    return route.patch({ data: updatedItems, reason }).then(() => updatedItems);
+    await route.patch({ data: updatedItems, reason });
+    return updatedItems;
   }
 
   /**
@@ -488,138 +519,93 @@ class Util {
    * @private
    */
   static basename(path, ext) {
-    let res = parse(path);
+    const res = parse(path);
     return ext && res.ext.startsWith(ext) ? res.name : res.base.split('?')[0];
-  }
-
-  /**
-   * Transforms a snowflake from a decimal string to a bit string.
-   * @param  {Snowflake} num Snowflake to be transformed
-   * @returns {string}
-   * @private
-   */
-  static idToBinary(num) {
-    let bin = '';
-    let high = parseInt(num.slice(0, -10)) || 0;
-    let low = parseInt(num.slice(-10));
-    while (low > 0 || high > 0) {
-      bin = String(low & 1) + bin;
-      low = Math.floor(low / 2);
-      if (high > 0) {
-        low += 5000000000 * (high % 2);
-        high = Math.floor(high / 2);
-      }
-    }
-    return bin;
-  }
-
-  /**
-   * Transforms a snowflake from a bit string to a decimal string.
-   * @param  {string} num Bit string to be transformed
-   * @returns {Snowflake}
-   * @private
-   */
-  static binaryToID(num) {
-    let dec = '';
-
-    while (num.length > 50) {
-      const high = parseInt(num.slice(0, -32), 2);
-      const low = parseInt((high % 10).toString(2) + num.slice(-32), 2);
-
-      dec = (low % 10).toString() + dec;
-      num =
-        Math.floor(high / 10).toString(2) +
-        Math.floor(low / 10)
-          .toString(2)
-          .padStart(32, '0');
-    }
-
-    num = parseInt(num, 2);
-    while (num > 0) {
-      dec = (num % 10).toString() + dec;
-      num = Math.floor(num / 10);
-    }
-
-    return dec;
   }
 
   /**
    * Breaks user, role and everyone/here mentions by adding a zero width space after every @ character
    * @param {string} str The string to sanitize
    * @returns {string}
+   * @deprecated Use {@link BaseMessageOptions#allowedMentions} instead.
    */
   static removeMentions(str) {
-    return str.replace(/@/g, '@\u200b');
+    if (!deprecationEmittedForRemoveMentions) {
+      process.emitWarning(
+        'The Util.removeMentions method is deprecated. Use MessageOptions#allowedMentions instead.',
+        'DeprecationWarning',
+      );
+
+      deprecationEmittedForRemoveMentions = true;
+    }
+
+    return Util._removeMentions(str);
+  }
+
+  static _removeMentions(str) {
+    return str.replaceAll('@', '@\u200b');
   }
 
   /**
    * The content to have all mentions replaced by the equivalent text.
+   * <warn>When {@link Util.removeMentions} is removed, this method will no longer sanitize mentions.
+   * Use {@link BaseMessageOptions#allowedMentions} instead to prevent mentions when sending a message.</warn>
    * @param {string} str The string to be converted
-   * @param {Message} message The message object to reference
+   * @param {TextBasedChannels} channel The channel the string was sent in
    * @returns {string}
    */
-  static cleanContent(str, message) {
+  static cleanContent(str, channel) {
     str = str
       .replace(/<@!?[0-9]+>/g, input => {
         const id = input.replace(/<|!|>|@/g, '');
-        if (message.channel.type === 'dm') {
-          const user = message.client.users.cache.get(id);
-          return user ? Util.removeMentions(`@${user.username}`) : input;
+        if (channel.type === 'DM') {
+          const user = channel.client.users.cache.get(id);
+          return user ? Util._removeMentions(`@${user.username}`) : input;
         }
 
-        const member = message.channel.guild.members.cache.get(id);
+        const member = channel.guild.members.cache.get(id);
         if (member) {
-          return Util.removeMentions(`@${member.displayName}`);
+          return Util._removeMentions(`@${member.displayName}`);
         } else {
-          const user = message.client.users.cache.get(id);
-          return user ? Util.removeMentions(`@${user.username}`) : input;
+          const user = channel.client.users.cache.get(id);
+          return user ? Util._removeMentions(`@${user.username}`) : input;
         }
       })
       .replace(/<#[0-9]+>/g, input => {
-        const channel = message.client.channels.cache.get(input.replace(/<|#|>/g, ''));
-        return channel ? `#${channel.name}` : input;
+        const mentionedChannel = channel.client.channels.cache.get(input.replace(/<|#|>/g, ''));
+        return mentionedChannel ? `#${mentionedChannel.name}` : input;
       })
       .replace(/<@&[0-9]+>/g, input => {
-        if (message.channel.type === 'dm') return input;
-        const role = message.guild.roles.cache.get(input.replace(/<|@|>|&/g, ''));
+        if (channel.type === 'DM') return input;
+        const role = channel.guild.roles.cache.get(input.replace(/<|@|>|&/g, ''));
         return role ? `@${role.name}` : input;
       });
-    if (message.client.options.disableMentions === 'everyone') {
-      str = str.replace(/@([^<>@ ]*)/gmsu, (match, target) => {
-        if (target.match(/^[&!]?\d+$/)) {
-          return `@${target}`;
-        } else {
-          return `@\u200b${target}`;
-        }
-      });
-    }
-    if (message.client.options.disableMentions === 'all') {
-      return Util.removeMentions(str);
-    } else {
-      return str;
-    }
+    return str;
   }
 
   /**
-   * The content to put in a codeblock with all codeblock fences replaced by the equivalent backticks.
+   * The content to put in a code block with all code block fences replaced by the equivalent backticks.
    * @param {string} text The string to be converted
    * @returns {string}
    */
   static cleanCodeBlockContent(text) {
-    return text.replace(/```/g, '`\u200b``');
+    return text.replaceAll('```', '`\u200b``');
   }
 
   /**
-   * Creates a Promise that resolves after a specified duration.
-   * @param {number} ms How long to wait before resolving (in milliseconds)
-   * @returns {Promise<void>}
-   * @private
+   * Creates a sweep filter that sweeps archived threads
+   * @param {number} [lifetime=14400] How long a thread has to be archived to be valid for sweeping
+   * @deprecated When not using with `makeCache` use `Sweepers.archivedThreadSweepFilter` instead
+   * @returns {SweepFilter}
    */
-  static delayFor(ms) {
-    return new Promise(resolve => {
-      setTimeout(resolve, ms);
-    });
+  static archivedThreadSweepFilter(lifetime = 14400) {
+    const filter = require('./Sweepers').archivedThreadSweepFilter(lifetime);
+    filter.isDefault = true;
+    return filter;
   }
 }
 
 module.exports = Util;
+
+// Fixes Circular
+const GuildChannel = require('../structures/GuildChannel');

@@ -1,71 +1,33 @@
 'use strict';
 
-const GuildChannel = require('./GuildChannel');
-const { Error } = require('../errors');
-const Collection = require('../util/Collection');
-const { browser } = require('../util/Constants');
+const process = require('node:process');
+const BaseGuildVoiceChannel = require('./BaseGuildVoiceChannel');
 const Permissions = require('../util/Permissions');
+
+let deprecationEmittedForEditable = false;
 
 /**
  * Represents a guild voice channel on Discord.
- * @extends {GuildChannel}
+ * @extends {BaseGuildVoiceChannel}
  */
-class VoiceChannel extends GuildChannel {
-  _patch(data) {
-    super._patch(data);
-    /**
-     * The bitrate of this voice channel
-     * @type {number}
-     */
-    this.bitrate = data.bitrate;
-
-    /**
-     * The maximum amount of users allowed in this channel - 0 means unlimited.
-     * @type {number}
-     */
-    this.userLimit = data.user_limit;
-  }
-
-  /**
-   * The members in this voice channel
-   * @type {Collection<Snowflake, GuildMember>}
-   * @readonly
-   */
-  get members() {
-    const coll = new Collection();
-    for (const state of this.guild.voiceStates.cache.values()) {
-      if (state.channelID === this.id && state.member) {
-        coll.set(state.id, state.member);
-      }
-    }
-    return coll;
-  }
-
-  /**
-   * Checks if the voice channel is full
-   * @type {boolean}
-   * @readonly
-   */
-  get full() {
-    return this.userLimit > 0 && this.members.size >= this.userLimit;
-  }
-
-  /**
-   * Whether the channel is deletable by the client user
-   * @type {boolean}
-   * @readonly
-   */
-  get deletable() {
-    return super.deletable && this.permissionsFor(this.client.user).has(Permissions.FLAGS.CONNECT, false);
-  }
-
+class VoiceChannel extends BaseGuildVoiceChannel {
   /**
    * Whether the channel is editable by the client user
    * @type {boolean}
    * @readonly
+   * @deprecated Use {@link VoiceChannel#manageable} instead
    */
   get editable() {
-    return this.manageable && this.permissionsFor(this.client.user).has(Permissions.FLAGS.CONNECT, false);
+    if (!deprecationEmittedForEditable) {
+      process.emitWarning(
+        'The VoiceChannel#editable getter is deprecated. Use VoiceChannel#manageable instead.',
+        'DeprecationWarning',
+      );
+
+      deprecationEmittedForEditable = true;
+    }
+
+    return this.manageable;
   }
 
   /**
@@ -74,9 +36,7 @@ class VoiceChannel extends GuildChannel {
    * @readonly
    */
   get joinable() {
-    if (browser) return false;
-    if (!this.viewable) return false;
-    if (!this.permissionsFor(this.client.user).has(Permissions.FLAGS.CONNECT, false)) return false;
+    if (!super.joinable) return false;
     if (this.full && !this.permissionsFor(this.client.user).has(Permissions.FLAGS.MOVE_MEMBERS, false)) return false;
     return true;
   }
@@ -87,7 +47,14 @@ class VoiceChannel extends GuildChannel {
    * @readonly
    */
   get speakable() {
-    return this.permissionsFor(this.client.user).has(Permissions.FLAGS.SPEAK, false);
+    const permissions = this.permissionsFor(this.client.user);
+    if (!permissions) return false;
+    // This flag allows speaking even if timed out
+    if (permissions.has(Permissions.FLAGS.ADMINISTRATOR, false)) return true;
+
+    return (
+      this.guild.me.communicationDisabledUntilTimestamp < Date.now() && permissions.has(Permissions.FLAGS.SPEAK, false)
+    );
   }
 
   /**
@@ -97,7 +64,7 @@ class VoiceChannel extends GuildChannel {
    * @returns {Promise<VoiceChannel>}
    * @example
    * // Set the bitrate of a voice channel
-   * voiceChannel.setBitrate(48000)
+   * voiceChannel.setBitrate(48_000)
    *   .then(vc => console.log(`Set bitrate to ${vc.bitrate}bps for ${vc.name}`))
    *   .catch(console.error);
    */
@@ -121,30 +88,17 @@ class VoiceChannel extends GuildChannel {
   }
 
   /**
-   * Attempts to join this voice channel.
-   * @returns {Promise<VoiceConnection>}
+   * Sets the RTC region of the channel.
+   * @name VoiceChannel#setRTCRegion
+   * @param {?string} region The new region of the channel. Set to `null` to remove a specific region for the channel
+   * @returns {Promise<VoiceChannel>}
    * @example
-   * // Join a voice channel
-   * voiceChannel.join()
-   *   .then(connection => console.log('Connected!'))
-   *   .catch(console.error);
-   */
-  join() {
-    if (browser) return Promise.reject(new Error('VOICE_NO_BROWSER'));
-    return this.client.voice.joinChannel(this);
-  }
-
-  /**
-   * Leaves this voice channel.
+   * // Set the RTC region to europe
+   * voiceChannel.setRTCRegion('europe');
    * @example
-   * // Leave a voice channel
-   * voiceChannel.leave();
+   * // Remove a fixed region for this channel - let Discord decide automatically
+   * voiceChannel.setRTCRegion(null);
    */
-  leave() {
-    if (browser) return;
-    const connection = this.client.voice.connections.get(this.guild.id);
-    if (connection && connection.channel.id === this.id) connection.disconnect();
-  }
 }
 
 module.exports = VoiceChannel;

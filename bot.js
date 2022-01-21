@@ -1,12 +1,11 @@
 const fs = require('fs');
-const Discord = require('discord.js');
-const client = new Discord.Client();
+const { Client, Collection, Intents } = require('discord.js');
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 const mongoose = require('mongoose')
 require('dotenv').config();
-client.commands = new Discord.Collection();
+client.commands = new Collection();
 const { AutoPoster } = require('topgg-autoposter')
 const poster = AutoPoster(process.env.TOPGG_TOKEN, client)
-require('discord-buttons')(client);
 
 // Connecting to database
 mongoose.connect(process.env.MONGODB_URI, {
@@ -31,15 +30,15 @@ poster.on('posted', (stats) => {
 
 // Set bot activity
 client.on('ready', () => {
-	let server_count = client.guilds.cache.size * 3;
+	let serverCount = client.guilds.cache.size * 3;
 	console.log(`Logged in as ${client.user.tag}!`);
-	client.user.setActivity(`${server_count} servers | v!help`, { type: "WATCHING" })
-	// let activities = [ `${client.guilds.cache.size} servers`, `${client.channels.cache.size} chnls`, `${client.users.cache.size} users` ], i = 0;
+	client.user.setActivity(`${serverCount} servers | v!help`, { type: "WATCHING" });
+	// let activities = [ `${serverCount} servers`, `${client.users.cache.size} users` ], i = 0;
 	// setInterval(() => client.user.setActivity(`${activities[i ++ % activities.length]} | v!help`, { type: "WATCHING"}),`5000`)
 });
 
 // Checking messages and executing commands
-client.on('message', async message => {
+client.on('messageCreate', async message => {
 	if (!message.content.startsWith(process.env.PREFIX) || message.author.bot) return; // Return nothing if there is no prefix or if the bot is messaging
 
 	const args = message.content.slice(process.env.PREFIX.length).trim().split(/ +/);

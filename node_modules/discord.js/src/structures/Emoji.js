@@ -1,7 +1,24 @@
 'use strict';
 
+const process = require('node:process');
 const Base = require('./Base');
-const Snowflake = require('../util/Snowflake');
+const SnowflakeUtil = require('../util/SnowflakeUtil');
+
+/**
+ * @type {WeakSet<Emoji>}
+ * @private
+ * @internal
+ */
+const deletedEmojis = new WeakSet();
+let deprecationEmittedForDeleted = false;
+
+/**
+ * Represents raw emoji data from the API
+ * @typedef {APIEmoji} RawEmoji
+ * @property {?Snowflake} id The emoji's id
+ * @property {?string} name The emoji's name
+ * @property {?boolean} animated Whether the emoji is animated
+ */
 
 /**
  * Represents an emoji, see {@link GuildEmoji} and {@link ReactionEmoji}.
@@ -11,28 +28,52 @@ class Emoji extends Base {
   constructor(client, emoji) {
     super(client);
     /**
-     * Whether this emoji is animated
-     * @type {boolean}
+     * Whether or not the emoji is animated
+     * @type {?boolean}
      */
-    this.animated = emoji.animated;
+    this.animated = emoji.animated ?? null;
 
     /**
-     * The name of this emoji
-     * @type {string}
+     * The emoji's name
+     * @type {?string}
      */
-    this.name = emoji.name;
+    this.name = emoji.name ?? null;
 
     /**
-     * The ID of this emoji
+     * The emoji's id
      * @type {?Snowflake}
      */
     this.id = emoji.id;
+  }
 
-    /**
-     * Whether this emoji has been deleted
-     * @type {boolean}
-     */
-    this.deleted = false;
+  /**
+   * Whether or not the structure has been deleted
+   * @type {boolean}
+   * @deprecated This will be removed in the next major version, see https://github.com/discordjs/discord.js/issues/7091
+   */
+  get deleted() {
+    if (!deprecationEmittedForDeleted) {
+      deprecationEmittedForDeleted = true;
+      process.emitWarning(
+        'Emoji#deleted is deprecated, see https://github.com/discordjs/discord.js/issues/7091.',
+        'DeprecationWarning',
+      );
+    }
+
+    return deletedEmojis.has(this);
+  }
+
+  set deleted(value) {
+    if (!deprecationEmittedForDeleted) {
+      deprecationEmittedForDeleted = true;
+      process.emitWarning(
+        'Emoji#deleted is deprecated, see https://github.com/discordjs/discord.js/issues/7091.',
+        'DeprecationWarning',
+      );
+    }
+
+    if (value) deletedEmojis.add(this);
+    else deletedEmojis.delete(this);
   }
 
   /**
@@ -46,13 +87,12 @@ class Emoji extends Base {
   }
 
   /**
-   * The URL to the emoji file if its a custom emoji
+   * The URL to the emoji file if it's a custom emoji
    * @type {?string}
    * @readonly
    */
   get url() {
-    if (!this.id) return null;
-    return this.client.rest.cdn.Emoji(this.id, this.animated ? 'gif' : 'png');
+    return this.id && this.client.rest.cdn.Emoji(this.id, this.animated ? 'gif' : 'png');
   }
 
   /**
@@ -61,8 +101,7 @@ class Emoji extends Base {
    * @readonly
    */
   get createdTimestamp() {
-    if (!this.id) return null;
-    return Snowflake.deconstruct(this.id).timestamp;
+    return this.id && SnowflakeUtil.timestampFrom(this.id);
   }
 
   /**
@@ -71,8 +110,7 @@ class Emoji extends Base {
    * @readonly
    */
   get createdAt() {
-    if (!this.id) return null;
-    return new Date(this.createdTimestamp);
+    return this.id && new Date(this.createdTimestamp);
   }
 
   /**
@@ -82,7 +120,7 @@ class Emoji extends Base {
    * @example
    * // Send a custom emoji from a guild:
    * const emoji = guild.emojis.cache.first();
-   * msg.reply(`Hello! ${emoji}`);
+   * msg.channel.send(`Hello! ${emoji}`);
    * @example
    * // Send the emoji used in a reaction to the channel the reaction is part of
    * reaction.message.channel.send(`The emoji used was: ${reaction.emoji}`);
@@ -93,7 +131,7 @@ class Emoji extends Base {
 
   toJSON() {
     return super.toJSON({
-      guild: 'guildID',
+      guild: 'guildId',
       createdTimestamp: true,
       url: true,
       identifier: true,
@@ -101,4 +139,10 @@ class Emoji extends Base {
   }
 }
 
-module.exports = Emoji;
+exports.Emoji = Emoji;
+exports.deletedEmojis = deletedEmojis;
+
+/**
+ * @external APIEmoji
+ * @see {@link https://discord.com/developers/docs/resources/emoji#emoji-object}
+ */

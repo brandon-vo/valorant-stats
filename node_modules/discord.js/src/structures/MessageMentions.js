@@ -1,6 +1,6 @@
 'use strict';
 
-const Collection = require('../util/Collection');
+const { Collection } = require('@discordjs/collection');
 const { ChannelTypes } = require('../util/Constants');
 const Util = require('../util/Util');
 
@@ -8,7 +8,7 @@ const Util = require('../util/Util');
  * Keeps track of mentions in a {@link Message}.
  */
 class MessageMentions {
-  constructor(message, users, roles, everyone, crosspostedChannels) {
+  constructor(message, users, roles, everyone, crosspostedChannels, repliedUser) {
     /**
      * The client the message is from
      * @type {Client}
@@ -49,9 +49,9 @@ class MessageMentions {
         this.users = new Collection();
         for (const mention of users) {
           if (mention.member && message.guild) {
-            message.guild.members.add(Object.assign(mention.member, { user: mention }));
+            message.guild.members._add(Object.assign(mention.member, { user: mention }));
           }
-          const user = message.client.users.add(mention);
+          const user = message.client.users._add(mention);
           this.users.set(user.id, user);
         }
       }
@@ -59,18 +59,19 @@ class MessageMentions {
       this.users = new Collection();
     }
 
-    if (roles) {
-      if (roles instanceof Collection) {
-        /**
-         * Any roles that were mentioned
-         * <info>Order as received from the API, not as they appear in the message content</info>
-         * @type {Collection<Snowflake, Role>}
-         */
-        this.roles = new Collection(roles);
-      } else {
-        this.roles = new Collection();
+    if (roles instanceof Collection) {
+      /**
+       * Any roles that were mentioned
+       * <info>Order as received from the API, not as they appear in the message content</info>
+       * @type {Collection<Snowflake, Role>}
+       */
+      this.roles = new Collection(roles);
+    } else if (roles) {
+      this.roles = new Collection();
+      const guild = message.guild;
+      if (guild) {
         for (const mention of roles) {
-          const role = message.channel.guild.roles.cache.get(mention);
+          const role = guild.roles.cache.get(mention);
           if (role) this.roles.set(role.id, role);
         }
       }
@@ -87,7 +88,7 @@ class MessageMentions {
 
     /**
      * Cached channels for {@link MessageMentions#channels}
-     * @type {?Collection<Snowflake, GuildChannel>}
+     * @type {?Collection<Snowflake, Channel>}
      * @private
      */
     this._channels = null;
@@ -95,10 +96,10 @@ class MessageMentions {
     /**
      * Crossposted channel data.
      * @typedef {Object} CrosspostedChannel
-     * @property {string} channelID ID of the mentioned channel
-     * @property {string} guildID ID of the guild that has the channel
-     * @property {string} type Type of the channel
-     * @property {string} name The name of the channel
+     * @property {Snowflake} channelId The mentioned channel's id
+     * @property {Snowflake} guildId The id of the guild that has the channel
+     * @property {ChannelType} type The channel's type
+     * @property {string} name The channel's name
      */
 
     if (crosspostedChannels) {
@@ -115,9 +116,9 @@ class MessageMentions {
         for (const d of crosspostedChannels) {
           const type = channelTypes[d.type];
           this.crosspostedChannels.set(d.id, {
-            channelID: d.id,
-            guildID: d.guild_id,
-            type: type ? type.toLowerCase() : 'unknown',
+            channelId: d.id,
+            guildId: d.guild_id,
+            type: type ?? 'UNKNOWN',
             name: d.name,
           });
         }
@@ -125,10 +126,16 @@ class MessageMentions {
     } else {
       this.crosspostedChannels = new Collection();
     }
+
+    /**
+     * The author of the message that this message is a reply to
+     * @type {?User}
+     */
+    this.repliedUser = repliedUser ? this.client.users._add(repliedUser) : null;
   }
 
   /**
-   * Any members that were mentioned (only in {@link TextChannel}s)
+   * Any members that were mentioned (only in {@link Guild}s)
    * <info>Order as received from the API, not as they appear in the message content</info>
    * @type {?Collection<Snowflake, GuildMember>}
    * @readonly
@@ -138,7 +145,7 @@ class MessageMentions {
     if (!this.guild) return null;
     this._members = new Collection();
     this.users.forEach(user => {
-      const member = this.guild.member(user);
+      const member = this.guild.members.resolve(user);
       if (member) this._members.set(member.user.id, member);
     });
     return this._members;
@@ -147,7 +154,7 @@ class MessageMentions {
   /**
    * Any channels that were mentioned
    * <info>Order as they appear first in the message content</info>
-   * @type {Collection<Snowflake, GuildChannel>}
+   * @type {Collection<Snowflake, Channel>}
    * @readonly
    */
   get channels() {
@@ -162,29 +169,32 @@ class MessageMentions {
   }
 
   /**
+   * Options used to check for a mention.
+   * @typedef {Object} MessageMentionsHasOptions
+   * @property {boolean} [ignoreDirect=false] Whether to ignore direct mentions to the item
+   * @property {boolean} [ignoreRoles=false] Whether to ignore role mentions to a guild member
+   * @property {boolean} [ignoreEveryone=false] Whether to ignore everyone/here mentions
+   */
+
+  /**
    * Checks if a user, guild member, role, or channel is mentioned.
-   * Takes into account user mentions, role mentions, and @everyone/@here mentions.
-   * @param {UserResolvable|RoleResolvable|GuildChannelResolvable} data User/Role/Channel to check
-   * @param {Object} [options] Options
-   * @param {boolean} [options.ignoreDirect=false] - Whether to ignore direct mentions to the item
-   * @param {boolean} [options.ignoreRoles=false] - Whether to ignore role mentions to a guild member
-   * @param {boolean} [options.ignoreEveryone=false] - Whether to ignore everyone/here mentions
+   * Takes into account user mentions, role mentions, and `@everyone`/`@here` mentions.
+   * @param {UserResolvable|RoleResolvable|ChannelResolvable} data The User/Role/Channel to check for
+   * @param {MessageMentionsHasOptions} [options] The options for the check
    * @returns {boolean}
    */
   has(data, { ignoreDirect = false, ignoreRoles = false, ignoreEveryone = false } = {}) {
     if (!ignoreEveryone && this.everyone) return true;
-    const GuildMember = require('./GuildMember');
+    const { GuildMember } = require('./GuildMember');
     if (!ignoreRoles && data instanceof GuildMember) {
       for (const role of this.roles.values()) if (data.roles.cache.has(role.id)) return true;
     }
 
     if (!ignoreDirect) {
       const id =
-        this.client.users.resolveID(data) ||
-        (this.guild && this.guild.roles.resolveID(data)) ||
-        this.client.channels.resolveID(data);
+        this.guild?.roles.resolveId(data) ?? this.client.channels.resolveId(data) ?? this.client.users.resolveId(data);
 
-      return this.users.has(id) || this.channels.has(id) || this.roles.has(id);
+      return typeof id === 'string' && (this.users.has(id) || this.channels.has(id) || this.roles.has(id));
     }
 
     return false;

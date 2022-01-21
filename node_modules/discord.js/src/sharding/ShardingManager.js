@@ -1,11 +1,13 @@
 'use strict';
 
-const EventEmitter = require('events');
-const fs = require('fs');
-const path = require('path');
+const EventEmitter = require('node:events');
+const fs = require('node:fs');
+const path = require('node:path');
+const process = require('node:process');
+const { setTimeout: sleep } = require('node:timers/promises');
+const { Collection } = require('@discordjs/collection');
 const Shard = require('./Shard');
 const { Error, TypeError, RangeError } = require('../errors');
-const Collection = require('../util/Collection');
 const Util = require('../util/Util');
 
 /**
@@ -19,23 +21,29 @@ const Util = require('../util/Util');
  */
 class ShardingManager extends EventEmitter {
   /**
-   * The mode to spawn shards with for a {@link ShardingManager}: either "process" to use child processes, or
-   * "worker" to use [Worker threads](https://nodejs.org/api/worker_threads.html).
-   * @typedef {Object} ShardingManagerMode
+   * The mode to spawn shards with for a {@link ShardingManager}. Can be either one of:
+   * * 'process' to use child processes
+   * * 'worker' to use [Worker threads](https://nodejs.org/api/worker_threads.html)
+   * @typedef {string} ShardingManagerMode
+   */
+
+  /**
+   * The options to spawn shards with for a {@link ShardingManager}.
+   * @typedef {Object} ShardingManagerOptions
+   * @property {string|number} [totalShards='auto'] Number of total shards of all shard managers or "auto"
+   * @property {string|number[]} [shardList='auto'] List of shards to spawn or "auto"
+   * @property {ShardingManagerMode} [mode='process'] Which mode to use for shards
+   * @property {boolean} [respawn=true] Whether shards should automatically respawn upon exiting
+   * @property {string[]} [shardArgs=[]] Arguments to pass to the shard script when spawning
+   * (only available when mode is set to 'process')
+   * @property {string} [execArgv=[]] Arguments to pass to the shard script executable when spawning
+   * (only available when mode is set to 'process')
+   * @property {string} [token] Token to use for automatic shard count and passing to shards
    */
 
   /**
    * @param {string} file Path to your shard script file
-   * @param {Object} [options] Options for the sharding manager
-   * @param {string|number} [options.totalShards='auto'] Number of total shards of all shard managers or "auto"
-   * @param {string|number[]} [options.shardList='auto'] List of shards to spawn or "auto"
-   * @param {ShardingManagerMode} [options.mode='process'] Which mode to use for shards
-   * @param {boolean} [options.respawn=true] Whether shards should automatically respawn upon exiting
-   * @param {string[]} [options.shardArgs=[]] Arguments to pass to the shard script when spawning
-   * (only available when using the `process` mode)
-   * @param {string[]} [options.execArgv=[]] Arguments to pass to the shard script executable when spawning
-   * (only available when using the `process` mode)
-   * @param {string} [options.token] Token to use for automatic shard count and passing to shards
+   * @param {ShardingManagerOptions} [options] Options for the sharding manager
    */
   constructor(file, options = {}) {
     super();
@@ -65,16 +73,16 @@ class ShardingManager extends EventEmitter {
      * List of shards this sharding manager spawns
      * @type {string|number[]}
      */
-    this.shardList = options.shardList || 'auto';
+    this.shardList = options.shardList ?? 'auto';
     if (this.shardList !== 'auto') {
       if (!Array.isArray(this.shardList)) {
         throw new TypeError('CLIENT_INVALID_OPTION', 'shardList', 'an array.');
       }
       this.shardList = [...new Set(this.shardList)];
-      if (this.shardList.length < 1) throw new RangeError('CLIENT_INVALID_OPTION', 'shardList', 'at least 1 ID.');
+      if (this.shardList.length < 1) throw new RangeError('CLIENT_INVALID_OPTION', 'shardList', 'at least 1 id.');
       if (
         this.shardList.some(
-          shardID => typeof shardID !== 'number' || isNaN(shardID) || !Number.isInteger(shardID) || shardID < 0,
+          shardId => typeof shardId !== 'number' || isNaN(shardId) || !Number.isInteger(shardId) || shardId < 0,
         )
       ) {
         throw new TypeError('CLIENT_INVALID_OPTION', 'shardList', 'an array of positive integers.');
@@ -127,7 +135,7 @@ class ShardingManager extends EventEmitter {
      * Token to use for obtaining the automatic shard count, and passing to shards
      * @type {?string}
      */
-    this.token = options.token ? options.token.replace(/^Bot\s*/i, '') : null;
+    this.token = options.token?.replace(/^Bot\s*/i, '') ?? null;
 
     /**
      * A collection of shards that this manager has spawned
@@ -143,7 +151,7 @@ class ShardingManager extends EventEmitter {
   /**
    * Creates a single shard.
    * <warn>Using this method is usually not necessary if you use the spawn method.</warn>
-   * @param {number} [id=this.shards.size] ID of the shard to create
+   * @param {number} [id=this.shards.size] Id of the shard to create
    * <info>This is usually not necessary to manually specify.</info>
    * @returns {Shard} Note that the created shard needs to be explicitly spawned using its spawn method.
    */
@@ -160,14 +168,19 @@ class ShardingManager extends EventEmitter {
   }
 
   /**
+   * Options used to spawn multiple shards.
+   * @typedef {Object} MultipleShardSpawnOptions
+   * @property {number|string} [amount=this.totalShards] Number of shards to spawn
+   * @property {number} [delay=5500] How long to wait in between spawning each shard (in milliseconds)
+   * @property {number} [timeout=30000] The amount in milliseconds to wait until the {@link Client} has become ready
+   */
+
+  /**
    * Spawns multiple shards.
-   * @param {number|string} [amount=this.totalShards] Number of shards to spawn
-   * @param {number} [delay=5500] How long to wait in between spawning each shard (in milliseconds)
-   * @param {number} [spawnTimeout=30000] The amount in milliseconds to wait until the {@link Client} has become ready
-   * before resolving. (-1 or Infinity for no wait)
+   * @param {MultipleShardSpawnOptions} [options] Options for spawning shards
    * @returns {Promise<Collection<number, Shard>>}
    */
-  async spawn(amount = this.totalShards, delay = 5500, spawnTimeout) {
+  async spawn({ amount = this.totalShards, delay = 5500, timeout = 30_000 } = {}) {
     // Obtain/verify the number of shards to spawn
     if (amount === 'auto') {
       amount = await Util.fetchRecommendedShards(this.token);
@@ -190,20 +203,20 @@ class ShardingManager extends EventEmitter {
       this.totalShards = amount;
     }
 
-    if (this.shardList.some(shardID => shardID >= amount)) {
+    if (this.shardList.some(shardId => shardId >= amount)) {
       throw new RangeError(
         'CLIENT_INVALID_OPTION',
         'Amount of shards',
-        'bigger than the highest shardID in the shardList option.',
+        'bigger than the highest shardId in the shardList option.',
       );
     }
 
     // Spawn the shards
-    for (const shardID of this.shardList) {
+    for (const shardId of this.shardList) {
       const promises = [];
-      const shard = this.createShard(shardID);
-      promises.push(shard.spawn(spawnTimeout));
-      if (delay > 0 && this.shards.size !== this.shardList.length) promises.push(Util.delayFor(delay));
+      const shard = this.createShard(shardId);
+      promises.push(shard.spawn(timeout));
+      if (delay > 0 && this.shards.size !== this.shardList.length) promises.push(sleep(delay));
       await Promise.all(promises); // eslint-disable-line no-await-in-loop
     }
 
@@ -222,20 +235,28 @@ class ShardingManager extends EventEmitter {
   }
 
   /**
-   * Evaluates a script on all shards, or a given shard, in the context of the {@link Client}s.
-   * @param {string} script JavaScript to run on each shard
-   * @param {number} [shard] Shard to run on, all if undefined
-   * @returns {Promise<*>|Promise<Array<*>>} Results of the script execution
+   * Options for {@link ShardingManager#broadcastEval} and {@link ShardClientUtil#broadcastEval}.
+   * @typedef {Object} BroadcastEvalOptions
+   * @property {number} [shard] Shard to run script on, all if undefined
+   * @property {*} [context] The JSON-serializable values to call the script with
    */
-  broadcastEval(script, shard) {
-    return this._performOnShards('eval', [script], shard);
+
+  /**
+   * Evaluates a script on all shards, or a given shard, in the context of the {@link Client}s.
+   * @param {Function} script JavaScript to run on each shard
+   * @param {BroadcastEvalOptions} [options={}] The options for the broadcast
+   * @returns {Promise<*|Array<*>>} Results of the script execution
+   */
+  broadcastEval(script, options = {}) {
+    if (typeof script !== 'function') return Promise.reject(new TypeError('SHARDING_INVALID_EVAL_BROADCAST'));
+    return this._performOnShards('eval', [`(${script})(this, ${JSON.stringify(options.context)})`], options.shard);
   }
 
   /**
    * Fetches a client property value of each shard, or a given shard.
    * @param {string} prop Name of the client property to get, using periods for nesting
    * @param {number} [shard] Shard to fetch property from, all if undefined
-   * @returns {Promise<*>|Promise<Array<*>>}
+   * @returns {Promise<*|Array<*>>}
    * @example
    * manager.fetchClientValues('guilds.cache.size')
    *   .then(results => console.log(`${results.reduce((prev, val) => prev + val, 0)} total guilds`))
@@ -250,17 +271,18 @@ class ShardingManager extends EventEmitter {
    * @param {string} method Method name to run on each shard
    * @param {Array<*>} args Arguments to pass through to the method call
    * @param {number} [shard] Shard to run on, all if undefined
-   * @returns {Promise<*>|Promise<Array<*>>} Results of the method execution
+   * @returns {Promise<*|Array<*>>} Results of the method execution
    * @private
    */
   _performOnShards(method, args, shard) {
     if (this.shards.size === 0) return Promise.reject(new Error('SHARDING_NO_SHARDS'));
-    if (this.shards.size !== this.shardList.length) return Promise.reject(new Error('SHARDING_IN_PROCESS'));
 
     if (typeof shard === 'number') {
       if (this.shards.has(shard)) return this.shards.get(shard)[method](...args);
       return Promise.reject(new Error('SHARDING_SHARD_NOT_FOUND', shard));
     }
+
+    if (this.shards.size !== this.shardList.length) return Promise.reject(new Error('SHARDING_IN_PROCESS'));
 
     const promises = [];
     for (const sh of this.shards.values()) promises.push(sh[method](...args));
@@ -268,19 +290,25 @@ class ShardingManager extends EventEmitter {
   }
 
   /**
-   * Kills all running shards and respawns them.
-   * @param {number} [shardDelay=5000] How long to wait between shards (in milliseconds)
-   * @param {number} [respawnDelay=500] How long to wait between killing a shard's process and restarting it
+   * Options used to respawn all shards.
+   * @typedef {Object} MultipleShardRespawnOptions
+   * @property {number} [shardDelay=5000] How long to wait between shards (in milliseconds)
+   * @property {number} [respawnDelay=500] How long to wait between killing a shard's process and restarting it
    * (in milliseconds)
-   * @param {number} [spawnTimeout=30000] The amount in milliseconds to wait for a shard to become ready before
-   * continuing to another. (-1 or Infinity for no wait)
-   * @returns {Promise<Collection<string, Shard>>}
+   * @property {number} [timeout=30000] The amount in milliseconds to wait for a shard to become ready before
+   * continuing to another (`-1` or `Infinity` for no wait)
    */
-  async respawnAll(shardDelay = 5000, respawnDelay = 500, spawnTimeout) {
+
+  /**
+   * Kills all running shards and respawns them.
+   * @param {MultipleShardRespawnOptions} [options] Options for respawning shards
+   * @returns {Promise<Collection<number, Shard>>}
+   */
+  async respawnAll({ shardDelay = 5_000, respawnDelay = 500, timeout = 30_000 } = {}) {
     let s = 0;
     for (const shard of this.shards.values()) {
-      const promises = [shard.respawn(respawnDelay, spawnTimeout)];
-      if (++s < this.shards.size && shardDelay > 0) promises.push(Util.delayFor(shardDelay));
+      const promises = [shard.respawn({ delay: respawnDelay, timeout })];
+      if (++s < this.shards.size && shardDelay > 0) promises.push(sleep(shardDelay));
       await Promise.all(promises); // eslint-disable-line no-await-in-loop
     }
     return this.shards;

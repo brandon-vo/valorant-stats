@@ -15,7 +15,7 @@ const { PartialTypes } = require('../../util/Constants');
 */
 
 class MessageReactionAdd extends Action {
-  handle(data) {
+  handle(data, fromStructure = false) {
     if (!data.emoji) return false;
 
     const user = this.getUserFromMember(data);
@@ -23,23 +23,23 @@ class MessageReactionAdd extends Action {
 
     // Verify channel
     const channel = this.getChannel(data);
-    if (!channel || channel.type === 'voice') return false;
+    if (!channel || !channel.isText()) return false;
 
     // Verify message
     const message = this.getMessage(data, channel);
     if (!message) return false;
 
     // Verify reaction
-    if (message.partial && !this.client.options.partials.includes(PartialTypes.REACTION)) return false;
-    const existing = message.reactions.cache.get(data.emoji.id || data.emoji.name);
-    if (existing && existing.users.cache.has(user.id)) return { message, reaction: existing, user };
-    const reaction = message.reactions.add({
+    const includePartial = this.client.options.partials.includes(PartialTypes.REACTION);
+    if (message.partial && !includePartial) return false;
+    const reaction = message.reactions._add({
       emoji: data.emoji,
       count: message.partial ? null : 0,
       me: user.id === this.client.user.id,
     });
     if (!reaction) return false;
     reaction._add(user);
+    if (fromStructure) return { message, reaction, user };
     /**
      * Emitted whenever a reaction is added to a cached message.
      * @event Client#messageReactionAdd

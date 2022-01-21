@@ -3,10 +3,8 @@
 const Base = require('./Base');
 const TextBasedChannel = require('./interfaces/TextBasedChannel');
 const { Error } = require('../errors');
-const Snowflake = require('../util/Snowflake');
+const SnowflakeUtil = require('../util/SnowflakeUtil');
 const UserFlags = require('../util/UserFlags');
-
-let Structures;
 
 /**
  * Represents a user on Discord.
@@ -14,21 +12,19 @@ let Structures;
  * @extends {Base}
  */
 class User extends Base {
-  /**
-   * @param {Client} client The instantiating client
-   * @param {Object} data The data for the user
-   */
   constructor(client, data) {
     super(client);
 
     /**
-     * The ID of the user
+     * The user's id
      * @type {Snowflake}
      */
     this.id = data.id;
 
+    this.bot = null;
+
     this.system = null;
-    this.locale = null;
+
     this.flags = null;
 
     this._patch(data);
@@ -41,16 +37,18 @@ class User extends Base {
        * @type {?string}
        */
       this.username = data.username;
-    } else if (typeof this.username !== 'string') {
-      this.username = null;
+    } else {
+      this.username ??= null;
     }
 
-    if ('bot' in data || typeof this.bot !== 'boolean') {
+    if ('bot' in data) {
       /**
        * Whether or not the user is a bot
-       * @type {boolean}
+       * @type {?boolean}
        */
       this.bot = Boolean(data.bot);
+    } else if (!this.partial && typeof this.bot !== 'boolean') {
+      this.bot = false;
     }
 
     if ('discriminator' in data) {
@@ -59,18 +57,40 @@ class User extends Base {
        * @type {?string}
        */
       this.discriminator = data.discriminator;
-    } else if (typeof this.discriminator !== 'string') {
-      this.discriminator = null;
+    } else {
+      this.discriminator ??= null;
     }
 
     if ('avatar' in data) {
       /**
-       * The ID of the user's avatar
+       * The user avatar's hash
        * @type {?string}
        */
       this.avatar = data.avatar;
-    } else if (typeof this.avatar !== 'string') {
-      this.avatar = null;
+    } else {
+      this.avatar ??= null;
+    }
+
+    if ('banner' in data) {
+      /**
+       * The user banner's hash
+       * <info>The user must be force fetched for this property to be present or be updated</info>
+       * @type {?string}
+       */
+      this.banner = data.banner;
+    } else if (this.banner !== null) {
+      this.banner ??= undefined;
+    }
+
+    if ('accent_color' in data) {
+      /**
+       * The base 10 accent color of the user's banner
+       * <info>The user must be force fetched for this property to be present or be updated</info>
+       * @type {?number}
+       */
+      this.accentColor = data.accent_color;
+    } else if (this.accentColor !== null) {
+      this.accentColor ??= undefined;
     }
 
     if ('system' in data) {
@@ -79,14 +99,8 @@ class User extends Base {
        * @type {?boolean}
        */
       this.system = Boolean(data.system);
-    }
-
-    if ('locale' in data) {
-      /**
-       * The locale of the user's client (ISO 639-1)
-       * @type {?string}
-       */
-      this.locale = data.locale;
+    } else if (!this.partial && typeof this.system !== 'boolean') {
+      this.system = false;
     }
 
     if ('public_flags' in data) {
@@ -96,18 +110,6 @@ class User extends Base {
        */
       this.flags = new UserFlags(data.public_flags);
     }
-
-    /**
-     * The ID of the last message sent by the user, if one was sent
-     * @type {?Snowflake}
-     */
-    this.lastMessageID = null;
-
-    /**
-     * The ID of the channel for the last message sent by the user, if one was sent
-     * @type {?Snowflake}
-     */
-    this.lastMessageChannelID = null;
   }
 
   /**
@@ -125,7 +127,7 @@ class User extends Base {
    * @readonly
    */
   get createdTimestamp() {
-    return Snowflake.deconstruct(this.id).timestamp;
+    return SnowflakeUtil.timestampFrom(this.id);
   }
 
   /**
@@ -135,30 +137,6 @@ class User extends Base {
    */
   get createdAt() {
     return new Date(this.createdTimestamp);
-  }
-
-  /**
-   * The Message object of the last message sent by the user, if one was sent
-   * @type {?Message}
-   * @readonly
-   */
-  get lastMessage() {
-    const channel = this.client.channels.cache.get(this.lastMessageChannelID);
-    return (channel && channel.messages.cache.get(this.lastMessageID)) || null;
-  }
-
-  /**
-   * The presence of this user
-   * @type {Presence}
-   * @readonly
-   */
-  get presence() {
-    for (const guild of this.client.guilds.cache.values()) {
-      if (guild.presences.cache.has(this.id)) return guild.presences.cache.get(this.id);
-    }
-    if (!Structures) Structures = require('../util/Structures');
-    const Presence = Structures.get('Presence');
-    return new Presence(this.client, { user: { id: this.id } });
   }
 
   /**
@@ -187,7 +165,31 @@ class User extends Base {
    * @returns {string}
    */
   displayAvatarURL(options) {
-    return this.avatarURL(options) || this.defaultAvatarURL;
+    return this.avatarURL(options) ?? this.defaultAvatarURL;
+  }
+
+  /**
+   * The hexadecimal version of the user accent color, with a leading hash
+   * <info>The user must be force fetched for this property to be present</info>
+   * @type {?string}
+   * @readonly
+   */
+  get hexAccentColor() {
+    if (typeof this.accentColor !== 'number') return this.accentColor;
+    return `#${this.accentColor.toString(16).padStart(6, '0')}`;
+  }
+
+  /**
+   * A link to the user's banner.
+   * <info>This method will throw an error if called before the user is force fetched.
+   * See {@link User#banner} for more info</info>
+   * @param {ImageURLOptions} [options={}] Options for the Image URL
+   * @returns {?string}
+   */
+  bannerURL({ format, size, dynamic } = {}) {
+    if (typeof this.banner === 'undefined') throw new Error('USER_BANNER_NOT_FETCHED');
+    if (!this.banner) return null;
+    return this.client.rest.cdn.Banner(this.id, this.banner, format, size, dynamic);
   }
 
   /**
@@ -200,42 +202,12 @@ class User extends Base {
   }
 
   /**
-   * Checks whether the user is typing in a channel.
-   * @param {ChannelResolvable} channel The channel to check in
-   * @returns {boolean}
-   */
-  typingIn(channel) {
-    channel = this.client.channels.resolve(channel);
-    return channel._typing.has(this.id);
-  }
-
-  /**
-   * Gets the time that the user started typing.
-   * @param {ChannelResolvable} channel The channel to get the time in
-   * @returns {?Date}
-   */
-  typingSinceIn(channel) {
-    channel = this.client.channels.resolve(channel);
-    return channel._typing.has(this.id) ? new Date(channel._typing.get(this.id).since) : null;
-  }
-
-  /**
-   * Gets the amount of time the user has been typing in a channel for (in milliseconds), or -1 if they're not typing.
-   * @param {ChannelResolvable} channel The channel to get the time in
-   * @returns {number}
-   */
-  typingDurationIn(channel) {
-    channel = this.client.channels.resolve(channel);
-    return channel._typing.has(this.id) ? channel._typing.get(this.id).elapsedTime : -1;
-  }
-
-  /**
    * The DM between the client's user and this user
    * @type {?DMChannel}
    * @readonly
    */
   get dmChannel() {
-    return this.client.channels.cache.find(c => c.type === 'dm' && c.recipient.id === this.id) || null;
+    return this.client.users.dmChannel(this.id);
   }
 
   /**
@@ -243,67 +215,73 @@ class User extends Base {
    * @param {boolean} [force=false] Whether to skip the cache check and request the API
    * @returns {Promise<DMChannel>}
    */
-  async createDM(force = false) {
-    if (!force) {
-      const { dmChannel } = this;
-      if (dmChannel && !dmChannel.partial) return dmChannel;
-    }
-
-    const data = await this.client.api.users(this.client.user.id).channels.post({
-      data: {
-        recipient_id: this.id,
-      },
-    });
-    return this.client.actions.ChannelCreate.handle(data).channel;
+  createDM(force = false) {
+    return this.client.users.createDM(this.id, force);
   }
 
   /**
    * Deletes a DM channel (if one exists) between the client and the user. Resolves with the channel if successful.
    * @returns {Promise<DMChannel>}
    */
-  async deleteDM() {
-    const { dmChannel } = this;
-    if (!dmChannel) throw new Error('USER_NO_DMCHANNEL');
-    const data = await this.client.api.channels(dmChannel.id).delete();
-    return this.client.actions.ChannelDelete.handle(data).channel;
+  deleteDM() {
+    return this.client.users.deleteDM(this.id);
   }
 
   /**
-   * Checks if the user is equal to another. It compares ID, username, discriminator, avatar, and bot flags.
+   * Checks if the user is equal to another.
+   * It compares id, username, discriminator, avatar, banner, accent color, and bot flags.
    * It is recommended to compare equality by using `user.id === user2.id` unless you want to compare all properties.
    * @param {User} user User to compare with
    * @returns {boolean}
    */
   equals(user) {
-    let equal =
+    return (
       user &&
       this.id === user.id &&
       this.username === user.username &&
       this.discriminator === user.discriminator &&
-      this.avatar === user.avatar;
+      this.avatar === user.avatar &&
+      this.flags?.bitfield === user.flags?.bitfield &&
+      this.banner === user.banner &&
+      this.accentColor === user.accentColor
+    );
+  }
 
-    return equal;
+  /**
+   * Compares the user with an API user object
+   * @param {APIUser} user The API user object to compare
+   * @returns {boolean}
+   * @private
+   */
+  _equals(user) {
+    return (
+      user &&
+      this.id === user.id &&
+      this.username === user.username &&
+      this.discriminator === user.discriminator &&
+      this.avatar === user.avatar &&
+      this.flags?.bitfield === user.public_flags &&
+      ('banner' in user ? this.banner === user.banner : true) &&
+      ('accent_color' in user ? this.accentColor === user.accent_color : true)
+    );
   }
 
   /**
    * Fetches this user's flags.
-   * @param {boolean} [force=false] Whether to skip the cache check and request the AP
+   * @param {boolean} [force=false] Whether to skip the cache check and request the API
    * @returns {Promise<UserFlags>}
    */
-  async fetchFlags(force = false) {
-    if (this.flags && !force) return this.flags;
-    const data = await this.client.api.users(this.id).get();
-    this._patch(data);
-    return this.flags;
+  fetchFlags(force = false) {
+    return this.client.users.fetchFlags(this.id, { force });
   }
 
   /**
    * Fetches this user.
-   * @param {boolean} [force=false] Whether to skip the cache check and request the AP
+   * @param {boolean} [force=true] Whether to skip the cache check and request the API
    * @returns {Promise<User>}
    */
-  fetch(force = false) {
-    return this.client.users.fetch(this.id, true, force);
+  fetch(force = true) {
+    return this.client.users.fetch(this.id, { force });
   }
 
   /**
@@ -322,14 +300,14 @@ class User extends Base {
       {
         createdTimestamp: true,
         defaultAvatarURL: true,
+        hexAccentColor: true,
         tag: true,
-        lastMessage: false,
-        lastMessageID: false,
       },
       ...props,
     );
     json.avatarURL = this.avatarURL();
     json.displayAvatarURL = this.displayAvatarURL();
+    json.bannerURL = this.banner ? this.bannerURL() : this.banner;
     return json;
   }
 
@@ -341,3 +319,8 @@ class User extends Base {
 TextBasedChannel.applyToClass(User);
 
 module.exports = User;
+
+/**
+ * @external APIUser
+ * @see {@link https://discord.com/developers/docs/resources/user#user-object}
+ */

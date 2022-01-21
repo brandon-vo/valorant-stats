@@ -1,7 +1,9 @@
 'use strict';
 
 const Action = require('./Action');
+const { deletedChannels } = require('../../structures/Channel');
 const DMChannel = require('../../structures/DMChannel');
+const { deletedMessages } = require('../../structures/Message');
 const { Events } = require('../../util/Constants');
 
 class ChannelDeleteAction extends Action {
@@ -12,14 +14,14 @@ class ChannelDeleteAction extends Action {
 
   handle(data) {
     const client = this.client;
-    let channel = client.channels.cache.get(data.id);
+    const channel = client.channels.cache.get(data.id);
 
     if (channel) {
-      client.channels.remove(channel.id);
-      channel.deleted = true;
+      client.channels._remove(channel.id);
+      deletedChannels.add(channel);
       if (channel.messages && !(channel instanceof DMChannel)) {
         for (const message of channel.messages.cache.values()) {
-          message.deleted = true;
+          deletedMessages.add(message);
         }
       }
       /**

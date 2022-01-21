@@ -24,11 +24,11 @@ class Intents extends BitField {}
  */
 
 /**
- * Numeric websocket intents. All available properties:
+ * Numeric WebSocket intents. All available properties:
  * * `GUILDS`
  * * `GUILD_MEMBERS`
  * * `GUILD_BANS`
- * * `GUILD_EMOJIS`
+ * * `GUILD_EMOJIS_AND_STICKERS`
  * * `GUILD_INTEGRATIONS`
  * * `GUILD_WEBHOOKS`
  * * `GUILD_INVITES`
@@ -40,6 +40,7 @@ class Intents extends BitField {}
  * * `DIRECT_MESSAGES`
  * * `DIRECT_MESSAGE_REACTIONS`
  * * `DIRECT_MESSAGE_TYPING`
+ * * `GUILD_SCHEDULED_EVENTS`
  * @type {Object}
  * @see {@link https://discord.com/developers/docs/topics/gateway#list-of-intents}
  */
@@ -47,7 +48,7 @@ Intents.FLAGS = {
   GUILDS: 1 << 0,
   GUILD_MEMBERS: 1 << 1,
   GUILD_BANS: 1 << 2,
-  GUILD_EMOJIS: 1 << 3,
+  GUILD_EMOJIS_AND_STICKERS: 1 << 3,
   GUILD_INTEGRATIONS: 1 << 4,
   GUILD_WEBHOOKS: 1 << 5,
   GUILD_INVITES: 1 << 6,
@@ -59,25 +60,7 @@ Intents.FLAGS = {
   DIRECT_MESSAGES: 1 << 12,
   DIRECT_MESSAGE_REACTIONS: 1 << 13,
   DIRECT_MESSAGE_TYPING: 1 << 14,
+  GUILD_SCHEDULED_EVENTS: 1 << 16,
 };
-
-/**
- * Bitfield representing all privileged intents
- * @type {number}
- * @see {@link https://discord.com/developers/docs/topics/gateway#privileged-intents}
- */
-Intents.PRIVILEGED = Intents.FLAGS.GUILD_MEMBERS | Intents.FLAGS.GUILD_PRESENCES;
-
-/**
- * Bitfield representing all intents combined
- * @type {number}
- */
-Intents.ALL = Object.values(Intents.FLAGS).reduce((acc, p) => acc | p, 0);
-
-/**
- * Bitfield representing all non-privileged intents
- * @type {number}
- */
-Intents.NON_PRIVILEGED = Intents.ALL & ~Intents.PRIVILEGED;
 
 module.exports = Intents;

@@ -10,12 +10,10 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.21.4",
-    "discord-buttons": "^4.0.0-deprecated",
-    "discord.js": "^12.5.3",
-    "discord.js-pagination": "^1.0.3",
+    "discord.js": "^13.6.0",
     "dotenv": "^8.2.0",
     "mongoose": "^5.12.9",
-    "node-fetch": "^2.6.1",
+    "reconlx": "^2.5.2",
     "top.gg": "^2.3.2",
     "topgg-autoposter": "^2.0.1"
   }

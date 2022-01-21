@@ -1,10 +1,8 @@
-const { MessageEmbed, Message } = require('discord.js');
-const pagination = require('discord.js-pagination')
-const assets = require('../assets.json')
+const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const { pagination } = require('reconlx');
+const assets = require('../assets.json');
 const axios = require('axios').default;
-const Account = require('../schemas/AccountSchema')
-// const ButtonPages = require('discord-button-pages')
-const { MessageButton } = require('discord-buttons')
+const Account = require('../schemas/AccountSchema');
 
 module.exports = {
     name: "valorant",
@@ -19,7 +17,7 @@ module.exports = {
             str += args[i];
 
         // Get account
-        const account = await Account.find({ discordId: message.author.id })
+        const account = await Account.find({ discordId: message.author.id });
 
         // If theres no argument provided by user, check if they linked a Valorant account to their Discord ID
         if (!args[0] && account.length > 0)
@@ -42,21 +40,33 @@ module.exports = {
 
         // Check if the ID has been encoded already through linked command
         if (ID.includes('#'))
-            playerID = encodeURIComponent(ID)
+            playerID = encodeURIComponent(ID);
         else
-            playerID = ID
+            playerID = ID;
 
-        var helpButton = new MessageButton().setStyle("LINK").setLabel("Tracker.gg").setURL("https://tracker.gg")
-        var voteButton = new MessageButton().setStyle("LINK").setLabel("Vote").setURL("https://top.gg/bot/833535533287866398")
+        const defaultButtons = new MessageActionRow().addComponents(
+            new MessageButton()
+                .setLabel("Tracker.gg")
+                .setURL("https://tracker.gg")
+                .setStyle("LINK"),
+            new MessageButton()
+                .setLabel("Vote")
+                .setURL("https://top.gg/bot/833535533287866398")
+                .setStyle("LINK"),
+            new MessageButton()
+                .setLabel("Website")
+                .setURL("https://valostats.netlify.app/")
+                .setStyle("LINK"),
+        )
 
         // Run command
         try {
             // Check if account exists
             try {
-                trackerProfile = await axios.get(process.env.TRACKER_PROFILE + `${playerID}`)
-                trackerMatch = await axios.get(process.env.TRACKER_MATCH + `${playerID}`)
-                trackerMap = await axios.get(process.env.TRACKER_PROFILE + `${playerID}` + '/segments/map')
-                trackerWeapon = await axios.get(process.env.TRACKER_PROFILE + `${playerID}` + '/segments/weapon')
+                trackerProfile = await axios.get(process.env.TRACKER_PROFILE + `${playerID}`);
+                trackerMatch = await axios.get(process.env.TRACKER_MATCH + `${playerID}`);
+                trackerMap = await axios.get(process.env.TRACKER_PROFILE + `${playerID}` + '/segments/map');
+                trackerWeapon = await axios.get(process.env.TRACKER_PROFILE + `${playerID}` + '/segments/weapon');
 
             } catch (error) {
 
@@ -64,7 +74,7 @@ module.exports = {
                     const maintenanceEmbed = new MessageEmbed()
                         .setColor('#d1390f')
                         .setThumbnail('https://cdn.discordapp.com/attachments/834195818080108564/932365602427920404/x-png-35400.png')
-                        .setFooter('Developed by CMDRVo')
+                        .setFooter({ text: 'Developed by CMDRVo' })
                         .addFields(
                             {
                                 name: 'Maintenance Status', value: "```diff\n" + "ValoStats currently has issues in retrieving stats." +
@@ -72,12 +82,13 @@ module.exports = {
                             },
                         )
 
-                    return message.reply(maintenanceEmbed, { buttons: [helpButton, voteButton] })
+                    //return message.reply(maintenanceEmbed);
+                    return message.channel.send({ embeds: [maintenanceEmbed], components: [defaultButtons] });
                 }
                 const errorEmbed = new MessageEmbed()
                     .setColor('#d1390f')
                     .setThumbnail('https://cdn.discordapp.com/attachments/834195818080108564/932365602427920404/x-png-35400.png')
-                    .setFooter('Developed by CMDRVo')
+                    .setFooter({ text: 'Developed by CMDRVo' })
                     .addFields(
                         {
                             name: 'Error Status', value: "```diff\n" + "Please ensure you have inputted the correct " +
@@ -85,10 +96,10 @@ module.exports = {
                         },
                     )
 
-                return message.reply(errorEmbed, { buttons: [helpButton, voteButton] })
+                return message.channel.send({ embeds: [errorEmbed], components: [defaultButtons] });
             }
 
-            const profileStats = trackerProfile.data.data.segments // Access profile stats
+            const profileStats = trackerProfile.data.data.segments; // Access profile stats
 
             // Checking users playlist stats
             for (let x = 0; x < profileStats.length; x++) {
@@ -112,9 +123,15 @@ module.exports = {
             const mapStats = trackerMap.data.data // Map stats
             const weaponStats = trackerWeapon.data.data // Weapon stats
 
+            const author = {
+                name: `${userHandle}`,
+                iconURL: userAvatar,
+                url: `https://tracker.gg/valorant/profile/riot/${playerID}/overview`
+            }
+
             // Set rank emojis and name
-            var rankName = ''
-            var rankEmoji = ''
+            var rankName = '';
+            var rankEmoji = '';
             if (compStats) {
                 rankName = compStats.rank.metadata.tierName
                 rankEmoji = assets.rankEmojis[rankName].emoji
@@ -126,10 +143,10 @@ module.exports = {
                 }
             }
 
-            var lastAgent = lastMatch.segments[0].metadata.agentName
+            var lastAgent = lastMatch.segments[0].metadata.agentName;
 
             // Set agent emoji for the user
-            var agentEmoji = ":white_small_square:"
+            var agentEmoji = ":white_small_square:";
 
             if (lastAgent == "Astra" || lastAgent == "Breach" || lastAgent == "Brimstone" || lastAgent == "Cypher" || lastAgent == "Jett"
                 || lastAgent == "Killjoy" || lastAgent == "Omen" || lastAgent == "Phoenix" || lastAgent == "Raze" || lastAgent == "Reyna"
@@ -154,7 +171,7 @@ module.exports = {
                 const statsEmbed1 = new MessageEmbed()
                     .setColor('#11806A')
                     .setTitle(`Competitive Career Stats`)
-                    .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                    .setAuthor(author)
                     .setThumbnail(userAvatar)
                     .addFields(
                         { name: 'KDR', value: "```yaml\n" + compStats.kDRatio.displayValue + "\n```", inline: true },
@@ -175,7 +192,7 @@ module.exports = {
                 const statsEmbed2 = new MessageEmbed()
                     .setColor('#11806A')
                     .setTitle(`Competitive Career Stats`)
-                    .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                    .setAuthor(author)
                     .setThumbnail(userAvatar)
                     .addFields(
                         { name: 'Kills/Match', value: "```yaml\n" + compStats.killsPerMatch.displayValue + "\n```", inline: true },
@@ -192,13 +209,13 @@ module.exports = {
                         { name: 'First Deaths', value: "```yaml\n" + compStats.deathsFirst.displayValue + "\n```", inline: true },
                     )
 
-                const statsPages = [statsEmbed1, statsEmbed2] // Pages
-
-                const flipPage = ["⬅️", "➡️"] // Reactions to flip pages
-
-                const timeout = '100000' // Timeout
-
-                pagination(message, statsPages, flipPage, timeout) // Show pages
+                const embedPages = [statsEmbed1, statsEmbed2];
+                pagination({
+                    embeds: embedPages,
+                    channel: message.channel,
+                    author: message.author,
+                    time: 60 * 1000,
+                })
 
             }
 
@@ -209,8 +226,8 @@ module.exports = {
                 if (!unratedStats) return message.reply('This player has never played an unrated game!')
 
                 // Each square represents ~8.33%
-                greenSquare = Math.round(unratedStats.matchesWinPct.value / 8.33)
-                redSquare = 12 - greenSquare
+                greenSquare = Math.round(unratedStats.matchesWinPct.value / 8.33);
+                redSquare = 12 - greenSquare;
 
                 // Setting the win rate visual bar
                 winRate = "<:greenline:839562756930797598>".repeat(greenSquare) + "<:redline:839562438760071298>".repeat(redSquare)
@@ -219,7 +236,7 @@ module.exports = {
                 const unratedEmbed1 = new MessageEmbed()
                     .setColor('#11806A')
                     .setTitle(`Unrated Career Stats`)
-                    .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                    .setAuthor(author)
                     .setThumbnail(userAvatar)
                     .addFields(
                         { name: 'KDR', value: "```yaml\n" + unratedStats.kDRatio.displayValue + "\n```", inline: true },
@@ -240,7 +257,7 @@ module.exports = {
                 const unratedEmbed2 = new MessageEmbed()
                     .setColor('#11806A')
                     .setTitle(`Unrated Career Stats`)
-                    .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                    .setAuthor(author)
                     .setThumbnail(userAvatar)
                     .addFields(
                         { name: 'Kills/Match', value: "```yaml\n" + unratedStats.killsPerMatch.displayValue + "\n```", inline: true },
@@ -259,11 +276,12 @@ module.exports = {
 
                 const unratedPages = [unratedEmbed1, unratedEmbed2] // Pages
 
-                const flipPage = ["⬅️", "➡️"] // Reactions to flip pages
-
-                const timeout = '100000' // Timeout
-
-                pagination(message, unratedPages, flipPage, timeout) // Send pages
+                pagination({
+                    embeds: unratedPages,
+                    channel: message.channel,
+                    author: message.author,
+                    time: 60 * 1000,
+                })
 
             }
 
@@ -284,7 +302,7 @@ module.exports = {
                 const spikeRushEmbed1 = new MessageEmbed()
                     .setColor('#11806A')
                     .setTitle(`Spike Rush Career Stats`)
-                    .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                    .setAuthor(author)
                     .setThumbnail(userAvatar)
                     .addFields(
                         { name: 'KDR', value: "```yaml\n" + spikeRushStats.kDRatio.displayValue + "\n```", inline: true },
@@ -305,7 +323,7 @@ module.exports = {
                 const spikeRushEmbed2 = new MessageEmbed()
                     .setColor('#11806A')
                     .setTitle(`Spike Rush Career Stats`)
-                    .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                    .setAuthor(author)
                     .setThumbnail(userAvatar)
                     .addFields(
                         { name: 'Kills/Match', value: "```yaml\n" + spikeRushStats.killsPerMatch.displayValue + "\n```", inline: true },
@@ -323,11 +341,12 @@ module.exports = {
 
                 const spikeRushPages = [spikeRushEmbed1, spikeRushEmbed2] // Pages
 
-                const flipPage = ["⬅️", "➡️"] // Flip pages
-
-                const timeout = '100000' // Timeout
-
-                pagination(message, spikeRushPages, flipPage, timeout) // Send pages
+                pagination({
+                    embeds: spikeRushPages,
+                    channel: message.channel,
+                    author: message.author,
+                    time: 60 * 1000,
+                })
 
             }
 
@@ -348,7 +367,7 @@ module.exports = {
                 const deathmatchEmbed = new MessageEmbed()
                     .setColor('#11806A')
                     .setTitle(`Deathmatch Career Stats`)
-                    .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                    .setAuthor(author)
                     .setThumbnail(userAvatar)
                     .addFields(
                         { name: 'KDR', value: "```yaml\n" + dmStats.kDRatio.displayValue + "\n```", inline: true },
@@ -365,7 +384,7 @@ module.exports = {
                         },
                     )
 
-                message.channel.send(deathmatchEmbed) // Send embed
+                message.channel.send({ embeds: [deathmatchEmbed], components: [defaultButtons] }) // Send embed
 
             }
 
@@ -386,7 +405,7 @@ module.exports = {
                 const escalationEmbed = new MessageEmbed()
                     .setColor('#11806A')
                     .setTitle(`Escalation Career Stats`)
-                    .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                    .setAuthor(author)
                     .setThumbnail(userAvatar)
                     .addFields(
                         { name: 'KDR', value: "```yaml\n" + escalationStats.kDRatio.displayValue + "\n```", inline: true },
@@ -403,14 +422,12 @@ module.exports = {
                         },
                     )
 
-                message.channel.send(escalationEmbed) // Send embed
+                message.channel.send({ embeds: [escalationEmbed], components: [defaultButtons] }) // Send embed
 
             }
 
             // Check if user uses last match stats command
             else if (command == 'lastmatch' || command == 'lm') {
-
-                console.log(trackerMatch.data.data.matches[1])
 
                 // Check last match mode
                 if (lastMatch.metadata.modeName === 'Unknown') return message.reply("This player has played a Valorant gamemode that I am unable to track!")
@@ -469,12 +486,12 @@ module.exports = {
                     const deathmatchEmbed = new MessageEmbed()
                         .setColor('#11806A')
                         .setTitle('Last Match Stats - ' + lastMap + " " + deathmatchEmoji)
-                        .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                        .setAuthor(author)
                         .setThumbnail(lastMatch.segments[0].metadata.agentImageUrl)
                         .setDescription("`" + lastMatch.metadata.timestamp + "`")
                         .setDescription("```\n     " + lastMatch.metadata.modeName + " - " + lmStats.playtime.displayValue + "\n```")
                         .setImage(mapImage)
-                        .setFooter("You placed " + lmStats.placement.displayValue)
+                        .setFooter({ text: "You placed " + lmStats.placement.displayValue })
 
                     var count = 0 // Count columns for embed format
 
@@ -513,7 +530,7 @@ module.exports = {
                         }
                     }
 
-                    return message.channel.send(deathmatchEmbed) // Send embed
+                    return message.channel.send({ embeds: [deathmatchEmbed], components: [defaultButtons] }) // Send embed
                 }
                 // Get info about players in last match
                 for (x = 2; x < 12; x++) {
@@ -588,7 +605,7 @@ module.exports = {
                 if (lastMatch.metadata.modeName === 'Competitive') {
                     lastMatchEmbed1.setColor('#11806A')
                     lastMatchEmbed1.setTitle('Last Match Stats - ' + lastMap)
-                    lastMatchEmbed1.setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                    lastMatchEmbed1.setAuthor(author)
                     lastMatchEmbed1.setThumbnail(lastMatch.segments[0].metadata.agentImageUrl)
                     lastMatchEmbed1.setDescription("`              " + timeStamp[0] + "             `")
                     lastMatchEmbed1.addFields(
@@ -616,7 +633,7 @@ module.exports = {
                 else {
                     lastMatchEmbed1.setColor('#11806A')
                     lastMatchEmbed1.setTitle('Last Match Stats - ' + lastMap)
-                    lastMatchEmbed1.setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                    lastMatchEmbed1.setAuthor(author)
                     lastMatchEmbed1.setThumbnail(lastMatch.segments[0].metadata.agentImageUrl)
                     lastMatchEmbed1.setDescription("`" + lastMatch.metadata.timestamp + "`")
                     lastMatchEmbed1.addFields(
@@ -642,7 +659,7 @@ module.exports = {
                 const lastMatchEmbed2 = new MessageEmbed()
                     .setColor('#11806A')
                     .setTitle('Last Match Stats - ' + lastMap + " | " + lmStats.roundsWon.displayValue + " - " + lmStats.roundsLost.displayValue)
-                    .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                    .setAuthor(author)
                     .setDescription('```\n                Players in your game\n```')
 
                 var count = 0
@@ -707,11 +724,13 @@ module.exports = {
 
                 const lastMatchPages = [lastMatchEmbed1, lastMatchEmbed2] // Pages
 
-                const flipPage = ["⬅️", "➡️"] // Flip pages
+                pagination({
+                    embeds: lastMatchPages,
+                    channel: message.channel,
+                    author: message.author,
+                    time: 60 * 1000,
+                })
 
-                const timeout = '100000' // Timeout
-
-                pagination(message, lastMatchPages, flipPage, timeout) // Send pages
             }
 
             // Check if agent stats command is used
@@ -739,10 +758,10 @@ module.exports = {
 
                 const agentEmbed = new MessageEmbed()
                     .setColor('#11806A')
-                    .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                    .setAuthor(author)
                     .setThumbnail(userAvatar)
                     .setDescription("```grey\n      " + "      Top " + agentLength + " - Agents Played" + "\n```")
-                    .setFooter('Competitive Agents Only')
+                    .setFooter({ text: 'Competitive Agents Only' })
 
                 for (let i = 0; i < agentLength; i++) {
 
@@ -773,7 +792,7 @@ module.exports = {
                     )
                 }
 
-                message.channel.send(agentEmbed) // Send embed
+                message.channel.send({ embeds: [agentEmbed], components: [defaultButtons] }) // Send embed
 
             }
 
@@ -793,10 +812,10 @@ module.exports = {
 
                 const mapEmbed = new MessageEmbed()
                     .setColor('#11806A')
-                    .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                    .setAuthor(author)
                     .setThumbnail(userAvatar)
                     .setDescription("```grey\n      " + "        Map Stats" + "\n```")
-                    .setFooter('Competitive Maps Only')
+                    .setFooter({ text: 'Competitive Maps Only' })
 
                 for (let i = 0; i < mapInfo.length; i++) { // For all avaliable maps
 
@@ -821,7 +840,7 @@ module.exports = {
                     )
                 }
 
-                message.channel.send(mapEmbed)
+                message.channel.send({ embeds: [mapEmbed], components: [defaultButtons] }) // Send embed
 
             }
 
@@ -854,10 +873,10 @@ module.exports = {
 
                 const weaponEmbed = new MessageEmbed()
                     .setColor('#11806A')
-                    .setAuthor(`${userHandle}`, userAvatar, `https://tracker.gg/valorant/profile/riot/${playerID}/overview`)
+                    .setAuthor(author)
                     .setThumbnail(userAvatar)
                     .setDescription("```grey\n      " + "      Top " + weaponLength + " - Weapon Stats" + "\n```")
-                    .setFooter('Competitive Weapons Only')
+                    .setFooter({ text: 'Competitive Weapons Only' })
 
                 for (i = 0; i < weaponLength; i++) {
 
@@ -879,7 +898,7 @@ module.exports = {
                     )
                 }
 
-                message.channel.send(weaponEmbed) // Send embed
+                message.channel.send({ embeds: [weaponEmbed], components: [defaultButtons] }) // Send embed
             }
 
         } catch (error) {

@@ -11,22 +11,23 @@ const { Events } = require('../util/Constants');
 
 /**
  * Collects messages on a channel.
- * Will automatically stop if the channel (`'channelDelete'`) or guild (`'guildDelete'`) are deleted.
+ * Will automatically stop if the channel ({@link Client#event:channelDelete channelDelete}),
+ * thread ({@link Client#event:threadDelete threadDelete}), or
+ * guild ({@link Client#event:guildDelete guildDelete}) is deleted.
  * @extends {Collector}
  */
 class MessageCollector extends Collector {
   /**
-   * @param {TextChannel|DMChannel} channel The channel
-   * @param {CollectorFilter} filter The filter to be applied to this collector
+   * @param {TextBasedChannels} channel The channel
    * @param {MessageCollectorOptions} options The options to be applied to this collector
    * @emits MessageCollector#message
    */
-  constructor(channel, filter, options = {}) {
-    super(channel.client, filter, options);
+  constructor(channel, options = {}) {
+    super(channel.client, options);
 
     /**
      * The channel
-     * @type {TextBasedChannel}
+     * @type {TextBasedChannels}
      */
     this.channel = channel;
 
@@ -39,7 +40,9 @@ class MessageCollector extends Collector {
     const bulkDeleteListener = messages => {
       for (const message of messages.values()) this.handleDispose(message);
     };
+
     this._handleChannelDeletion = this._handleChannelDeletion.bind(this);
+    this._handleThreadDeletion = this._handleThreadDeletion.bind(this);
     this._handleGuildDeletion = this._handleGuildDeletion.bind(this);
 
     this.client.incrementMaxListeners();
@@ -47,6 +50,7 @@ class MessageCollector extends Collector {
     this.client.on(Events.MESSAGE_DELETE, this.handleDispose);
     this.client.on(Events.MESSAGE_BULK_DELETE, bulkDeleteListener);
     this.client.on(Events.CHANNEL_DELETE, this._handleChannelDeletion);
+    this.client.on(Events.THREAD_DELETE, this._handleThreadDeletion);
     this.client.on(Events.GUILD_DELETE, this._handleGuildDeletion);
 
     this.once('end', () => {
@@ -54,6 +58,7 @@ class MessageCollector extends Collector {
       this.client.removeListener(Events.MESSAGE_DELETE, this.handleDispose);
       this.client.removeListener(Events.MESSAGE_BULK_DELETE, bulkDeleteListener);
       this.client.removeListener(Events.CHANNEL_DELETE, this._handleChannelDeletion);
+      this.client.removeListener(Events.THREAD_DELETE, this._handleThreadDeletion);
       this.client.removeListener(Events.GUILD_DELETE, this._handleGuildDeletion);
       this.client.decrementMaxListeners();
     });
@@ -71,7 +76,7 @@ class MessageCollector extends Collector {
      * @event MessageCollector#collect
      * @param {Message} message The message that was collected
      */
-    if (message.channel.id !== this.channel.id) return null;
+    if (message.channelId !== this.channel.id) return null;
     this.received++;
     return message.id;
   }
@@ -87,15 +92,15 @@ class MessageCollector extends Collector {
      * @event MessageCollector#dispose
      * @param {Message} message The message that was disposed of
      */
-    return message.channel.id === this.channel.id ? message.id : null;
+    return message.channelId === this.channel.id ? message.id : null;
   }
 
   /**
-   * Checks after un/collection to see if the collector is done.
-   * @returns {?string}
-   * @private
+   * The reason this collector has ended with, or null if it hasn't ended yet
+   * @type {?string}
+   * @readonly
    */
-  endReason() {
+  get endReason() {
     if (this.options.max && this.collected.size >= this.options.max) return 'limit';
     if (this.options.maxProcessed && this.received === this.options.maxProcessed) return 'processedLimit';
     return null;
@@ -108,8 +113,20 @@ class MessageCollector extends Collector {
    * @returns {void}
    */
   _handleChannelDeletion(channel) {
-    if (channel.id === this.channel.id) {
+    if (channel.id === this.channel.id || channel.id === this.channel.parentId) {
       this.stop('channelDelete');
+    }
+  }
+
+  /**
+   * Handles checking if the thread has been deleted, and if so, stops the collector with the reason 'threadDelete'.
+   * @private
+   * @param {ThreadChannel} thread The thread that was deleted
+   * @returns {void}
+   */
+  _handleThreadDeletion(thread) {
+    if (thread.id === this.channel.id) {
+      this.stop('threadDelete');
     }
   }
 
@@ -120,7 +137,7 @@ class MessageCollector extends Collector {
    * @returns {void}
    */
   _handleGuildDeletion(guild) {
-    if (this.channel.guild && guild.id === this.channel.guild.id) {
+    if (guild.id === this.channel.guild?.id) {
       this.stop('guildDelete');
     }
   }

@@ -1,5 +1,5 @@
 const { MessageEmbed } = require("discord.js");
-const pagination = require("discord.js-pagination");
+const { pagination } = require('reconlx');
 
 module.exports = {
   name: "help",
@@ -8,7 +8,7 @@ module.exports = {
   execute(message) {
     const helpEmbed1 = new MessageEmbed()
       .setColor("RANDOM")
-      .setAuthor("Help Menu", "https://bit.ly/32GAtTp")
+      .setAuthor({name: "Help Menu", url: "https://bit.ly/32GAtTp"})
       .addFields(
         {
           name: "How to use this Discord bot",
@@ -77,7 +77,7 @@ module.exports = {
 
     const helpEmbed2 = new MessageEmbed()
       .setColor("RANDOM")
-      .setAuthor("Help Menu", "https://bit.ly/32GAtTp")
+      .setAuthor({name: "Help Menu", url: "https://bit.ly/32GAtTp"})
       .addFields(
         {
           name: "\u200B",
@@ -89,26 +89,30 @@ module.exports = {
         {
           name: "Notes",
           value:
-            "- The bot must have access to the default permissions in order to function properly\n" + 
+            "- The bot must have access to the default permissions in order to function properly\n" +
             "- You can view stats of a linked user by mentioning their username in the command",
         },
         { name: "KDR", value: "kills ÷ deaths", inline: true },
         { name: "KDA", value: "(kills + (assists ÷ 2)) ÷ deaths", inline: true },
         { name: "KAD", value: "(kills + assists) ÷ deaths", inline: true },
         { name: "Known Bugs", value: "Stats not being retrieved - Try Again", inline: true },
-        { name: "Found Bugs? ", value: "Contact CMDRVo#3496 on Discord", inline: true  },
-        { name: "Common Mistake", value: "When linking an account to your Discord ID, you must type the command properly.\n" +
-        "Do not include `< >` in between your username and tag. Not case sensitive.\n" + 
-        "Command: `v!link username#tag`" + "\n" + "Examples: `v!link sen tenz#0505` `v!link CMDRVo#CMDR` `v!link 100t aSUnA#1111`"},
+        { name: "Found Bugs? ", value: "Contact CMDRVo#3496 on Discord", inline: true },
+        {
+          name: "Common Mistake", value: "When linking an account to your Discord ID, you must type the command properly.\n" +
+            "Do not include `< >` in between your username and tag. Not case sensitive.\n" +
+            "Command: `v!link username#tag`" + "\n" + "Examples: `v!link sen tenz#0505` `v!link CMDRVo#CMDR` `v!link 100t aSUnA#1111`"
+        },
       )
       .setTimestamp();
 
     const helpPages = [helpEmbed1, helpEmbed2]; // Pages
 
-    const flipPage = ["⬅️", "➡️"]; // Flip Pags
+    pagination({
+      embeds: helpPages,
+      channel: message.channel,
+      author: message.author,
+      time: 60 * 1000,
+    })
 
-    const timeout = "100000"; // Timeout
-
-    pagination(message, helpPages, flipPage, timeout);
   },
 };

@@ -1,22 +1,18 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const stream = require('stream');
+const { Buffer } = require('node:buffer');
+const fs = require('node:fs');
+const path = require('node:path');
+const stream = require('node:stream');
 const fetch = require('node-fetch');
 const { Error: DiscordError, TypeError } = require('../errors');
-const { browser } = require('../util/Constants');
-const Util = require('../util/Util');
+const Invite = require('../structures/Invite');
 
 /**
  * The DataResolver identifies different objects and tries to resolve a specific piece of information from them.
  * @private
  */
-class DataResolver {
-  constructor() {
-    throw new Error(`The ${this.constructor.name} class may not be instantiated.`);
-  }
-
+class DataResolver extends null {
   /**
    * Data that can be resolved to give an invite code. This can be:
    * * An invite code
@@ -25,7 +21,7 @@ class DataResolver {
    */
 
   /**
-   * Data that can be resolved to give an template code. This can be:
+   * Data that can be resolved to give a template code. This can be:
    * * A template code
    * * A template URL
    * @typedef {string} GuildTemplateResolvable
@@ -38,8 +34,7 @@ class DataResolver {
    * @returns {string}
    */
   static resolveCode(data, regex) {
-    const match = regex.exec(data);
-    return match ? match[1] || data : data;
+    return data.matchAll(regex).next().value?.[1] ?? data;
   }
 
   /**
@@ -48,7 +43,7 @@ class DataResolver {
    * @returns {string}
    */
   static resolveInviteCode(data) {
-    return this.resolveCode(data, /discord(?:(?:app)?\.com\/invite|\.gg(?:\/invite)?)\/([\w-]{2,255})/i);
+    return this.resolveCode(data, Invite.INVITES_PATTERN);
   }
 
   /**
@@ -57,7 +52,8 @@ class DataResolver {
    * @returns {string}
    */
   static resolveGuildTemplateCode(data) {
-    return this.resolveCode(data, /discord(?:app)?\.(?:com\/template|new)\/([\w-]{2,255})/i);
+    const GuildTemplate = require('../structures/GuildTemplate');
+    return this.resolveCode(data, GuildTemplate.GUILD_TEMPLATES_PATTERN);
   }
 
   /**
@@ -95,7 +91,8 @@ class DataResolver {
    * Data that can be resolved to give a Buffer. This can be:
    * * A Buffer
    * * The path to a local file
-   * * A URL
+   * * A URL <warn>When provided a URL, discord.js will fetch the URL internally in order to create a Buffer.
+   * This can pose a security risk when the URL has not been sanitized</warn>
    * @typedef {string|Buffer} BufferResolvable
    */
 
@@ -110,26 +107,21 @@ class DataResolver {
    * @returns {Promise<Buffer|Stream>}
    */
   static async resolveFile(resource) {
-    if (!browser && Buffer.isBuffer(resource)) return resource;
-    if (browser && resource instanceof ArrayBuffer) return Util.convertToBuffer(resource);
-    // eslint-disable-next-line no-undef
-    if (browser && resource instanceof Blob) return resource;
-    if (resource instanceof stream.Readable) return resource;
-
+    if (Buffer.isBuffer(resource) || resource instanceof stream.Readable) return resource;
     if (typeof resource === 'string') {
       if (/^https?:\/\//.test(resource)) {
         const res = await fetch(resource);
-        return browser ? res.blob() : res.body;
-      } else if (!browser) {
-        return new Promise((resolve, reject) => {
-          const file = path.resolve(resource);
-          fs.stat(file, (err, stats) => {
-            if (err) return reject(err);
-            if (!stats.isFile()) return reject(new DiscordError('FILE_NOT_FOUND', file));
-            return resolve(fs.createReadStream(file));
-          });
-        });
+        return res.body;
       }
+
+      return new Promise((resolve, reject) => {
+        const file = path.resolve(resource);
+        fs.stat(file, (err, stats) => {
+          if (err) return reject(err);
+          if (!stats.isFile()) return reject(new DiscordError('FILE_NOT_FOUND', file));
+          return resolve(fs.createReadStream(file));
+        });
+      });
     }
 
     throw new TypeError('REQ_RESOURCE_TYPE');

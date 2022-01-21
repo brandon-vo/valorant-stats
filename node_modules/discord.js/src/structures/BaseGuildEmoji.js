@@ -1,6 +1,6 @@
 'use strict';
 
-const Emoji = require('./Emoji');
+const { Emoji } = require('./Emoji');
 
 /**
  * Parent class for {@link GuildEmoji} and {@link GuildPreviewEmoji}.
@@ -17,25 +17,17 @@ class BaseGuildEmoji extends Emoji {
      */
     this.guild = guild;
 
-    this.requireColons = null;
+    this.requiresColons = null;
     this.managed = null;
     this.available = null;
-
-    /**
-     * Array of role ids this emoji is active for
-     * @name BaseGuildEmoji#_roles
-     * @type {Snowflake[]}
-     * @private
-     */
-    Object.defineProperty(this, '_roles', { value: [], writable: true });
 
     this._patch(data);
   }
 
   _patch(data) {
-    if (data.name) this.name = data.name;
+    if ('name' in data) this.name = data.name;
 
-    if (typeof data.require_colons !== 'undefined') {
+    if ('require_colons' in data) {
       /**
        * Whether or not this emoji requires colons surrounding it
        * @type {?boolean}
@@ -43,7 +35,7 @@ class BaseGuildEmoji extends Emoji {
       this.requiresColons = data.require_colons;
     }
 
-    if (typeof data.managed !== 'undefined') {
+    if ('managed' in data) {
       /**
        * Whether this emoji is managed by an external service
        * @type {?boolean}
@@ -51,15 +43,13 @@ class BaseGuildEmoji extends Emoji {
       this.managed = data.managed;
     }
 
-    if (typeof data.available !== 'undefined') {
+    if ('available' in data) {
       /**
        * Whether this emoji is available
        * @type {?boolean}
        */
       this.available = data.available;
     }
-
-    if (data.roles) this._roles = data.roles;
   }
 }
 

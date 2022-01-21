@@ -1,6 +1,6 @@
 'use strict';
 
-const Channel = require('./Channel');
+const { Channel } = require('./Channel');
 const TextBasedChannel = require('./interfaces/TextBasedChannel');
 const MessageManager = require('../managers/MessageManager');
 
@@ -10,20 +10,17 @@ const MessageManager = require('../managers/MessageManager');
  * @implements {TextBasedChannel}
  */
 class DMChannel extends Channel {
-  /**
-   * @param {Client} client The instantiating client
-   * @param {Object} data The data for the DM channel
-   */
   constructor(client, data) {
     super(client, data);
+
     // Override the channel type so partials have a known type
-    this.type = 'dm';
+    this.type = 'DM';
+
     /**
      * A manager of the messages belonging to this channel
      * @type {MessageManager}
      */
     this.messages = new MessageManager(this);
-    this._typing = new Map();
   }
 
   _patch(data) {
@@ -34,20 +31,26 @@ class DMChannel extends Channel {
        * The recipient on the other end of the DM
        * @type {User}
        */
-      this.recipient = this.client.users.add(data.recipients[0]);
+      this.recipient = this.client.users._add(data.recipients[0]);
     }
 
-    /**
-     * The ID of the last message in the channel, if one was sent
-     * @type {?Snowflake}
-     */
-    this.lastMessageID = data.last_message_id;
+    if ('last_message_id' in data) {
+      /**
+       * The channel's last message id, if one was sent
+       * @type {?Snowflake}
+       */
+      this.lastMessageId = data.last_message_id;
+    }
 
-    /**
-     * The timestamp when the last pinned message was pinned, if there was one
-     * @type {?number}
-     */
-    this.lastPinTimestamp = data.last_pin_timestamp ? new Date(data.last_pin_timestamp).getTime() : null;
+    if ('last_pin_timestamp' in data) {
+      /**
+       * The timestamp when the last pinned message was pinned, if there was one
+       * @type {?number}
+       */
+      this.lastPinTimestamp = new Date(data.last_pin_timestamp).getTime();
+    } else {
+      this.lastPinTimestamp ??= null;
+    }
   }
 
   /**
@@ -56,15 +59,15 @@ class DMChannel extends Channel {
    * @readonly
    */
   get partial() {
-    return typeof this.lastMessageID === 'undefined';
+    return typeof this.lastMessageId === 'undefined';
   }
 
   /**
    * Fetch this DMChannel.
-   * @param {boolean} [force=false] Whether to skip the cache check and request the API
+   * @param {boolean} [force=true] Whether to skip the cache check and request the API
    * @returns {Promise<DMChannel>}
    */
-  fetch(force = false) {
+  fetch(force = true) {
     return this.recipient.createDM(force);
   }
 
@@ -85,12 +88,11 @@ class DMChannel extends Channel {
   get lastMessage() {}
   get lastPinAt() {}
   send() {}
-  startTyping() {}
-  stopTyping() {}
-  get typing() {}
-  get typingCount() {}
+  sendTyping() {}
   createMessageCollector() {}
   awaitMessages() {}
+  createMessageComponentCollector() {}
+  awaitMessageComponent() {}
   // Doesn't work on DM channels; bulkDelete() {}
 }
 

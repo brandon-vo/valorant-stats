@@ -1,7 +1,9 @@
 'use strict';
 
-const EventEmitter = require('events');
-const Collection = require('../../util/Collection');
+const EventEmitter = require('node:events');
+const { setTimeout } = require('node:timers');
+const { Collection } = require('@discordjs/collection');
+const { TypeError } = require('../../errors');
 const Util = require('../../util/Util');
 
 /**
@@ -15,6 +17,7 @@ const Util = require('../../util/Util');
 /**
  * Options to be applied to the collector.
  * @typedef {Object} CollectorOptions
+ * @property {CollectorFilter} [filter] The filter applied to this collector
  * @property {number} [time] How long to run the collector for in milliseconds
  * @property {number} [idle] How long to stop the collector after inactivity in milliseconds
  * @property {boolean} [dispose=false] Whether to dispose data when it's deleted
@@ -25,7 +28,7 @@ const Util = require('../../util/Util');
  * @abstract
  */
 class Collector extends EventEmitter {
-  constructor(client, filter, options = {}) {
+  constructor(client, options = {}) {
     super();
 
     /**
@@ -39,8 +42,9 @@ class Collector extends EventEmitter {
     /**
      * The filter applied to this collector
      * @type {CollectorFilter}
+     * @returns {boolean|Promise<boolean>}
      */
-    this.filter = filter;
+    this.filter = options.filter ?? (() => true);
 
     /**
      * The options of this collector
@@ -74,20 +78,25 @@ class Collector extends EventEmitter {
      */
     this._idletimeout = null;
 
+    if (typeof this.filter !== 'function') {
+      throw new TypeError('INVALID_TYPE', 'options.filter', 'function');
+    }
+
     this.handleCollect = this.handleCollect.bind(this);
     this.handleDispose = this.handleDispose.bind(this);
 
-    if (options.time) this._timeout = this.client.setTimeout(() => this.stop('time'), options.time);
-    if (options.idle) this._idletimeout = this.client.setTimeout(() => this.stop('idle'), options.idle);
+    if (options.time) this._timeout = setTimeout(() => this.stop('time'), options.time).unref();
+    if (options.idle) this._idletimeout = setTimeout(() => this.stop('idle'), options.idle).unref();
   }
 
   /**
    * Call this to handle an event as a collectable element. Accepts any event data as parameters.
    * @param {...*} args The arguments emitted by the listener
+   * @returns {Promise<void>}
    * @emits Collector#collect
    */
   async handleCollect(...args) {
-    const collect = this.collect(...args);
+    const collect = await this.collect(...args);
 
     if (collect && (await this.filter(...args, this.collected))) {
       this.collected.set(collect, args[0]);
@@ -100,8 +109,8 @@ class Collector extends EventEmitter {
       this.emit('collect', ...args);
 
       if (this._idletimeout) {
-        this.client.clearTimeout(this._idletimeout);
-        this._idletimeout = this.client.setTimeout(() => this.stop('idle'), this.options.idle);
+        clearTimeout(this._idletimeout);
+        this._idletimeout = setTimeout(() => this.stop('idle'), this.options.idle).unref();
       }
     }
     this.checkEnd();
@@ -110,13 +119,14 @@ class Collector extends EventEmitter {
   /**
    * Call this to remove an element from the collection. Accepts any event data as parameters.
    * @param {...*} args The arguments emitted by the listener
+   * @returns {Promise<void>}
    * @emits Collector#dispose
    */
-  handleDispose(...args) {
+  async handleDispose(...args) {
     if (!this.options.dispose) return;
 
     const dispose = this.dispose(...args);
-    if (!dispose || !this.filter(...args) || !this.collected.has(dispose)) return;
+    if (!dispose || !(await this.filter(...args)) || !this.collected.has(dispose)) return;
     this.collected.delete(dispose);
 
     /**
@@ -170,11 +180,11 @@ class Collector extends EventEmitter {
     if (this.ended) return;
 
     if (this._timeout) {
-      this.client.clearTimeout(this._timeout);
+      clearTimeout(this._timeout);
       this._timeout = null;
     }
     if (this._idletimeout) {
-      this.client.clearTimeout(this._idletimeout);
+      clearTimeout(this._idletimeout);
       this._idletimeout = null;
     }
     this.ended = true;
@@ -189,28 +199,35 @@ class Collector extends EventEmitter {
   }
 
   /**
-   * Resets the collectors timeout and idle timer.
-   * @param {Object} [options] Options
-   * @param {number} [options.time] How long to run the collector for in milliseconds
-   * @param {number} [options.idle] How long to stop the collector after inactivity in milliseconds
+   * Options used to reset the timeout and idle timer of a {@link Collector}.
+   * @typedef {Object} CollectorResetTimerOptions
+   * @property {number} [time] How long to run the collector for (in milliseconds)
+   * @property {number} [idle] How long to wait to stop the collector after inactivity (in milliseconds)
+   */
+
+  /**
+   * Resets the collector's timeout and idle timer.
+   * @param {CollectorResetTimerOptions} [options] Options for resetting
    */
   resetTimer({ time, idle } = {}) {
     if (this._timeout) {
-      this.client.clearTimeout(this._timeout);
-      this._timeout = this.client.setTimeout(() => this.stop('time'), time || this.options.time);
+      clearTimeout(this._timeout);
+      this._timeout = setTimeout(() => this.stop('time'), time ?? this.options.time).unref();
     }
     if (this._idletimeout) {
-      this.client.clearTimeout(this._idletimeout);
-      this._idletimeout = this.client.setTimeout(() => this.stop('idle'), idle || this.options.idle);
+      clearTimeout(this._idletimeout);
+      this._idletimeout = setTimeout(() => this.stop('idle'), idle ?? this.options.idle).unref();
     }
   }
 
   /**
    * Checks whether the collector should end, and if so, ends it.
+   * @returns {boolean} Whether the collector ended or not
    */
   checkEnd() {
-    const reason = this.endReason();
+    const reason = this.endReason;
     if (reason) this.stop(reason);
+    return Boolean(reason);
   }
 
   /**
@@ -248,13 +265,21 @@ class Collector extends EventEmitter {
     return Util.flatten(this);
   }
 
-  /* eslint-disable no-empty-function, valid-jsdoc */
+  /* eslint-disable no-empty-function */
+  /**
+   * The reason this collector has ended with, or null if it hasn't ended yet
+   * @type {?string}
+   * @readonly
+   * @abstract
+   */
+  get endReason() {}
+
   /**
    * Handles incoming events from the `handleCollect` function. Returns null if the event should not
    * be collected, or returns an object describing the data that should be stored.
    * @see Collector#handleCollect
    * @param {...*} args Any args the event listener emits
-   * @returns {?{key, value}} Data to insert into collection, if any
+   * @returns {?(*|Promise<?*>)} Data to insert into collection, if any
    * @abstract
    */
   collect() {}
@@ -268,14 +293,7 @@ class Collector extends EventEmitter {
    * @abstract
    */
   dispose() {}
-
-  /**
-   * The reason this collector has ended or will end with.
-   * @returns {?string} Reason to end the collector, if any
-   * @abstract
-   */
-  endReason() {}
-  /* eslint-enable no-empty-function, valid-jsdoc */
+  /* eslint-enable no-empty-function */
 }
 
 module.exports = Collector;

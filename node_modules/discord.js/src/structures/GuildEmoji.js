@@ -10,11 +10,6 @@ const Permissions = require('../util/Permissions');
  * @extends {BaseGuildEmoji}
  */
 class GuildEmoji extends BaseGuildEmoji {
-  /**
-   * @param {Client} client The instantiating client
-   * @param {Object} data The data for the guild emoji
-   * @param {Guild} guild The guild the guild emoji is part of
-   */
   constructor(client, data, guild) {
     super(client, data, guild);
 
@@ -23,6 +18,16 @@ class GuildEmoji extends BaseGuildEmoji {
      * @type {?User}
      */
     this.author = null;
+
+    /**
+     * Array of role ids this emoji is active for
+     * @name GuildEmoji#_roles
+     * @type {Snowflake[]}
+     * @private
+     */
+    Object.defineProperty(this, '_roles', { value: [], writable: true });
+
+    this._patch(data);
   }
 
   /**
@@ -39,7 +44,9 @@ class GuildEmoji extends BaseGuildEmoji {
 
   _patch(data) {
     super._patch(data);
-    if (typeof data.user !== 'undefined') this.author = this.client.users.add(data.user);
+
+    if (data.user) this.author = this.client.users._add(data.user);
+    if (data.roles) this._roles = data.roles;
   }
 
   /**
@@ -49,7 +56,7 @@ class GuildEmoji extends BaseGuildEmoji {
    */
   get deletable() {
     if (!this.guild.me) throw new Error('GUILD_UNCACHED_ME');
-    return !this.managed && this.guild.me.hasPermission(Permissions.FLAGS.MANAGE_EMOJIS);
+    return !this.managed && this.guild.me.permissions.has(Permissions.FLAGS.MANAGE_EMOJIS_AND_STICKERS);
   }
 
   /**
@@ -70,8 +77,8 @@ class GuildEmoji extends BaseGuildEmoji {
       throw new Error('EMOJI_MANAGED');
     } else {
       if (!this.guild.me) throw new Error('GUILD_UNCACHED_ME');
-      if (!this.guild.me.permissions.has(Permissions.FLAGS.MANAGE_EMOJIS)) {
-        throw new Error('MISSING_MANAGE_EMOJIS_PERMISSION', this.guild);
+      if (!this.guild.me.permissions.has(Permissions.FLAGS.MANAGE_EMOJIS_AND_STICKERS)) {
+        throw new Error('MISSING_MANAGE_EMOJIS_AND_STICKERS_PERMISSION', this.guild);
       }
     }
     const data = await this.client.api.guilds(this.guild.id).emojis(this.id).get();
@@ -97,9 +104,9 @@ class GuildEmoji extends BaseGuildEmoji {
    *   .then(e => console.log(`Edited emoji ${e}`))
    *   .catch(console.error);
    */
-  edit(data, reason) {
-    const roles = data.roles ? data.roles.map(r => r.id || r) : undefined;
-    return this.client.api
+  async edit(data, reason) {
+    const roles = data.roles?.map(r => r.id ?? r);
+    const newData = await this.client.api
       .guilds(this.guild.id)
       .emojis(this.id)
       .patch({
@@ -108,12 +115,10 @@ class GuildEmoji extends BaseGuildEmoji {
           roles,
         },
         reason,
-      })
-      .then(newData => {
-        const clone = this._clone();
-        clone._patch(newData);
-        return clone;
       });
+    const clone = this._clone();
+    clone._patch(newData);
+    return clone;
   }
 
   /**
@@ -131,18 +136,15 @@ class GuildEmoji extends BaseGuildEmoji {
    * @param {string} [reason] Reason for deleting the emoji
    * @returns {Promise<GuildEmoji>}
    */
-  delete(reason) {
-    return this.client.api
-      .guilds(this.guild.id)
-      .emojis(this.id)
-      .delete({ reason })
-      .then(() => this);
+  async delete(reason) {
+    await this.client.api.guilds(this.guild.id).emojis(this.id).delete({ reason });
+    return this;
   }
 
   /**
    * Whether this emoji is the same as another one.
-   * @param {GuildEmoji|Object} other The emoji to compare it to
-   * @returns {boolean} Whether the emoji is equal to the given emoji or not
+   * @param {GuildEmoji|APIEmoji} other The emoji to compare it to
+   * @returns {boolean}
    */
   equals(other) {
     if (other instanceof GuildEmoji) {
@@ -150,6 +152,7 @@ class GuildEmoji extends BaseGuildEmoji {
         other.id === this.id &&
         other.name === this.name &&
         other.managed === this.managed &&
+        other.available === this.available &&
         other.requiresColons === this.requiresColons &&
         other.roles.cache.size === this.roles.cache.size &&
         other.roles.cache.every(role => this.roles.cache.has(role.id))

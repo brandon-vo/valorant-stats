@@ -1,12 +1,14 @@
 'use strict';
 
-const EventEmitter = require('events');
+const EventEmitter = require('node:events');
+const { setImmediate } = require('node:timers');
+const { setTimeout: sleep } = require('node:timers/promises');
+const { Collection } = require('@discordjs/collection');
+const { RPCErrorCodes } = require('discord-api-types/v9');
 const WebSocketShard = require('./WebSocketShard');
 const PacketHandlers = require('./handlers');
-const { Error: DJSError } = require('../../errors');
-const Collection = require('../../util/Collection');
+const { Error } = require('../../errors');
 const { Events, ShardEvents, Status, WSCodes, WSEvents } = require('../../util/Constants');
-const Util = require('../../util/Util');
 
 const BeforeReadyWhitelist = [
   WSEvents.READY,
@@ -19,7 +21,11 @@ const BeforeReadyWhitelist = [
 ];
 
 const UNRECOVERABLE_CLOSE_CODES = Object.keys(WSCodes).slice(1).map(Number);
-const UNRESUMABLE_CLOSE_CODES = [1000, 4006, 4007];
+const UNRESUMABLE_CLOSE_CODES = [
+  RPCErrorCodes.UnknownError,
+  RPCErrorCodes.InvalidPermissions,
+  RPCErrorCodes.InvalidClientId,
+];
 
 /**
  * The WebSocket manager for this client.
@@ -68,7 +74,7 @@ class WebSocketManager extends EventEmitter {
 
     /**
      * An array of queued events before this WebSocketManager became ready
-     * @type {object[]}
+     * @type {Object[]}
      * @private
      * @name WebSocketManager#packetQueue
      */
@@ -76,7 +82,7 @@ class WebSocketManager extends EventEmitter {
 
     /**
      * The current status of this WebSocketManager
-     * @type {number}
+     * @type {Status}
      */
     this.status = Status.IDLE;
 
@@ -93,16 +99,6 @@ class WebSocketManager extends EventEmitter {
      * @private
      */
     this.reconnecting = false;
-
-    /**
-     * The current session limit of the client
-     * @private
-     * @type {?Object}
-     * @property {number} total Total number of identifies available
-     * @property {number} remaining Number of identifies remaining
-     * @property {number} reset_after Number of milliseconds after which the limit resets
-     */
-    this.sessionStartLimit = null;
   }
 
   /**
@@ -130,7 +126,7 @@ class WebSocketManager extends EventEmitter {
    * @private
    */
   async connect() {
-    const invalidToken = new DJSError(WSCodes[4004]);
+    const invalidToken = new Error(WSCodes[4004]);
     const {
       url: gatewayURL,
       shards: recommendedShards,
@@ -139,9 +135,7 @@ class WebSocketManager extends EventEmitter {
       throw error.httpStatus === 401 ? invalidToken : error;
     });
 
-    this.sessionStartLimit = sessionStartLimit;
-
-    const { total, remaining, reset_after } = sessionStartLimit;
+    const { total, remaining } = sessionStartLimit;
 
     this.debug(`Fetched Gateway Information
     URL: ${gatewayURL}
@@ -165,8 +159,6 @@ class WebSocketManager extends EventEmitter {
     this.debug(`Spawning shards: ${shards.join(', ')}`);
     this.shardQueue = new Set(shards.map(id => new WebSocketShard(this, id)));
 
-    await this._handleSessionLimit(remaining, reset_after);
-
     return this.createShards();
   }
 
@@ -188,8 +180,8 @@ class WebSocketManager extends EventEmitter {
         /**
          * Emitted when a shard turns ready.
          * @event Client#shardReady
-         * @param {number} id The shard ID that turned ready
-         * @param {?Set<string>} unavailableGuilds Set of unavailable guild IDs, if any
+         * @param {number} id The shard id that turned ready
+         * @param {?Set<Snowflake>} unavailableGuilds Set of unavailable guild ids, if any
          */
         this.client.emit(Events.SHARD_READY, shard.id, unavailableGuilds);
 
@@ -198,12 +190,12 @@ class WebSocketManager extends EventEmitter {
       });
 
       shard.on(ShardEvents.CLOSE, event => {
-        if (event.code === 1000 ? this.destroyed : UNRECOVERABLE_CLOSE_CODES.includes(event.code)) {
+        if (event.code === 1_000 ? this.destroyed : UNRECOVERABLE_CLOSE_CODES.includes(event.code)) {
           /**
            * Emitted when a shard's WebSocket disconnects and will no longer reconnect.
            * @event Client#shardDisconnect
            * @param {CloseEvent} event The WebSocket close event
-           * @param {number} id The shard ID that disconnected
+           * @param {number} id The shard id that disconnected
            */
           this.client.emit(Events.SHARD_DISCONNECT, event, shard.id);
           this.debug(WSCodes[event.code], shard);
@@ -212,21 +204,21 @@ class WebSocketManager extends EventEmitter {
 
         if (UNRESUMABLE_CLOSE_CODES.includes(event.code)) {
           // These event codes cannot be resumed
-          shard.sessionID = null;
+          shard.sessionId = null;
         }
 
         /**
          * Emitted when a shard is attempting to reconnect or re-identify.
          * @event Client#shardReconnecting
-         * @param {number} id The shard ID that is attempting to reconnect
+         * @param {number} id The shard id that is attempting to reconnect
          */
         this.client.emit(Events.SHARD_RECONNECTING, shard.id);
 
         this.shardQueue.add(shard);
 
-        if (shard.sessionID) {
-          this.debug(`Session ID is present, attempting an immediate reconnect...`, shard);
-          this.reconnect(true);
+        if (shard.sessionId) {
+          this.debug(`Session id is present, attempting an immediate reconnect...`, shard);
+          this.reconnect();
         } else {
           shard.destroy({ reset: true, emit: false, log: false });
           this.reconnect();
@@ -254,8 +246,8 @@ class WebSocketManager extends EventEmitter {
     try {
       await shard.connect();
     } catch (error) {
-      if (error && error.code && UNRECOVERABLE_CLOSE_CODES.includes(error.code)) {
-        throw new DJSError(WSCodes[error.code]);
+      if (error?.code && UNRECOVERABLE_CLOSE_CODES.includes(error.code)) {
+        throw new Error(WSCodes[error.code]);
         // Undefined if session is invalid, error event for regular closes
       } else if (!error || error.code) {
         this.debug('Failed to connect to the gateway, requeueing...', shard);
@@ -267,8 +259,7 @@ class WebSocketManager extends EventEmitter {
     // If we have more shards, add a 5s delay
     if (this.shardQueue.size) {
       this.debug(`Shard Queue Size: ${this.shardQueue.size}; continuing in 5 seconds...`);
-      await Util.delayFor(5000);
-      await this._handleSessionLimit();
+      await sleep(5_000);
       return this.createShards();
     }
 
@@ -277,21 +268,19 @@ class WebSocketManager extends EventEmitter {
 
   /**
    * Handles reconnects for this manager.
-   * @param {boolean} [skipLimit=false] IF this reconnect should skip checking the session limit
    * @private
    * @returns {Promise<boolean>}
    */
-  async reconnect(skipLimit = false) {
+  async reconnect() {
     if (this.reconnecting || this.status !== Status.READY) return false;
     this.reconnecting = true;
     try {
-      if (!skipLimit) await this._handleSessionLimit();
       await this.createShards();
     } catch (error) {
       this.debug(`Couldn't reconnect or fetch information about the gateway. ${error}`);
       if (error.httpStatus !== 401) {
         this.debug(`Possible network error occurred. Retrying in 5s...`);
-        await Util.delayFor(5000);
+        await sleep(5_000);
         this.reconnecting = false;
         return this.reconnect();
       }
@@ -333,29 +322,7 @@ class WebSocketManager extends EventEmitter {
     this.debug(`Manager was destroyed. Called by:\n${new Error('MANAGER_DESTROYED').stack}`);
     this.destroyed = true;
     this.shardQueue.clear();
-    for (const shard of this.shards.values()) shard.destroy({ closeCode: 1000, reset: true, emit: false, log: false });
-  }
-
-  /**
-   * Handles the timeout required if we cannot identify anymore.
-   * @param {number} [remaining] The amount of remaining identify sessions that can be done today
-   * @param {number} [resetAfter] The amount of time in which the identify counter resets
-   * @private
-   */
-  async _handleSessionLimit(remaining, resetAfter) {
-    if (typeof remaining === 'undefined' && typeof resetAfter === 'undefined') {
-      const { session_start_limit } = await this.client.api.gateway.bot.get();
-      this.sessionStartLimit = session_start_limit;
-      remaining = session_start_limit.remaining;
-      resetAfter = session_start_limit.reset_after;
-      this.debug(`Session Limit Information
-    Total: ${session_start_limit.total}
-    Remaining: ${remaining}`);
-    }
-    if (!remaining) {
-      this.debug(`Exceeded identify threshold. Will attempt a connection in ${resetAfter}ms`);
-      await Util.delayFor(resetAfter);
-    }
+    for (const shard of this.shards.values()) shard.destroy({ closeCode: 1_000, reset: true, emit: false, log: false });
   }
 
   /**
@@ -375,9 +342,9 @@ class WebSocketManager extends EventEmitter {
 
     if (this.packetQueue.length) {
       const item = this.packetQueue.shift();
-      this.client.setImmediate(() => {
+      setImmediate(() => {
         this.handlePacket(item.packet, item.shard);
-      });
+      }).unref();
     }
 
     if (packet && PacketHandlers[packet.t]) {
@@ -391,25 +358,10 @@ class WebSocketManager extends EventEmitter {
    * Checks whether the client is ready to be marked as ready.
    * @private
    */
-  async checkShardsReady() {
+  checkShardsReady() {
     if (this.status === Status.READY) return;
     if (this.shards.size !== this.totalShards || this.shards.some(s => s.status !== Status.READY)) {
       return;
-    }
-
-    this.status = Status.NEARLY;
-
-    if (this.client.options.fetchAllMembers) {
-      try {
-        const promises = this.client.guilds.cache.map(guild => {
-          if (guild.available) return guild.members.fetch();
-          // Return empty promise if guild is unavailable
-          return Promise.resolve();
-        });
-        await Promise.all(promises);
-      } catch (err) {
-        this.debug(`Failed to fetch all members before ready! ${err}\n${err.stack}`);
-      }
     }
 
     this.triggerClientReady();
@@ -427,8 +379,9 @@ class WebSocketManager extends EventEmitter {
     /**
      * Emitted when the client becomes ready to start working.
      * @event Client#ready
+     * @param {Client} client The client
      */
-    this.client.emit(Events.CLIENT_READY);
+    this.client.emit(Events.CLIENT_READY, this.client);
 
     this.handlePacket();
   }

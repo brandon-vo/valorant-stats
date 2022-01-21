@@ -1,5 +1,7 @@
 'use strict';
 
+const process = require('node:process');
+const { Error } = require('../errors');
 const { Events } = require('../util/Constants');
 const Util = require('../util/Util');
 
@@ -8,10 +10,6 @@ const Util = require('../util/Util');
  * Utilises IPC to send and receive data to/from the master process and other shards.
  */
 class ShardClientUtil {
-  /**
-   * @param {Client} client Client of the current shard
-   * @param {ShardingManagerMode} mode Mode the shard was spawned with
-   */
   constructor(client, mode) {
     /**
      * Client for the shard
@@ -43,7 +41,7 @@ class ShardClientUtil {
         process.send({ _reconnecting: true });
       });
     } else if (mode === 'worker') {
-      this.parentPort = require('worker_threads').parentPort;
+      this.parentPort = require('node:worker_threads').parentPort;
       this.parentPort.on('message', this._handleMessage.bind(this));
       client.on('ready', () => {
         this.parentPort.postMessage({ _ready: true });
@@ -58,7 +56,7 @@ class ShardClientUtil {
   }
 
   /**
-   * Array of shard IDs of this client
+   * Array of shard ids of this client
    * @type {number[]}
    * @readonly
    */
@@ -99,7 +97,7 @@ class ShardClientUtil {
    * Fetches a client property value of each shard, or a given shard.
    * @param {string} prop Name of the client property to get, using periods for nesting
    * @param {number} [shard] Shard to fetch property from, all if undefined
-   * @returns {Promise<*>|Promise<Array<*>>}
+   * @returns {Promise<*|Array<*>>}
    * @example
    * client.shard.fetchClientValues('guilds.cache.size')
    *   .then(results => console.log(`${results.reduce((prev, val) => prev + val, 0)} total guilds`))
@@ -108,10 +106,10 @@ class ShardClientUtil {
    */
   fetchClientValues(prop, shard) {
     return new Promise((resolve, reject) => {
-      const parent = this.parentPort || process;
+      const parent = this.parentPort ?? process;
 
       const listener = message => {
-        if (!message || message._sFetchProp !== prop || message._sFetchPropShard !== shard) return;
+        if (message?._sFetchProp !== prop || message._sFetchPropShard !== shard) return;
         parent.removeListener('message', listener);
         if (!message._error) resolve(message._result);
         else reject(Util.makeError(message._error));
@@ -127,29 +125,33 @@ class ShardClientUtil {
 
   /**
    * Evaluates a script or function on all shards, or a given shard, in the context of the {@link Client}s.
-   * @param {string|Function} script JavaScript to run on each shard
-   * @param {number} [shard] Shard to run script on, all if undefined
-   * @returns {Promise<*>|Promise<Array<*>>} Results of the script execution
+   * @param {Function} script JavaScript to run on each shard
+   * @param {BroadcastEvalOptions} [options={}] The options for the broadcast
+   * @returns {Promise<*|Array<*>>} Results of the script execution
    * @example
-   * client.shard.broadcastEval('this.guilds.cache.size')
+   * client.shard.broadcastEval(client => client.guilds.cache.size)
    *   .then(results => console.log(`${results.reduce((prev, val) => prev + val, 0)} total guilds`))
    *   .catch(console.error);
    * @see {@link ShardingManager#broadcastEval}
    */
-  broadcastEval(script, shard) {
+  broadcastEval(script, options = {}) {
     return new Promise((resolve, reject) => {
-      const parent = this.parentPort || process;
-      script = typeof script === 'function' ? `(${script})(this)` : script;
+      const parent = this.parentPort ?? process;
+      if (typeof script !== 'function') {
+        reject(new TypeError('SHARDING_INVALID_EVAL_BROADCAST'));
+        return;
+      }
+      script = `(${script})(this, ${JSON.stringify(options.context)})`;
 
       const listener = message => {
-        if (!message || message._sEval !== script || message._sEvalShard !== shard) return;
+        if (message?._sEval !== script || message._sEvalShard !== options.shard) return;
         parent.removeListener('message', listener);
         if (!message._error) resolve(message._result);
         else reject(Util.makeError(message._error));
       };
       parent.on('message', listener);
 
-      this.send({ _sEval: script, _sEvalShard: shard }).catch(err => {
+      this.send({ _sEval: script, _sEvalShard: options.shard }).catch(err => {
         parent.removeListener('message', listener);
         reject(err);
       });
@@ -158,16 +160,12 @@ class ShardClientUtil {
 
   /**
    * Requests a respawn of all shards.
-   * @param {number} [shardDelay=5000] How long to wait between shards (in milliseconds)
-   * @param {number} [respawnDelay=500] How long to wait between killing a shard's process/worker and restarting it
-   * (in milliseconds)
-   * @param {number} [spawnTimeout=30000] The amount in milliseconds to wait for a shard to become ready before
-   * continuing to another. (-1 or Infinity for no wait)
+   * @param {MultipleShardRespawnOptions} [options] Options for respawning shards
    * @returns {Promise<void>} Resolves upon the message being sent
    * @see {@link ShardingManager#respawnAll}
    */
-  respawnAll(shardDelay = 5000, respawnDelay = 500, spawnTimeout = 30000) {
-    return this.send({ _sRespawnAll: { shardDelay, respawnDelay, spawnTimeout } });
+  respawnAll({ shardDelay = 5_000, respawnDelay = 500, timeout = 30_000 } = {}) {
+    return this.send({ _sRespawnAll: { shardDelay, respawnDelay, timeout } });
   }
 
   /**
@@ -178,10 +176,14 @@ class ShardClientUtil {
   async _handleMessage(message) {
     if (!message) return;
     if (message._fetchProp) {
-      const props = message._fetchProp.split('.');
-      let value = this.client;
-      for (const prop of props) value = value[prop];
-      this._respond('fetchProp', { _fetchProp: message._fetchProp, _result: value });
+      try {
+        const props = message._fetchProp.split('.');
+        let value = this.client;
+        for (const prop of props) value = value[prop];
+        this._respond('fetchProp', { _fetchProp: message._fetchProp, _result: value });
+      } catch (err) {
+        this._respond('fetchProp', { _fetchProp: message._fetchProp, _error: Util.makePlainError(err) });
+      }
     } else if (message._eval) {
       try {
         this._respond('eval', { _eval: message._eval, _result: await this.client._eval(message._eval) });
@@ -199,13 +201,14 @@ class ShardClientUtil {
    */
   _respond(type, message) {
     this.send(message).catch(err => {
-      err.message = `Error when sending ${type} response to master process: ${err.message}`;
+      const error = new Error(`Error when sending ${type} response to master process: ${err.message}`);
+      error.stack = err.stack;
       /**
        * Emitted when the client encounters an error.
        * @event Client#error
        * @param {Error} error The error encountered
        */
-      this.client.emit(Events.ERROR, err);
+      this.client.emit(Events.ERROR, error);
     });
   }
 
@@ -228,14 +231,14 @@ class ShardClientUtil {
   }
 
   /**
-   * Get the shard ID for a given guild ID.
-   * @param {Snowflake} guildID Snowflake guild ID to get shard ID for
+   * Get the shard id for a given guild id.
+   * @param {Snowflake} guildId Snowflake guild id to get shard id for
    * @param {number} shardCount Number of shards
    * @returns {number}
    */
-  static shardIDForGuildID(guildID, shardCount) {
-    const shard = Number(BigInt(guildID) >> 22n) % shardCount;
-    if (shard < 0) throw new Error('SHARDING_SHARD_MISCALCULATION', shard, guildID, shardCount);
+  static shardIdForGuildId(guildId, shardCount) {
+    const shard = Number(BigInt(guildId) >> 22n) % shardCount;
+    if (shard < 0) throw new Error('SHARDING_SHARD_MISCALCULATION', shard, guildId, shardCount);
     return shard;
   }
 }

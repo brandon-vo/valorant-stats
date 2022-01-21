@@ -1,6 +1,6 @@
 'use strict';
 
-const Channel = require('./Channel');
+const { Channel } = require('./Channel');
 const { Error } = require('../errors');
 
 /**
@@ -13,7 +13,7 @@ class PartialGroupDMChannel extends Channel {
 
     /**
      * The name of this Group DM Channel
-     * @type {string}
+     * @type {?string}
      */
     this.name = data.name;
 
@@ -22,16 +22,27 @@ class PartialGroupDMChannel extends Channel {
      * @type {?string}
      */
     this.icon = data.icon;
+
+    /**
+     * Recipient data received in a {@link PartialGroupDMChannel}.
+     * @typedef {Object} PartialRecipient
+     * @property {string} username The username of the recipient
+     */
+
+    /**
+     * The recipients of this Group DM Channel.
+     * @type {PartialRecipient[]}
+     */
+    this.recipients = data.recipients;
   }
 
   /**
    * The URL to this channel's icon.
-   * @param {ImageURLOptions} [options={}] Options for the Image URL
+   * @param {StaticImageURLOptions} [options={}] Options for the Image URL
    * @returns {?string}
    */
   iconURL({ format, size } = {}) {
-    if (!this.icon) return null;
-    return this.client.rest.cdn.GDMIcon(this.id, this.icon, format, size);
+    return this.icon && this.client.rest.cdn.GDMIcon(this.id, this.icon, format, size);
   }
 
   delete() {

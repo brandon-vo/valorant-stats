@@ -1,12 +1,20 @@
 'use strict';
 
+const process = require('node:process');
 const Base = require('./Base');
-const Role = require('./Role');
+const VoiceState = require('./VoiceState');
 const TextBasedChannel = require('./interfaces/TextBasedChannel');
 const { Error } = require('../errors');
 const GuildMemberRoleManager = require('../managers/GuildMemberRoleManager');
 const Permissions = require('../util/Permissions');
-let Structures;
+
+/**
+ * @type {WeakSet<GuildMember>}
+ * @private
+ * @internal
+ */
+const deletedGuildMembers = new WeakSet();
+let deprecationEmittedForDeleted = false;
 
 /**
  * Represents a member of a guild on Discord.
@@ -14,11 +22,6 @@ let Structures;
  * @extends {Base}
  */
 class GuildMember extends Base {
-  /**
-   * @param {Client} client The instantiating client
-   * @param {Object} data The data for the guild member
-   * @param {Guild} guild The guild the member is part of
-   */
   constructor(client, data, guild) {
     super(client);
 
@@ -35,34 +38,28 @@ class GuildMember extends Base {
     this.joinedTimestamp = null;
 
     /**
-     * The ID of the last message sent by the member in their guild, if one was sent
-     * @type {?Snowflake}
-     */
-    this.lastMessageID = null;
-
-    /**
-     * The ID of the channel for the last message sent by the member in their guild, if one was sent
-     * @type {?Snowflake}
-     */
-    this.lastMessageChannelID = null;
-
-    /**
-     * The timestamp of when the member used their Nitro boost on the guild, if it was used
+     * The last timestamp this member started boosting the guild
      * @type {?number}
      */
     this.premiumSinceTimestamp = null;
-
-    /**
-     * Whether the member has been removed from the guild
-     * @type {boolean}
-     */
-    this.deleted = false;
 
     /**
      * The nickname of this member, if they have one
      * @type {?string}
      */
     this.nickname = null;
+
+    /**
+     * Whether this member has yet to pass the guild's membership gate
+     * @type {boolean}
+     */
+    this.pending = false;
+
+    /**
+     * The timestamp this member's timeout will be removed
+     * @type {?number}
+     */
+    this.communicationDisabledUntilTimestamp = null;
 
     this._roles = [];
     if (data) this._patch(data);
@@ -72,15 +69,32 @@ class GuildMember extends Base {
     if ('user' in data) {
       /**
        * The user that this guild member instance represents
-       * @type {User}
+       * @type {?User}
        */
-      this.user = this.client.users.add(data.user, true);
+      this.user = this.client.users._add(data.user, true);
     }
 
     if ('nick' in data) this.nickname = data.nick;
+    if ('avatar' in data) {
+      /**
+       * The guild member's avatar hash
+       * @type {?string}
+       */
+      this.avatar = data.avatar;
+    } else if (typeof this.avatar !== 'string') {
+      this.avatar = null;
+    }
     if ('joined_at' in data) this.joinedTimestamp = new Date(data.joined_at).getTime();
-    if ('premium_since' in data) this.premiumSinceTimestamp = new Date(data.premium_since).getTime();
+    if ('premium_since' in data) {
+      this.premiumSinceTimestamp = data.premium_since ? new Date(data.premium_since).getTime() : null;
+    }
     if ('roles' in data) this._roles = data.roles;
+    this.pending = data.pending ?? false;
+
+    if ('communication_disabled_until' in data) {
+      this.communicationDisabledUntilTimestamp =
+        data.communication_disabled_until && Date.parse(data.communication_disabled_until);
+    }
   }
 
   _clone() {
@@ -90,12 +104,42 @@ class GuildMember extends Base {
   }
 
   /**
+   * Whether or not the structure has been deleted
+   * @type {boolean}
+   * @deprecated This will be removed in the next major version, see https://github.com/discordjs/discord.js/issues/7091
+   */
+  get deleted() {
+    if (!deprecationEmittedForDeleted) {
+      deprecationEmittedForDeleted = true;
+      process.emitWarning(
+        'GuildMember#deleted is deprecated, see https://github.com/discordjs/discord.js/issues/7091.',
+        'DeprecationWarning',
+      );
+    }
+
+    return deletedGuildMembers.has(this);
+  }
+
+  set deleted(value) {
+    if (!deprecationEmittedForDeleted) {
+      deprecationEmittedForDeleted = true;
+      process.emitWarning(
+        'GuildMember#deleted is deprecated, see https://github.com/discordjs/discord.js/issues/7091.',
+        'DeprecationWarning',
+      );
+    }
+
+    if (value) deletedGuildMembers.add(this);
+    else deletedGuildMembers.delete(this);
+  }
+
+  /**
    * Whether this GuildMember is a partial
    * @type {boolean}
    * @readonly
    */
   get partial() {
-    return !this.joinedTimestamp;
+    return this.joinedTimestamp === null;
   }
 
   /**
@@ -108,24 +152,32 @@ class GuildMember extends Base {
   }
 
   /**
-   * The Message object of the last message sent by the member in their guild, if one was sent
-   * @type {?Message}
-   * @readonly
-   */
-  get lastMessage() {
-    const channel = this.guild.channels.cache.get(this.lastMessageChannelID);
-    return (channel && channel.messages.cache.get(this.lastMessageID)) || null;
-  }
-
-  /**
    * The voice state of this member
    * @type {VoiceState}
    * @readonly
    */
   get voice() {
-    if (!Structures) Structures = require('../util/Structures');
-    const VoiceState = Structures.get('VoiceState');
-    return this.guild.voiceStates.cache.get(this.id) || new VoiceState(this.guild, { user_id: this.id });
+    return this.guild.voiceStates.cache.get(this.id) ?? new VoiceState(this.guild, { user_id: this.id });
+  }
+
+  /**
+   * A link to the member's guild avatar.
+   * @param {ImageURLOptions} [options={}] Options for the Image URL
+   * @returns {?string}
+   */
+  avatarURL({ format, size, dynamic } = {}) {
+    if (!this.avatar) return null;
+    return this.client.rest.cdn.GuildMemberAvatar(this.guild.id, this.id, this.avatar, format, size, dynamic);
+  }
+
+  /**
+   * A link to the member's guild avatar if they have one.
+   * Otherwise, a link to their {@link User#displayAvatarURL} will be returned.
+   * @param {ImageURLOptions} [options={}] Options for the Image URL
+   * @returns {string}
+   */
+  displayAvatarURL(options) {
+    return this.avatarURL(options) ?? this.user.displayAvatarURL(options);
   }
 
   /**
@@ -138,7 +190,16 @@ class GuildMember extends Base {
   }
 
   /**
-   * The time of when the member used their Nitro boost on the guild, if it was used
+   * The time this member's timeout will be removed
+   * @type {?Date}
+   * @readonly
+   */
+  get communicationDisabledUntil() {
+    return this.communicationDisabledUntilTimestamp && new Date(this.communicationDisabledUntilTimestamp);
+  }
+
+  /**
+   * The last time this member started boosting the guild
    * @type {?Date}
    * @readonly
    */
@@ -148,21 +209,11 @@ class GuildMember extends Base {
 
   /**
    * The presence of this guild member
-   * @type {Presence}
+   * @type {?Presence}
    * @readonly
    */
   get presence() {
-    if (!Structures) Structures = require('../util/Structures');
-    const Presence = Structures.get('Presence');
-    return (
-      this.guild.presences.cache.get(this.id) ||
-      new Presence(this.client, {
-        user: {
-          id: this.id,
-        },
-        guild: this.guild,
-      })
-    );
+    return this.guild.presences.resolve(this.id);
   }
 
   /**
@@ -171,8 +222,7 @@ class GuildMember extends Base {
    * @readonly
    */
   get displayColor() {
-    const role = this.roles.color;
-    return (role && role.color) || 0;
+    return this.roles.color?.color ?? 0;
   }
 
   /**
@@ -181,12 +231,11 @@ class GuildMember extends Base {
    * @readonly
    */
   get displayHexColor() {
-    const role = this.roles.color;
-    return (role && role.hexColor) || '#000000';
+    return this.roles.color?.hexColor ?? '#000000';
   }
 
   /**
-   * The ID of this member
+   * The member's id
    * @type {Snowflake}
    * @readonly
    */
@@ -200,16 +249,16 @@ class GuildMember extends Base {
    * @readonly
    */
   get displayName() {
-    return this.nickname || this.user.username;
+    return this.nickname ?? this.user.username;
   }
 
   /**
-   * The overall set of permissions for this member, taking only roles into account
+   * The overall set of permissions for this member, taking only roles and owner status into account
    * @type {Readonly<Permissions>}
    * @readonly
    */
   get permissions() {
-    if (this.user.id === this.guild.ownerID) return new Permissions(Permissions.ALL).freeze();
+    if (this.user.id === this.guild.ownerId) return new Permissions(Permissions.ALL).freeze();
     return new Permissions(this.roles.cache.map(role => role.permissions)).freeze();
   }
 
@@ -220,9 +269,9 @@ class GuildMember extends Base {
    * @readonly
    */
   get manageable() {
-    if (this.user.id === this.guild.ownerID) return false;
+    if (this.user.id === this.guild.ownerId) return false;
     if (this.user.id === this.client.user.id) return false;
-    if (this.client.user.id === this.guild.ownerID) return true;
+    if (this.client.user.id === this.guild.ownerId) return true;
     if (!this.guild.me) throw new Error('GUILD_UNCACHED_ME');
     return this.guild.me.roles.highest.comparePositionTo(this.roles.highest) > 0;
   }
@@ -246,41 +295,33 @@ class GuildMember extends Base {
   }
 
   /**
+   * Whether this member is moderatable by the client user
+   * @type {boolean}
+   * @readonly
+   */
+  get moderatable() {
+    return this.manageable && (this.guild.me?.permissions.has(Permissions.FLAGS.MODERATE_MEMBERS) ?? false);
+  }
+
+  /**
+   * Whether this member is currently timed out
+   * @returns {boolean}
+   */
+  isCommunicationDisabled() {
+    return this.communicationDisabledUntilTimestamp > Date.now();
+  }
+
+  /**
    * Returns `channel.permissionsFor(guildMember)`. Returns permissions for a member in a guild channel,
    * taking into account roles and permission overwrites.
-   * @param {ChannelResolvable} channel The guild channel to use as context
+   * @param {GuildChannelResolvable} channel The guild channel to use as context
    * @returns {Readonly<Permissions>}
    */
   permissionsIn(channel) {
     channel = this.guild.channels.resolve(channel);
     if (!channel) throw new Error('GUILD_CHANNEL_RESOLVE');
-    return channel.memberPermissions(this);
+    return channel.permissionsFor(this);
   }
-
-  /**
-   * Checks if any of this member's roles have a permission.
-   * @param {PermissionResolvable} permission Permission(s) to check for
-   * @param {Object} [options] Options
-   * @param {boolean} [options.checkAdmin=true] Whether to allow the administrator permission to override
-   * @param {boolean} [options.checkOwner=true] Whether to allow being the guild's owner to override
-   * @returns {boolean}
-   */
-  hasPermission(permission, { checkAdmin = true, checkOwner = true } = {}) {
-    if (checkOwner && this.user.id === this.guild.ownerID) return true;
-    const permissions = new Permissions(this.roles.cache.map(role => role.permissions));
-    return permissions.has(permission, checkAdmin);
-  }
-
-  /**
-   * The data for editing a guild member.
-   * @typedef {Object} GuildMemberEditData
-   * @property {string} [nick] The nickname to set for the member
-   * @property {Collection<Snowflake, Role>|RoleResolvable[]} [roles] The roles or role IDs to apply
-   * @property {boolean} [mute] Whether or not the member should be muted
-   * @property {boolean} [deaf] Whether or not the member should be deafened
-   * @property {ChannelResolvable|null} [channel] Channel to move member to (if they are connected to voice), or `null`
-   * if you want to kick them from voice
-   */
 
   /**
    * Edits this member.
@@ -288,38 +329,13 @@ class GuildMember extends Base {
    * @param {string} [reason] Reason for editing this user
    * @returns {Promise<GuildMember>}
    */
-  async edit(data, reason) {
-    if (data.channel) {
-      data.channel = this.guild.channels.resolve(data.channel);
-      if (!data.channel || data.channel.type !== 'voice') {
-        throw new Error('GUILD_VOICE_CHANNEL_RESOLVE');
-      }
-      data.channel_id = data.channel.id;
-      data.channel = undefined;
-    } else if (data.channel === null) {
-      data.channel_id = null;
-      data.channel = undefined;
-    }
-    if (data.roles) data.roles = data.roles.map(role => (role instanceof Role ? role.id : role));
-    let endpoint = this.client.api.guilds(this.guild.id);
-    if (this.user.id === this.client.user.id) {
-      const keys = Object.keys(data);
-      if (keys.length === 1 && keys[0] === 'nick') endpoint = endpoint.members('@me').nick;
-      else endpoint = endpoint.members(this.id);
-    } else {
-      endpoint = endpoint.members(this.id);
-    }
-    await endpoint.patch({ data, reason });
-
-    const clone = this._clone();
-    data.user = this.user;
-    clone._patch(data);
-    return clone;
+  edit(data, reason) {
+    return this.guild.members.edit(this, data, reason);
   }
 
   /**
    * Sets the nickname for this member.
-   * @param {string} nick The nickname for the guild member
+   * @param {?string} nick The nickname for the guild member, or `null` if you want to reset their nickname
    * @param {string} [reason] Reason for setting the nickname
    * @returns {Promise<GuildMember>}
    */
@@ -329,10 +345,11 @@ class GuildMember extends Base {
 
   /**
    * Creates a DM channel between the client and this member.
+   * @param {boolean} [force=false] Whether to skip the cache check and request the API
    * @returns {Promise<DMChannel>}
    */
-  createDM() {
-    return this.user.createDM();
+  createDM(force = false) {
+    return this.user.createDM(force);
   }
 
   /**
@@ -349,18 +366,12 @@ class GuildMember extends Base {
    * @returns {Promise<GuildMember>}
    */
   kick(reason) {
-    return this.client.api
-      .guilds(this.guild.id)
-      .members(this.user.id)
-      .delete({ reason })
-      .then(() => this);
+    return this.guild.members.kick(this, reason);
   }
 
   /**
    * Bans this guild member.
-   * @param {Object} [options] Options for the ban
-   * @param {number} [options.days=0] Number of days of messages to delete, must be between 0 and 7
-   * @param {string} [options.reason] Reason for banning
+   * @param {BanOptions} [options] Options for the ban
    * @returns {Promise<GuildMember>}
    * @example
    * // ban a guild member
@@ -373,12 +384,67 @@ class GuildMember extends Base {
   }
 
   /**
+   * Times this guild member out.
+   * @param {DateResolvable|null} communicationDisabledUntil The date or timestamp
+   * for the member's communication to be disabled until. Provide `null` to remove the timeout.
+   * @param {string} [reason] The reason for this timeout.
+   * @returns {Promise<GuildMember>}
+   * @example
+   * // Time a guild member out for 5 minutes
+   * guildMember.disableCommunicationUntil(Date.now() + (5 * 60 * 1000), 'They deserved it')
+   *   .then(console.log)
+   *   .catch(console.error);
+   */
+  disableCommunicationUntil(communicationDisabledUntil, reason) {
+    return this.edit({ communicationDisabledUntil }, reason);
+  }
+
+  /**
+   * Times this guild member out.
+   * @param {number|null} timeout The time in milliseconds
+   * for the member's communication to be disabled until. Provide `null` to remove the timeout.
+   * @param {string} [reason] The reason for this timeout.
+   * @returns {Promise<GuildMember>}
+   * @example
+   * // Time a guild member out for 5 minutes
+   * guildMember.timeout(5 * 60 * 1000, 'They deserved it')
+   *   .then(console.log)
+   *   .catch(console.error);
+   */
+  timeout(timeout, reason) {
+    return this.disableCommunicationUntil(timeout && Date.now() + timeout, reason);
+  }
+
+  /**
    * Fetches this GuildMember.
-   * @param {boolean} [force=false] Whether to skip the cache check and request the API
+   * @param {boolean} [force=true] Whether to skip the cache check and request the API
    * @returns {Promise<GuildMember>}
    */
-  fetch(force = false) {
+  fetch(force = true) {
     return this.guild.members.fetch({ user: this.id, cache: true, force });
+  }
+
+  /**
+   * Whether this guild member equals another guild member. It compares all properties, so for most
+   * comparison it is advisable to just compare `member.id === member2.id` as it is significantly faster
+   * and is often what most users need.
+   * @param {GuildMember} member The member to compare with
+   * @returns {boolean}
+   */
+  equals(member) {
+    return (
+      member instanceof this.constructor &&
+      this.id === member.id &&
+      this.partial === member.partial &&
+      this.guild.id === member.guild.id &&
+      this.joinedTimestamp === member.joinedTimestamp &&
+      this.nickname === member.nickname &&
+      this.avatar === member.avatar &&
+      this.pending === member.pending &&
+      this.communicationDisabledUntilTimestamp === member.communicationDisabledUntilTimestamp &&
+      (this._roles === member._roles ||
+        (this._roles.length === member._roles.length && this._roles.every((role, i) => role === member._roles[i])))
+    );
   }
 
   /**
@@ -393,15 +459,15 @@ class GuildMember extends Base {
   }
 
   toJSON() {
-    return super.toJSON({
-      guild: 'guildID',
-      user: 'userID',
+    const json = super.toJSON({
+      guild: 'guildId',
+      user: 'userId',
       displayName: true,
-      speaking: false,
-      lastMessage: false,
-      lastMessageID: false,
       roles: true,
     });
+    json.avatarURL = this.avatarURL();
+    json.displayAvatarURL = this.displayAvatarURL();
+    return json;
   }
 
   // These are here only for documentation purposes - they are implemented by TextBasedChannel
@@ -411,4 +477,10 @@ class GuildMember extends Base {
 
 TextBasedChannel.applyToClass(GuildMember);
 
-module.exports = GuildMember;
+exports.GuildMember = GuildMember;
+exports.deletedGuildMembers = deletedGuildMembers;
+
+/**
+ * @external APIGuildMember
+ * @see {@link https://discord.com/developers/docs/resources/guild#guild-member-object}
+ */

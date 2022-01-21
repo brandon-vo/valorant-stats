@@ -2,86 +2,79 @@
 
 const { Presence } = require('./Presence');
 const { TypeError } = require('../errors');
-const Collection = require('../util/Collection');
-const { ActivityTypes, OPCodes } = require('../util/Constants');
+const { ActivityTypes, Opcodes } = require('../util/Constants');
 
+/**
+ * Represents the client's presence.
+ * @extends {Presence}
+ */
 class ClientPresence extends Presence {
-  /**
-   * @param {Client} client The instantiating client
-   * @param {Object} [data={}] The data for the client presence
-   */
   constructor(client, data = {}) {
-    super(client, Object.assign(data, { status: 'online', user: { id: null } }));
+    super(client, Object.assign(data, { status: data.status ?? 'online', user: { id: null } }));
   }
 
-  async set(presence) {
-    const packet = await this._parse(presence);
-    this.patch(packet);
-    if (typeof presence.shardID === 'undefined') {
-      this.client.ws.broadcast({ op: OPCodes.STATUS_UPDATE, d: packet });
-    } else if (Array.isArray(presence.shardID)) {
-      for (const shardID of presence.shardID) {
-        this.client.ws.shards.get(shardID).send({ op: OPCodes.STATUS_UPDATE, d: packet });
+  /**
+   * Sets the client's presence
+   * @param {PresenceData} presence The data to set the presence to
+   * @returns {ClientPresence}
+   */
+  set(presence) {
+    const packet = this._parse(presence);
+    this._patch(packet);
+    if (typeof presence.shardId === 'undefined') {
+      this.client.ws.broadcast({ op: Opcodes.STATUS_UPDATE, d: packet });
+    } else if (Array.isArray(presence.shardId)) {
+      for (const shardId of presence.shardId) {
+        this.client.ws.shards.get(shardId).send({ op: Opcodes.STATUS_UPDATE, d: packet });
       }
     } else {
-      this.client.ws.shards.get(presence.shardID).send({ op: OPCodes.STATUS_UPDATE, d: packet });
+      this.client.ws.shards.get(presence.shardId).send({ op: Opcodes.STATUS_UPDATE, d: packet });
     }
     return this;
   }
 
-  async _parse({ status, since, afk, activity }) {
-    const applicationID = activity && (activity.application ? activity.application.id || activity.application : null);
-    let assets = new Collection();
-    if (activity) {
-      if (typeof activity.name !== 'string') throw new TypeError('INVALID_TYPE', 'name', 'string');
-      if (!activity.type) activity.type = 0;
-      if (activity.assets && applicationID) {
-        try {
-          const a = await this.client.api.oauth2.applications(applicationID).assets.get();
-          for (const asset of a) assets.set(asset.name, asset.id);
-        } catch {} // eslint-disable-line no-empty
-      }
-    }
-
-    const packet = {
-      afk: afk != null ? afk : false, // eslint-disable-line eqeqeq
-      since: since != null ? since : null, // eslint-disable-line eqeqeq
-      status: status || this.status,
-      game: activity
-        ? {
-            type: activity.type,
-            name: activity.name,
-            url: activity.url,
-            details: activity.details || undefined,
-            state: activity.state || undefined,
-            assets: activity.assets
-              ? {
-                  large_text: activity.assets.largeText || undefined,
-                  small_text: activity.assets.smallText || undefined,
-                  large_image: assets.get(activity.assets.largeImage) || activity.assets.largeImage,
-                  small_image: assets.get(activity.assets.smallImage) || activity.assets.smallImage,
-                }
-              : undefined,
-            timestamps: activity.timestamps || undefined,
-            party: activity.party || undefined,
-            application_id: applicationID || undefined,
-            secrets: activity.secrets || undefined,
-            instance: activity.instance || undefined,
-          }
-        : null,
+  /**
+   * Parses presence data into a packet ready to be sent to Discord
+   * @param {PresenceData} presence The data to parse
+   * @returns {APIPresence}
+   * @private
+   */
+  _parse({ status, since, afk, activities }) {
+    const data = {
+      activities: [],
+      afk: typeof afk === 'boolean' ? afk : false,
+      since: typeof since === 'number' && !Number.isNaN(since) ? since : null,
+      status: status ?? this.status,
     };
+    if (activities?.length) {
+      for (const [i, activity] of activities.entries()) {
+        if (typeof activity.name !== 'string') throw new TypeError('INVALID_TYPE', `activities[${i}].name`, 'string');
+        activity.type ??= 0;
 
-    if ((status || afk || since) && !activity) {
-      packet.game = this.activities[0] || null;
+        data.activities.push({
+          type: typeof activity.type === 'number' ? activity.type : ActivityTypes[activity.type],
+          name: activity.name,
+          url: activity.url,
+        });
+      }
+    } else if (!activities && (status || afk || since) && this.activities.length) {
+      data.activities.push(
+        ...this.activities.map(a => ({
+          name: a.name,
+          type: ActivityTypes[a.type],
+          url: a.url ?? undefined,
+        })),
+      );
     }
 
-    if (packet.game) {
-      packet.game.type =
-        typeof packet.game.type === 'number' ? packet.game.type : ActivityTypes.indexOf(packet.game.type);
-    }
-
-    return packet;
+    return data;
   }
 }
 
 module.exports = ClientPresence;
+
+/* eslint-disable max-len */
+/**
+ * @external APIPresence
+ * @see {@link https://discord.com/developers/docs/rich-presence/how-to#updating-presence-update-presence-payload-fields}
+ */

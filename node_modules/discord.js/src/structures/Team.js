@@ -1,9 +1,9 @@
 'use strict';
 
+const { Collection } = require('@discordjs/collection');
 const Base = require('./Base');
 const TeamMember = require('./TeamMember');
-const Collection = require('../util/Collection');
-const Snowflake = require('../util/Snowflake');
+const SnowflakeUtil = require('../util/SnowflakeUtil');
 
 /**
  * Represents a Client OAuth2 Application Team.
@@ -17,29 +17,38 @@ class Team extends Base {
 
   _patch(data) {
     /**
-     * The ID of the Team
+     * The Team's id
      * @type {Snowflake}
      */
     this.id = data.id;
 
-    /**
-     * The name of the Team
-     * @type {string}
-     */
-    this.name = data.name;
+    if ('name' in data) {
+      /**
+       * The name of the Team
+       * @type {string}
+       */
+      this.name = data.name;
+    }
 
-    /**
-     * The Team's icon hash
-     * @type {?string}
-     */
-    this.icon = data.icon || null;
+    if ('icon' in data) {
+      /**
+       * The Team's icon hash
+       * @type {?string}
+       */
+      this.icon = data.icon;
+    } else {
+      this.icon ??= null;
+    }
 
-    /**
-     * The Team's owner id
-     * @type {?string}
-     */
-    this.ownerID = data.owner_user_id || null;
-
+    if ('owner_user_id' in data) {
+      /**
+       * The Team's owner id
+       * @type {?Snowflake}
+       */
+      this.ownerId = data.owner_user_id;
+    } else {
+      this.ownerId ??= null;
+    }
     /**
      * The Team's members
      * @type {Collection<Snowflake, TeamMember>}
@@ -58,7 +67,7 @@ class Team extends Base {
    * @readonly
    */
   get owner() {
-    return this.members.get(this.ownerID) || null;
+    return this.members.get(this.ownerId) ?? null;
   }
 
   /**
@@ -67,7 +76,7 @@ class Team extends Base {
    * @readonly
    */
   get createdTimestamp() {
-    return Snowflake.deconstruct(this.id).timestamp;
+    return SnowflakeUtil.timestampFrom(this.id);
   }
 
   /**
@@ -80,9 +89,9 @@ class Team extends Base {
   }
 
   /**
-   * A link to the teams's icon.
-   * @param {ImageURLOptions} [options={}] Options for the Image URL
-   * @returns {?string} URL to the icon
+   * A link to the team's icon.
+   * @param {StaticImageURLOptions} [options={}] Options for the Image URL
+   * @returns {?string}
    */
   iconURL({ format, size } = {}) {
     if (!this.icon) return null;
