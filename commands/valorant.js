@@ -1,48 +1,32 @@
 const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
-const { pagination } = require('reconlx');
 const assets = require('../assets.json');
 const axios = require('axios').default;
 const Account = require('../schemas/AccountSchema');
+const paginationEmbed = require('discordjs-button-pagination')
 
 module.exports = {
     name: "valorant",
-    aliases: ['stats', 'competitive', 'comp', 'unrated', 'unranked', 'lastmatch', 'lm', 'deathmatch',
-        'dm', 'escalation', 'spikerush', 'sr', 'agents', 'agent', 'map', 'maps', `weapon`, 'weapons', 'guns'],
+    aliases:
+        [
+            'stats', 'competitive', 'comp',
+            'unrated', 'unranked', 'lastmatch', 'lm',
+            'deathmatch', 'dm', 'escalation', 'spikerush', 'sr',
+            'agents', 'agent', 'map', 'maps', `weapon`, 'weapons', 'guns'
+        ],
     description: "Get statistics for a Valorant player",
     async execute(message, args, command) {
 
-        // Argument formatting to access Valorant usernames with spaces
-        var str = args[0];
-        for (let i = 1; i < args.length; i++)
-            str += args[i];
+        const backButton = new MessageButton()
+            .setCustomId('previousbtn')
+            .setLabel('<')
+            .setStyle('SUCCESS');
 
-        // Get account
-        const account = await Account.find({ discordId: message.author.id });
+        const forwardsButton = new MessageButton()
+            .setCustomId('nextbtn')
+            .setLabel('>')
+            .setStyle('SUCCESS');
 
-        // If theres no argument provided by user, check if they linked a Valorant account to their Discord ID
-        if (!args[0] && account.length > 0)
-            str = account[0].valorantAccount
-        // If the user mentioned another user, get mentioned users Valorant account
-        else if (message.content.includes('@')) {
-            try {
-                taggedAccount = await Account.find({ discordId: (message.mentions.users.first().id) })
-                str = taggedAccount[0].valorantAccount
-            } catch (error) {
-                return message.reply('The player you have mentioned does not have their Valorant account linked!')
-            }
-        }
-        else if (!args[0])
-            return message.reply('Please include your Valorant username and tag (USERNAME#TAG)\n'
-                + 'For convenience, you may link a Valorant account to your Discord ID using the v!link command.')
-
-        // Convert characters to lowercase and encode input to correct format
-        var ID = str.toLowerCase();
-
-        // Check if the ID has been encoded already through linked command
-        if (ID.includes('#'))
-            playerID = encodeURIComponent(ID);
-        else
-            playerID = ID;
+        const navigationButtonArray = [backButton, forwardsButton];
 
         const defaultButtons = new MessageActionRow().addComponents(
             new MessageButton()
@@ -57,7 +41,78 @@ module.exports = {
                 .setLabel("Website")
                 .setURL("https://valostats.netlify.app/")
                 .setStyle("LINK"),
-        )
+        );
+
+        // Argument formatting to access Valorant usernames with spaces
+        var str = args[0];
+        for (let i = 1; i < args.length; i++)
+            str += args[i];
+
+        // Get account
+        const account = await Account.find({ discordId: message.author.id });
+
+        const notLinkedEmbed = new MessageEmbed()
+            .setColor('#d1390f')
+            .setThumbnail('https://cdn.discordapp.com/attachments/834195818080108564/932365602427920404/x-png-35400.png')
+            .setFooter({ text: 'Developed by CMDRVo' })
+            .addFields(
+                {
+                    name: 'Error Status',
+                    value: "```diff\n" + "The player you have mentioned does not have their " +
+                        "Valorant account linked to their Discord.\n```",
+                    inline: true
+                },
+            );
+
+        const noNameEmbed = new MessageEmbed()
+            .setColor('#d1390f')
+            .setThumbnail('https://cdn.discordapp.com/attachments/834195818080108564/932365602427920404/x-png-35400.png')
+            .setFooter({ text: 'Developed by CMDRVo' })
+            .addFields(
+                {
+                    name: 'Error Status',
+                    value: "```diff\n" + "Please include your Valorant username and tag (USERNAME#TAG)." +
+                        "For convenience, you may link a Valorant account to your Discord ID using the v!link command.\n```",
+                    inline: true
+                },
+            );
+
+        const defaultErrorEmbed = new MessageEmbed()
+            .setColor('#d1390f')
+            .setThumbnail('https://cdn.discordapp.com/attachments/834195818080108564/932365602427920404/x-png-35400.png')
+            .setFooter({ text: 'Developed by CMDRVo' })
+            .addFields(
+                {
+                    name: 'Error Status',
+                    value: "```diff\n An error has occurred. " +
+                        "Please try again later or contact CMDRVo#3496 for assistance.\n```",
+                    inline: true
+                },
+            );
+
+        // If theres no argument provided by user, check if they linked a Valorant account to their Discord ID
+        if (!args[0] && account.length > 0)
+            str = account[0].valorantAccount;
+        // If the user mentioned another user, get mentioned users Valorant account
+        else if (message.content.includes('@')) {
+            try {
+                taggedAccount = await Account.find({ discordId: (message.mentions.users.first().id) });
+                str = taggedAccount[0].valorantAccount;
+            } catch (error) {
+                return message.channel.send({ embeds: [notLinkedEmbed], components: [defaultButtons] });
+            }
+        }
+        else if (!args[0])
+            return message.channel.send({ embeds: [noNameEmbed], components: [defaultButtons] });
+
+        // Convert characters to lowercase and encode input to correct format
+        var ID = str.toLowerCase();
+
+        // Check if the ID has been encoded already through linked command
+        if (ID.includes('#'))
+            playerID = encodeURIComponent(ID);
+        else
+            playerID = ID;
 
         // Run command
         try {
@@ -77,8 +132,10 @@ module.exports = {
                         .setFooter({ text: 'Developed by CMDRVo' })
                         .addFields(
                             {
-                                name: 'Maintenance Status', value: "```diff\n" + "ValoStats currently has issues in retrieving stats." +
-                                    " Please try again later." + "\n```", inline: true
+                                name: 'Maintenance Status',
+                                value: "```diff\n" + "ValoStats currently has issues in retrieving stats." +
+                                    " Please try again later." + "\n```",
+                                inline: true
                             },
                         )
 
@@ -91,8 +148,10 @@ module.exports = {
                     .setFooter({ text: 'Developed by CMDRVo' })
                     .addFields(
                         {
-                            name: 'Error Status', value: "```diff\n" + "Please ensure you have inputted the correct " +
-                                "username#tag and logged into tracker.gg! (v!help)" + "\n```", inline: true
+                            name: 'Error Status',
+                            value: "```diff\n" + "Please ensure you have inputted the correct " +
+                                "username#tag and logged into tracker.gg! (v!help)" + "\n```",
+                            inline: true
                         },
                     )
 
@@ -104,37 +163,37 @@ module.exports = {
             // Checking users playlist stats
             for (let x = 0; x < profileStats.length; x++) {
                 if (profileStats[x].metadata.name == 'Competitive' && profileStats[x].type == 'playlist')
-                    var compStats = profileStats[x].stats // Access overall comp stats
+                    var compStats = profileStats[x].stats; // Access overall comp stats
                 else if (profileStats[x].metadata.name == 'Deathmatch' && profileStats[x].type == 'playlist')
                     var dmStats = profileStats[x].stats // Access overall deathmatch stats
                 else if (profileStats[x].metadata.name == 'Escalation' && profileStats[x].type == 'playlist')
-                    var escalationStats = profileStats[x].stats // Access overall escalation stats
+                    var escalationStats = profileStats[x].stats; // Access overall escalation stats
                 else if (profileStats[x].metadata.name == 'Spike Rush' && profileStats[x].type == 'playlist')
-                    var spikeRushStats = profileStats[x].stats // Access overall spike rush stats
+                    var spikeRushStats = profileStats[x].stats; // Access overall spike rush stats
                 else if (profileStats[x].metadata.name == 'Unrated' && profileStats[x].type == 'playlist')
-                    var unratedStats = profileStats[x].stats // Access overall unrated stats 
+                    var unratedStats = profileStats[x].stats; // Access overall unrated stats 
             }
 
-            const userHandle = trackerProfile.data.data.platformInfo.platformUserHandle // Username and tag
-            const userAvatar = trackerProfile.data.data.platformInfo.avatarUrl // Avatar image
-            const lastMatch = trackerMatch.data.data.matches[0] // Last match info
-            const lmStats = lastMatch.segments[0].stats // Last match stats for the player
-            const matchID = lastMatch.attributes.id // Match ID
-            const mapStats = trackerMap.data.data // Map stats
-            const weaponStats = trackerWeapon.data.data // Weapon stats
+            const userHandle = trackerProfile.data.data.platformInfo.platformUserHandle; // Username and tag
+            const userAvatar = trackerProfile.data.data.platformInfo.avatarUrl; // Avatar image
+            const lastMatch = trackerMatch.data.data.matches[0]; // Last match info
+            const lmStats = lastMatch.segments[0].stats; // Last match stats for the player
+            const matchID = lastMatch.attributes.id; // Match ID
+            const mapStats = trackerMap.data.data; // Map stats
+            const weaponStats = trackerWeapon.data.data; // Weapon stats
 
             const author = {
                 name: `${userHandle}`,
                 iconURL: userAvatar,
                 url: `https://tracker.gg/valorant/profile/riot/${playerID}/overview`
-            }
+            };
 
             // Set rank emojis and name
             var rankName = '';
             var rankEmoji = '';
             if (compStats) {
-                rankName = compStats.rank.metadata.tierName
-                rankEmoji = assets.rankEmojis[rankName].emoji
+                rankName = compStats.rank.metadata.tierName;
+                rankEmoji = assets.rankEmojis[rankName].emoji;
                 if (rankName.includes('Immortal')) {
                     rankName = rankName.split(' ')[0] + ' #' + compStats.rank.rank;
                 }
@@ -161,11 +220,11 @@ module.exports = {
                 if (!compStats) return message.reply('This player has never played a competitive game!')
 
                 // Each square represents ~8.33%
-                greenSquare = Math.round(compStats.matchesWinPct.value / 8.33)
-                redSquare = 12 - greenSquare
+                greenSquare = Math.round(compStats.matchesWinPct.value / 8.33);
+                redSquare = 12 - greenSquare;
 
                 // Setting the win rate visual bar
-                winRate = "<:greenline:839562756930797598>".repeat(greenSquare) + "<:redline:839562438760071298>".repeat(redSquare)
+                winRate = "<:greenline:839562756930797598>".repeat(greenSquare) + "<:redline:839562438760071298>".repeat(redSquare);
 
                 // Embed page 1
                 const statsEmbed1 = new MessageEmbed()
@@ -198,7 +257,7 @@ module.exports = {
                         { name: 'Kills/Match', value: "```yaml\n" + compStats.killsPerMatch.displayValue + "\n```", inline: true },
                         { name: 'Deaths/Match ', value: "```yaml\n" + compStats.deathsPerMatch.displayValue + "\n```", inline: true },
                         { name: 'Assists/Match', value: "```yaml\n" + compStats.assistsPerMatch.displayValue + "\n```", inline: true },
-                        { name: 'Headshot %', value: "```yaml\n" + compStats.headshotsPercentage.displayValue + "%\n```", inline: true },
+                        { name: 'Headshot %', value: "```yaml\n" + compStats.headshotsPercentage.displayValue + "\n```", inline: true },
                         { name: 'DMG/Round', value: "```yaml\n" + compStats.damagePerRound.displayValue + "\n```", inline: true },
                         { name: 'Avg Combat Score', value: "```yaml\n" + compStats.scorePerRound.displayValue + "\n```", inline: true },
                         { name: 'Plants', value: "```yaml\n" + compStats.plants.displayValue + "\n```", inline: true },
@@ -209,13 +268,9 @@ module.exports = {
                         { name: 'First Deaths', value: "```yaml\n" + compStats.deathsFirst.displayValue + "\n```", inline: true },
                     )
 
-                const embedPages = [statsEmbed1, statsEmbed2];
-                pagination({
-                    embeds: embedPages,
-                    channel: message.channel,
-                    author: message.author,
-                    time: 60 * 1000,
-                })
+                const statsEmbedPages = [statsEmbed1, statsEmbed2];
+
+                paginationEmbed(message, statsEmbedPages, navigationButtonArray);
 
             }
 
@@ -276,12 +331,7 @@ module.exports = {
 
                 const unratedPages = [unratedEmbed1, unratedEmbed2] // Pages
 
-                pagination({
-                    embeds: unratedPages,
-                    channel: message.channel,
-                    author: message.author,
-                    time: 60 * 1000,
-                })
+                paginationEmbed(message, unratedPages, navigationButtonArray);
 
             }
 
@@ -341,12 +391,7 @@ module.exports = {
 
                 const spikeRushPages = [spikeRushEmbed1, spikeRushEmbed2] // Pages
 
-                pagination({
-                    embeds: spikeRushPages,
-                    channel: message.channel,
-                    author: message.author,
-                    time: 60 * 1000,
-                })
+                paginationEmbed(message, spikeRushPages, navigationButtonArray);
 
             }
 
@@ -376,7 +421,7 @@ module.exports = {
                         { name: 'Kills', value: "```yaml\n" + dmStats.kills.displayValue + "\n```", inline: true },
                         { name: 'Deaths', value: "```yaml\n" + dmStats.deaths.displayValue + "```", inline: true },
                         { name: 'Assists', value: "```yaml\n" + dmStats.assists.displayValue + "\n```", inline: true },
-                        //{ name: 'Headshot %', value: "```yaml\n" + dmStats.headshotsPercentage.displayValue + "%\n```", inline: true },
+                        //{ name: 'Headshot %', value: "```yaml\n" + dmStats.headshotsPercentage.displayValue + "\n```", inline: true },
                         { name: 'Playtime', value: "```yaml\n" + dmStats.timePlayed.displayValue + "\n```", inline: true },
                         {
                             name: 'Win Rate - ' + dmStats.matchesWinPct.displayValue, value: winRate + " ```yaml\n" + "    W: "
@@ -664,28 +709,28 @@ module.exports = {
 
                 var count = 0
 
-                for (x = 0; x < playerMatchInfo.length / 2; x++) {
+                for (let x = 0; x < playerMatchInfo.length / 2; x++) {
 
-                    let nameA = blueTeam[x][0]
-                    let agentA = blueTeam[x][1]
-                    let rankA = blueTeam[x][2]
-                    let killsA = blueTeam[x][3]
-                    let deathsA = blueTeam[x][4]
-                    let assistsA = blueTeam[x][5]
-                    let kdrA = blueTeam[x][6]
-                    let acsA = blueTeam[x][7]
+                    var nameA = blueTeam[x][0];
+                    var agentA = blueTeam[x][1];
+                    var rankA = blueTeam[x][2];
+                    var killsA = blueTeam[x][3];
+                    var deathsA = blueTeam[x][4];
+                    var assistsA = blueTeam[x][5];
+                    var kdrA = blueTeam[x][6];
+                    var acsA = blueTeam[x][7];
 
-                    let nameB = redTeam[x][0]
-                    let agentB = redTeam[x][1]
-                    let rankB = redTeam[x][2]
-                    let killsB = redTeam[x][3]
-                    let deathsB = redTeam[x][4]
-                    let assistsB = redTeam[x][5]
-                    let kdrB = redTeam[x][6]
-                    let acsB = redTeam[x][7]
+                    var nameB = redTeam[x][0];
+                    var agentB = redTeam[x][1];
+                    var rankB = redTeam[x][2];
+                    var killsB = redTeam[x][3];
+                    var deathsB = redTeam[x][4];
+                    var assistsB = redTeam[x][5];
+                    var kdrB = redTeam[x][6];
+                    var acsB = redTeam[x][7];
 
-                    var playerAgentEmojiA = ":white_small_square:"
-                    var playerAgentEmojiB = ":white_small_square:"
+                    var playerAgentEmojiA = ":white_small_square:";
+                    var playerAgentEmojiB = ":white_small_square:";
 
                     if (agentA == "Astra" || agentA == "Breach" || agentA == "Brimstone" || agentA == "Cypher" || agentA == "Jett"
                         || agentA == "Killjoy" || agentA == "Omen" || agentA == "Phoenix" || agentA == "Raze" || agentA == "Reyna"
@@ -718,18 +763,13 @@ module.exports = {
                     // For 2 column formatting
                     if (count == 1) {
                         lastMatchEmbed2.addField('\u200B', '\u200B', true)
-                        count = 0
+                        count = 0;
                     }
                 }
 
                 const lastMatchPages = [lastMatchEmbed1, lastMatchEmbed2] // Pages
 
-                pagination({
-                    embeds: lastMatchPages,
-                    channel: message.channel,
-                    author: message.author,
-                    time: 60 * 1000,
-                })
+                paginationEmbed(message, lastMatchPages, navigationButtonArray);
 
             }
 
@@ -752,9 +792,9 @@ module.exports = {
                 agentInfo.sort(function (a, b) { return b[1] - a[1] }) // Sort agents by playtime
 
                 // Limit maximum amount of agents to show as 5
-                agentLength = agentInfo.length
+                agentLength = agentInfo.length;
                 if (agentLength > 5)
-                    agentLength = 5
+                    agentLength = 5;
 
                 const agentEmbed = new MessageEmbed()
                     .setColor('#11806A')
@@ -867,9 +907,9 @@ module.exports = {
                 topWeapons.sort(function (a, b) { return b[2] - a[2] }) // Sort weapons by kills
 
                 // Top 5 weapons only
-                weaponLength = topWeapons.length
+                weaponLength = topWeapons.length;
                 if (weaponLength > 5)
-                    weaponLength = 5
+                    weaponLength = 5;
 
                 const weaponEmbed = new MessageEmbed()
                     .setColor('#11806A')
@@ -878,7 +918,7 @@ module.exports = {
                     .setDescription("```grey\n      " + "      Top " + weaponLength + " - Weapon Stats" + "\n```")
                     .setFooter({ text: 'Competitive Weapons Only' })
 
-                for (i = 0; i < weaponLength; i++) {
+                for (let i = 0; i < weaponLength; i++) {
 
                     let weaponName = topWeapons[i][0]
                     let weaponKills = topWeapons[i][1]
@@ -902,7 +942,7 @@ module.exports = {
             }
 
         } catch (error) {
-            message.reply('An error has occurred. Please try again later or contact CMDRVo#3496 for assistance.')
+            message.channel.send({ embeds: [defaultErrorEmbed], components: [defaultButtons] });
             throw error;
         }
     }

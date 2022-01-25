@@ -1,14 +1,26 @@
-const { MessageEmbed } = require("discord.js");
-const { pagination } = require('reconlx');
+const { MessageEmbed, MessageButton } = require("discord.js");
+const paginationEmbed = require('discordjs-button-pagination');
 
 module.exports = {
   name: "help",
   description: "Display avaliable commands and other helpful information to the user.",
 
   execute(message) {
+    const backButton = new MessageButton()
+      .setCustomId('previousbtn')
+      .setLabel('<')
+      .setStyle('SUCCESS');
+
+    const forwardsButton = new MessageButton()
+      .setCustomId('nextbtn')
+      .setLabel('>')
+      .setStyle('SUCCESS');
+
+    const navigationButtonArray = [backButton, forwardsButton]
+
     const helpEmbed1 = new MessageEmbed()
       .setColor("RANDOM")
-      .setAuthor({name: "Help Menu", url: "https://bit.ly/32GAtTp"})
+      .setAuthor({ name: "Help Menu", url: "https://bit.ly/32GAtTp" })
       .addFields(
         {
           name: "How to use this Discord bot",
@@ -77,7 +89,7 @@ module.exports = {
 
     const helpEmbed2 = new MessageEmbed()
       .setColor("RANDOM")
-      .setAuthor({name: "Help Menu", url: "https://bit.ly/32GAtTp"})
+      .setAuthor({ name: "Help Menu", url: "https://bit.ly/32GAtTp" })
       .addFields(
         {
           name: "\u200B",
@@ -107,12 +119,7 @@ module.exports = {
 
     const helpPages = [helpEmbed1, helpEmbed2]; // Pages
 
-    pagination({
-      embeds: helpPages,
-      channel: message.channel,
-      author: message.author,
-      time: 60 * 1000,
-    })
+    paginationEmbed(message, helpPages, navigationButtonArray);
 
   },
 };

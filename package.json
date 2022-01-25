@@ -13,8 +13,11 @@
   "author": "Brandon Vo",
   "license": "ISC",
   "dependencies": {
+    "@discordjs/rest": "^0.2.0-canary.0",
     "axios": "^0.21.4",
+    "discord-api-types": "^0.26.1",
     "discord.js": "^13.6.0",
+    "discordjs-button-pagination": "^1.0.7",
     "dotenv": "^8.2.0",
     "mongoose": "^5.12.9",
     "reconlx": "^2.5.2",

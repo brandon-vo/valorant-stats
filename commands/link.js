@@ -8,7 +8,9 @@ module.exports = {
     async execute(message, args) {
 
         if (!args[0])
-            return message.reply('Please include your Valorant username and tag (USERNAME#TAG)')
+            return message.reply('Please include your Valorant username and tag (v!link USERNAME#TAG)')
+        if (!args.toString().includes('#'))
+            return message.reply('You have entered an invalid Valorant username and tag (v!link USERNAME#TAG)');
 
         // Space to %20
         var str = args[0];
@@ -19,14 +21,14 @@ module.exports = {
         var ID = str.toLowerCase();
 
         // # to %23
-        var playerID = ID.replace(/#/g, "%23")
+        var playerID = ID.replace(/#/g, "%23");
 
         const accounts = await Account.find({ discordId: message.author.id })
 
         // Check if the user has a linked account and delete it
-        if (accounts.length > 0) 
+        if (accounts.length > 0)
             await Account.deleteMany({ discordId: message.author.id })
-        
+
         // Add linked account to Discord ID
         try {
             const newUser = await DiscordUser.create({
@@ -34,7 +36,7 @@ module.exports = {
                 discordId: message.author.id,
                 valorantAccount: playerID
             })
-            message.reply('Successfuly linked Valorant account to your Discord ID')
+            message.reply('Successfuly linked the Valorant account `' + args + '` to your Discord ID')
         } catch (error) {
             console.log(error)
             return message.reply("Failed to link Valorant account to your Discord ID")
