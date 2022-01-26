@@ -35,13 +35,15 @@ mongoose.connect(process.env.MONGODB_URI, {
 	useUnifiedTopology: true,
 }).then(() => {
 	console.log('Connected to MongoDB Database')
-}).catch((error) => console.error(error))
+}).catch((error) => console.error(error));
 
 // Alert post to Top.gg
 poster.on('posted', (stats) => {
-	console.log(`Posted stats to Top.gg | ${stats.serverCount} servers`)
+	console.log(`Posted to Top.gg | ${stats.serverCount} servers`)
 });
+
 
 client.handleEvents(eventFiles, "./events");
 //client.handleCommands(slashCommandFiles, "./slashCommands");
+
 client.login(process.env.DISCORD_TOKEN);

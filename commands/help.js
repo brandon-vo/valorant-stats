@@ -1,5 +1,5 @@
 const { MessageEmbed, MessageButton } = require("discord.js");
-const paginationEmbed = require('discordjs-button-pagination');
+const { pagination } = require('reconlx');
 
 module.exports = {
   name: "help",
@@ -119,7 +119,13 @@ module.exports = {
 
     const helpPages = [helpEmbed1, helpEmbed2]; // Pages
 
-    paginationEmbed(message, helpPages, navigationButtonArray);
+    pagination({
+      embeds: helpPages,
+      channel: message.channel,
+      author: message.author,
+      time: 60 * 1000,
+    });
 
   },
+  
 };

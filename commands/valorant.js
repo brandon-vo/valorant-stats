@@ -2,7 +2,7 @@ const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
 const assets = require('../assets.json');
 const axios = require('axios').default;
 const Account = require('../schemas/AccountSchema');
-const paginationEmbed = require('discordjs-button-pagination')
+const { pagination } = require('reconlx');
 
 module.exports = {
     name: "valorant",
@@ -84,7 +84,7 @@ module.exports = {
             .addFields(
                 {
                     name: 'Error Status',
-                    value: "```diff\n An error has occurred. " +
+                    value: "```diff\n" + "An error has occurred. " +
                         "Please try again later or contact CMDRVo#3496 for assistance.\n```",
                     inline: true
                 },
@@ -270,7 +270,12 @@ module.exports = {
 
                 const statsEmbedPages = [statsEmbed1, statsEmbed2];
 
-                paginationEmbed(message, statsEmbedPages, navigationButtonArray);
+                pagination({
+                    embeds: statsEmbedPages,
+                    channel: message.channel,
+                    author: message.author,
+                    time: 60 * 1000,
+                });
 
             }
 
@@ -318,7 +323,7 @@ module.exports = {
                         { name: 'Kills/Match', value: "```yaml\n" + unratedStats.killsPerMatch.displayValue + "\n```", inline: true },
                         { name: 'Deaths/Match ', value: "```yaml\n" + unratedStats.deathsPerMatch.displayValue + "\n```", inline: true },
                         { name: 'Assists/Match', value: "```yaml\n" + unratedStats.assistsPerMatch.displayValue + "\n```", inline: true },
-                        { name: 'Headshot %', value: "```yaml\n" + unratedStats.headshotsPercentage.displayValue + "%\n```", inline: true },
+                        { name: 'Headshot %', value: "```yaml\n" + unratedStats.headshotsPercentage.displayValue + "\n```", inline: true },
                         { name: 'DMG/Round', value: "```yaml\n" + unratedStats.damagePerRound.displayValue + "\n```", inline: true },
                         { name: 'Avg Combat Score', value: "```yaml\n" + unratedStats.scorePerRound.displayValue + "\n```", inline: true },
                         { name: 'Plants', value: "```yaml\n" + unratedStats.plants.displayValue + "\n```", inline: true },
@@ -331,7 +336,12 @@ module.exports = {
 
                 const unratedPages = [unratedEmbed1, unratedEmbed2] // Pages
 
-                paginationEmbed(message, unratedPages, navigationButtonArray);
+                pagination({
+                    embeds: unratedPages,
+                    channel: message.channel,
+                    author: message.author,
+                    time: 60 * 1000,
+                });
 
             }
 
@@ -391,7 +401,12 @@ module.exports = {
 
                 const spikeRushPages = [spikeRushEmbed1, spikeRushEmbed2] // Pages
 
-                paginationEmbed(message, spikeRushPages, navigationButtonArray);
+                pagination({
+                    embeds: spikeRushPages,
+                    channel: message.channel,
+                    author: message.author,
+                    time: 60 * 1000,
+                });
 
             }
 
@@ -769,7 +784,12 @@ module.exports = {
 
                 const lastMatchPages = [lastMatchEmbed1, lastMatchEmbed2] // Pages
 
-                paginationEmbed(message, lastMatchPages, navigationButtonArray);
+                pagination({
+                    embeds: lastMatchPages,
+                    channel: message.channel,
+                    author: message.author,
+                    time: 60 * 1000,
+                });
 
             }
 
