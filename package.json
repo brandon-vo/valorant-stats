@@ -6,7 +6,7 @@
     "npm": "8.x"
   },
   "description": "Discord bot to retrieve Valorant statistics for a user. Created by Brandon Vo",
-  "main": "shard.js",
+  "main": "index.js",
   "scripts": {
     "start": "start"
   },
