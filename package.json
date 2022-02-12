@@ -2,8 +2,8 @@
   "name": "valorant-stats-bot",
   "version": "1.0.0",
   "engines": {
-    "node": "17.x",
-    "npm": "8.x"
+    "node": "16.x",
+    "npm": "7.x"
   },
   "description": "Discord bot to retrieve Valorant statistics for a user. Created by Brandon Vo",
   "main": "index.js",
