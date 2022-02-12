@@ -13,9 +13,9 @@ module.exports = {
             var linked = ID.replace(/%23/g, '#')
             var linkedAccount = linked.replace(/%20/g, ' ')
 
-            message.reply('Your linked account is: ' + linkedAccount)
+            message.reply('Your linked account is: `' + linkedAccount + '`');
         } else {
-            message.reply('You do not have an account linked! Use v!link USERNAME#TAG to link a Valorant account.')
+            message.reply('You do not have an account linked! Use v!link USERNAME#TAG to link a Valorant account.');
         }
     },
 };

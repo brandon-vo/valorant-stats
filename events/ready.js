@@ -2,9 +2,11 @@ module.exports = {
     name: 'ready',
     once: true,
     async execute(client) {
-        let serverCount = client.guilds.cache.size * 3;
-        console.log(`Online | ${client.guilds.cache.size} servers`);
-        client.user.setActivity(`${serverCount} servers | v!help`, { type: "WATCHING" });
+
+        await delay(90);
+        const req = await client.shard.fetchClientValues("guilds.cache.size");
+        const total = req.reduce((p, n) => p + n, 0);
+        client.user.setActivity(`${total} servers | v!help`, { type: "WATCHING" });
 
         // client.guilds.cache.filter(g => g.memberCount > 1000).forEach((guild) => {
         //     console.log(guild.memberCount + ' | ' + guild.name + ' | ' + guild.id);
@@ -12,3 +14,9 @@ module.exports = {
 
     },
 };
+
+function delay(n){
+    return new Promise(function(resolve){
+        setTimeout(resolve,n*1000);
+    });
+}
