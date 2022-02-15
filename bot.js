@@ -38,7 +38,7 @@ const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('
 
 	client.handleEvents(eventFiles, "./events");
 	//client.handleCommands("./slashCommands");
-	
+
 	client.login(process.env.DISCORD_TOKEN);
 
 })();
