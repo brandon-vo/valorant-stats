@@ -2,8 +2,8 @@
 <p align="center">
   <b>Verified by Discord</b>
       <img src="https://emoji.gg/assets/emoji/6817_Discord_Verified.png" width="12" height="12"><br>
-  <a href="https://discord.com/api/oauth2/authorize?client_id=833535533287866398&permissions=2417093728&scope=bot">Invite this bot to your server</a> 
-   <br>Used in over 2,500 Discord servers<br>
+  <a href="https://discord.com/api/oauth2/authorize?client_id=833535533287866398&permissions=414464793664&scope=applications.commands%20bot">Invite this bot to your server</a> 
+   <br>Used in over 3,800 Discord servers<br>
 </p>
 
 ---
@@ -16,28 +16,27 @@
 # Commands ⌨️
 | Command        | Description    | 
 | :-----------: | :--------: | 
-| v!help      | Display a list of avaliable commands      | 
-| v!competitive    | Display competitive career stats of a Valorant player | 
-| v!unrated     | Display unrated career stats of a Valorant player | 
-| v!spikerush    | Display spike rush career stats of a Valorant player | 
-| v!deathmatch    | Display deathmatch career stats of a Valorant player | 
-| v!escalation    | Display escalation career stats of a Valorant player | 
-| v!lm      | Display last match information of a Valorant player |  
-| v!agents  | Display agent stats of a Valorant player |
-| v!weapons  | Display weapon stats of a Valorant player |
-| v!map     | Display map stats of a Valorant player |
-| v!link | Link a Valorant user to your Discord ID    |
-| v!unlink | Unlink a Valorant user from your Discord ID    |
-| v!linked | Check which Valorant account has been linked to your Discord ID    |
-| v!invite | Get Discord bot invite link |
+| /help      | Display a list of avaliable commands      | 
+| /competitive    | Display competitive career stats of a Valorant player | 
+| /unrated     | Display unrated career stats of a Valorant player | 
+| /spikerush    | Display spike rush career stats of a Valorant player | 
+| /deathmatch    | Display deathmatch career stats of a Valorant player | 
+| /escalation    | Display escalation career stats of a Valorant player | 
+| /lm      | Display last match information of a Valorant player |  
+| /agents  | Display agent stats of a Valorant player |
+| /weapons  | Display weapon stats of a Valorant player |
+| /map     | Display map stats of a Valorant player |
+| /link | Link a Valorant user to your Discord ID    |
+| /unlink | Unlink a Valorant user from your Discord ID    |
+| /linked | Check which Valorant account has been linked to your Discord ID    |
+| /invite | Get Discord bot invite link |
 
 | Extra        | Description    | 
 | ------------- |-------------| 
-| v!joke      | Tell a joke      | 
-| v!ping      | Pong!             | 
-| v!help      | Display commands   |
+| /ping      | Pong!             | 
+| /help      | Display commands   |
 
-First Discord bot project. Created by Brandon Vo.  
+A hobby Discord bot project. Created by Brandon Vo.  
 Retrieves data from https://tracker.gg/valorant  
 Built with Discord.js, uses MongoDB database to store usernames
 

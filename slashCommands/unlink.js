@@ -1,6 +1,8 @@
 const DiscordUser = require('../schemas/AccountSchema');
 const Account = require('../schemas/AccountSchema');
+const { MessageEmbed } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const { buttons } = require('../components/buttons');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -16,15 +18,21 @@ module.exports = {
 
         // Remove linked account from Discord ID
         try {
-            const newUser = await DiscordUser.deleteOne({
+            await DiscordUser.deleteOne({
                 username: interaction.user.username,
                 discordId: interaction.user.id,
                 valorantAccount: null
             })
-            interaction.reply('Successfuly unlinked the Valorant account from your Discord ID');
+            interaction.reply({
+                content: 'Successfuly unlinked the Valorant account from your Discord ID',
+                components: [buttons]
+            });
         } catch (error) {
             console.error(error);
-            return interaction.reply("Failed to unlink the Valorant account from your Discord ID");
+            return interaction.reply({
+                content: "Failed to unlink the Valorant account from your Discord ID",
+                components: [buttons]
+            });
         }
     },
 };

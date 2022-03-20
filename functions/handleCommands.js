@@ -2,6 +2,7 @@ const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const fs = require('fs');
 const clientId = '833535533287866398';
+//const clientId = '954788847328309278'; //dev
 const guildId = '227161871105523715';
 
 module.exports = (client) => {
@@ -22,10 +23,10 @@ module.exports = (client) => {
         (async () => {
             try {
                 await rest.put(
-                    Routes.applicationGuildCommands(clientId, guildId),
+                    //Routes.applicationGuildCommands(clientId, guildId),
+                    Routes.applicationCommands(clientId),
                     { body: client.commandArray },
                 );
-
                 console.log('Reloaded slash commands');
             } catch (error) {
                 console.error(error);

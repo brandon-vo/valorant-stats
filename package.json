@@ -1,6 +1,6 @@
 {
   "name": "valorant-stats-bot",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "engines": {
     "node": "16.x",
     "npm": "7.x"
@@ -17,7 +17,6 @@
     "axios": "^0.21.4",
     "discord-api-types": "^0.26.1",
     "discord.js": "^13.6.0",
-    "discordjs-button-pagination": "^3.0.0",
     "dotenv": "^8.2.0",
     "mongoose": "^5.12.9",
     "reconlx": "^2.5.2",
