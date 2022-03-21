@@ -7,7 +7,7 @@ const noAccountEmbed = new MessageEmbed()
     .addFields(
         {
             name: 'Error Status',
-            value: "```diff\n" + "Please include the Valorant username and tag (USERNAME#TAG)." +
+            value: "```diff\n" + "Please include the Valorant username and tag (USERNAME#TAG). " +
                 "For convenience, you may link a Valorant account to your Discord ID using the /link command.\n```",
             inline: true
         },
@@ -34,7 +34,7 @@ const errorEmbed = new MessageEmbed()
         {
             name: 'Error Status',
             value: "```diff\n" + "Please ensure you have inputted the correct " +
-                "username#tag and logged into tracker.gg! (v!help)" + "\n```",
+                "username#tag and logged into tracker.gg! (/help)" + "\n```",
             inline: true
         },
     )
