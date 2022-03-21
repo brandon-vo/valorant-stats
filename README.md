@@ -1,9 +1,14 @@
-<h1 align="center">Valorant Stats Discord Bot</h1>
+<h1 align="center">Valorant Stats Discord Bot
+</h1>
+
 <p align="center">
   <b>Verified by Discord</b>
       <img src="https://emoji.gg/assets/emoji/6817_Discord_Verified.png" width="12" height="12"><br>
   <a href="https://discord.com/api/oauth2/authorize?client_id=833535533287866398&permissions=414464793664&scope=applications.commands%20bot">Invite this bot to your server</a> 
-   <br>Used in over 3,800 Discord servers<br>
+  <br><br>
+  <a href="https://top.gg/bot/833535533287866398">
+    <img src="https://top.gg/api/widget/servers/833535533287866398.svg">
+  </a>
 </p>
 
 ---
