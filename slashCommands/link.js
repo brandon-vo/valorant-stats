@@ -17,7 +17,7 @@ module.exports = {
         const playerID = encodeURI(args).toLowerCase();
 
         if (!playerID.includes('#'))
-            return interaction.reply('You have entered an invalid Valorant username and tag!');
+            return await interaction.reply('You have entered an invalid Valorant username and tag!');
 
         const accounts = await Account.find({ discordId: interaction.user.id });
 

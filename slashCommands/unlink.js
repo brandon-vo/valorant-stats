@@ -1,6 +1,5 @@
 const DiscordUser = require('../schemas/AccountSchema');
 const Account = require('../schemas/AccountSchema');
-const { MessageEmbed } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { buttons } = require('../components/buttons');
 
@@ -23,13 +22,13 @@ module.exports = {
                 discordId: interaction.user.id,
                 valorantAccount: null
             })
-            interaction.reply({
+            await interaction.reply({
                 content: 'Successfuly unlinked the Valorant account from your Discord ID',
                 components: [buttons]
             });
         } catch (error) {
             console.error(error);
-            return interaction.reply({
+            return await interaction.reply({
                 content: "Failed to unlink the Valorant account from your Discord ID",
                 components: [buttons]
             });
