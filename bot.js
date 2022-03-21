@@ -9,14 +9,8 @@ client.commands = new Collection();
 
 const functions = fs.readdirSync('./functions').filter(file => file.endsWith('.js'));
 const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
-//const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
 (async () => {
-
-	// for (const file of commandFiles) {
-	// 	const command = require(`./commands/${file}`);
-	// 	client.commands.set(command.name, command);
-	// };
 
 	for (const file of functions) {
 		require(`./functions/${file}`)(client);

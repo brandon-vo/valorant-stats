@@ -67,4 +67,20 @@ const useSlashEmbed = new MessageEmbed()
     )
     .setImage('https://cdn.discordapp.com/attachments/834195818080108564/954932610780520468/thanks.jpg');
 
-module.exports = { noAccountEmbed, maintenanceEmbed, errorEmbed, noStatsEmbed, useSlashEmbed };
+const helpEmbed = new MessageEmbed()
+    .setColor("RANDOM")
+    .setFooter({ text: 'Developed by CMDRVo' })
+    .addFields(
+        {
+            name: "\u200B",
+            value:
+                "```md\n" +
+                "#             ValoStats Commands             #" +
+                "\n```",
+        },
+        { name: 'Stats', value: "```yaml\n/stats\n/unrated\n/lastmatch\n/spikerush\n/deathmatch\n/escalation\n/agent\n/weapon\n/map```", inline: true },
+        { name: 'Other', value: "```yaml\n/link\n/unlink\n/linked\n/invite\n/ping\n/help```", inline: true },
+        { name: '\u200b', value: "`Connect with /link USERNAME#TAG to use commands easier\n        The Original Valorant Stats Discord Bot       `", inline: false },
+    )
+
+module.exports = { noAccountEmbed, maintenanceEmbed, errorEmbed, noStatsEmbed, useSlashEmbed, helpEmbed };
