@@ -169,12 +169,12 @@ module.exports = {
                     return
                 }
                 btnInt.deferUpdate()
-                if (btnInt.customId !== 'previous' && btnInt.customId !== 'next') {
+                if (btnInt.customId !== 'previous' + randomID && btnInt.customId !== 'next' + randomID) {
                     return;
                 }
-                if (btnInt.customId === 'previous' && pages[id] > 0) {
+                if (btnInt.customId === 'previous' + randomID && pages[id] > 0) {
                     --pages[id];
-                } else if (btnInt.customId === 'next' && pages[id] < embeds.length - 1) {
+                } else if (btnInt.customId === 'next' + randomID && pages[id] < embeds.length - 1) {
                     ++pages[id];
                 }
                 if (reply) {
