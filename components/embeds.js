@@ -80,7 +80,7 @@ const helpEmbed = new MessageEmbed()
         },
         { name: 'Stats', value: "```yaml\n/stats\n/unrated\n/lastmatch\n/spikerush\n/deathmatch\n/escalation\n/agent\n/weapon\n/map```", inline: true },
         { name: 'Other', value: "```yaml\n/link\n/unlink\n/linked\n/invite\n/ping\n/help```", inline: true },
-        { name: '\u200b', value: "`Connect with /link USERNAME#TAG to use commands easier\n        The Original Valorant Stats Discord Bot       `", inline: false },
+        { name: '\u200b', value: "`     To start using ValoStats, log into tracker.gg    \nConnect with /link USERNAME#TAG to use commands easier\n        The Original Valorant Stats Discord Bot       `", inline: false },
     )
 
 module.exports = { noAccountEmbed, maintenanceEmbed, errorEmbed, noStatsEmbed, useSlashEmbed, helpEmbed };

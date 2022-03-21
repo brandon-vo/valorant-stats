@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { buttons } = require('../components/buttons.js');
+const { helpButtons } = require('../components/buttons.js');
 const { helpEmbed } = require('../components/embeds');
 
 module.exports = {
@@ -11,7 +11,7 @@ module.exports = {
 
         await interaction.reply({
             embeds: [helpEmbed],
-            components: [buttons]
+            components: [helpButtons]
         });
     },
 };
