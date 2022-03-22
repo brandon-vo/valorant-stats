@@ -34,8 +34,8 @@ const errorEmbed = new MessageEmbed()
         {
             name: 'Error Status',
             value: "```diff\n" + "Please ensure the account you are trying to view has" +
-                " logged into tracker.gg/valorant! (/help)\n\nExample:\n1. Click 'Sign in with Riot ID'\n2. /command-to-use USERNAME#TAG\n" 
-                + "Note: if you linked a Valorant account to your Discord ID, you do not need to provide a USERNAME#TAG.\n```",
+                " logged into tracker.gg/valorant!\n\nExample:\n1. Click 'Sign in with Riot ID'\n2. /command-to-use USERNAME#TAG\n" 
+                + "Note: Linked Discord accounts do not need to provide a USERNAME#TAG.\n```",
             inline: true
         },
     )
@@ -81,7 +81,7 @@ const helpEmbed = new MessageEmbed()
         },
         { name: 'Stats', value: "```yaml\n/stats\n/unrated\n/lastmatch\n/spikerush\n/deathmatch\n/escalation\n/agent\n/weapon\n/map```", inline: true },
         { name: 'Other', value: "```yaml\n/link\n/unlink\n/linked\n/invite\n/ping\n/help```", inline: true },
-        { name: '\u200b', value: "`     To start using ValoStats, log into tracker.gg    \nConnect with /link USERNAME#TAG to use commands easier\n        The Original Valorant Stats Discord Bot       `", inline: false },
+        { name: '\u200b', value: "`To start using ValoStats, log into tracker.gg/valorant\nConnect with /link USERNAME#TAG to use commands easier\n        The Original Valorant Stats Discord Bot       `", inline: false },
     )
 
 module.exports = { noAccountEmbed, maintenanceEmbed, errorEmbed, noStatsEmbed, useSlashEmbed, helpEmbed };
