@@ -7,8 +7,8 @@ const noAccountEmbed = new MessageEmbed()
     .addFields(
         {
             name: 'Error Status',
-            value: "```diff\n" + "Please include the Valorant username and tag (USERNAME#TAG). " +
-                "For convenience, you may link a Valorant account to your Discord ID using the /link command.\n```",
+            value: "```diff\n" + "Please connect your Valorant account to your \nDiscord ID using /link to view player statistics." +
+                "\n\nExample: /link ValoStats#NA1\n```",
             inline: true
         },
     );
@@ -33,8 +33,8 @@ const errorEmbed = new MessageEmbed()
     .addFields(
         {
             name: 'Error Status',
-            value: "```diff\n" + "Please ensure you have inputted the correct " +
-                "username#tag and logged into tracker.gg! (/help)" + "\n```",
+            value: "```diff\n" + "Please ensure the account you are trying to view has" +
+                " logged into tracker.gg! (/help)\n\nExample: /command-to-use USERNAME#TAG" + "\n```",
             inline: true
         },
     )

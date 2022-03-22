@@ -19,13 +19,14 @@ module.exports = {
 
         let args = interaction.options.getString('username-tag');
         let account = await Account.find({ discordId: interaction.user.id });
+        if (account.length < 1) {
+            return await interaction.reply({
+                embeds: [noAccountEmbed],
+                components: [buttons]
+            });
+        }
+
         if (!args) {
-            if (account.length < 1) {
-                return await interaction.reply({
-                    embeds: [noAccountEmbed],
-                    components: [buttons]
-                });
-            }
             args = account[0].valorantAccount;
         }
 
@@ -85,11 +86,8 @@ module.exports = {
             if (compStats) {
                 rankName = compStats.rank.metadata.tierName;
                 rankEmoji = assets.rankEmojis[rankName].emoji;
-                if (rankName.includes('Immortal')) {
-                    rankName = rankName.split(' ')[0] + ' #' + compStats.rank.rank;
-                }
-                else if (rankName.includes('Radiant')) {
-                    rankName = rankName + ' #' + compStats.rank.rank;
+                if (rankName.includes('Immortal') || rankName.includes('Radiant')) {
+                    rankName = rankName + ' #' + (compStats.rank.rank ? compStats.rank.rank : '') + '\n' + compStats.rank.value + ' RR';
                 }
             }
 
