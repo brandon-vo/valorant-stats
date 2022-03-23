@@ -34,7 +34,7 @@ const errorEmbed = new MessageEmbed()
         {
             name: 'Error Status',
             value: "```diff\n" + "Please ensure the account you are trying to view has" +
-                " logged into tracker.gg/valorant!\n\nExample:\n1. Click 'Sign in with Riot ID'\n2. /command-to-use USERNAME#TAG\n" 
+                " logged into tracker.gg/valorant!\n\nExample:\n1. Click 'Sign in with Riot ID'\n2. /command-to-use USERNAME#TAG\n\n"
                 + "Note: Linked Discord accounts do not need to provide a USERNAME#TAG.\n```",
             inline: true
         },

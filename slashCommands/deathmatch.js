@@ -63,7 +63,8 @@ module.exports = {
             if (!deathmatchStats) {
                 return await interaction.reply({
                     embeds: [noStatsEmbed],
-                    components: [buttons]
+                    components: [buttons],
+                    ephemeral: true
                 });
             }
 

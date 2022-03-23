@@ -1,7 +1,7 @@
 const { MessageEmbed } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { buttons } = require('../components/buttons');
-const { noAccountEmbed, maintenanceEmbed, errorEmbed, noStatsEmbed } = require('../components/embeds');
+const { noAccountEmbed, maintenanceEmbed, errorEmbed } = require('../components/embeds');
 const Account = require('../schemas/AccountSchema');
 const assets = require('../assets.json');
 const { getProfile, getMap } = require('../api');
@@ -94,9 +94,10 @@ module.exports = {
                 let winRate = mapInfo[i][7]
                 let mapEmoji = '▫️'
 
-                // Implemented to prevent errors if new maps are released
-                if (mapName == 'Ascent' || mapName == 'Bind' || mapName == 'Breeze' || mapName == 'Haven' || mapName == 'Icebox' || mapName == 'Split')
-                    mapEmoji = assets.mapEmojis[mapName].emoji
+                let availableMapEmojis = ['Ascent', 'Bind', 'Breeze', 'Haven', 'Icebox', 'Split', 'Fracture'];
+                if (availableMapEmojis.includes(mapName)) {
+                    mapEmoji = assets.mapEmojis[mapName].emoji;
+                }
 
                 mapEmbed.addFields(
                     {

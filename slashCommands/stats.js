@@ -22,7 +22,8 @@ module.exports = {
         if (account.length < 1) {
             return await interaction.reply({
                 embeds: [noAccountEmbed],
-                components: [buttons]
+                components: [buttons],
+                ephemeral: true
             });
         }
 
@@ -67,7 +68,8 @@ module.exports = {
             if (!compStats) {
                 return await interaction.reply({
                     embeds: [noStatsEmbed],
-                    components: [buttons]
+                    components: [buttons],
+                    ephemeral: true
                 });
             }
 
@@ -166,7 +168,8 @@ module.exports = {
 
                 return await interaction.reply({
                     embeds: [cooldownEmbed],
-                    components: [buttons]
+                    components: [buttons],
+                    ephemeral: true
                 })
             }
 

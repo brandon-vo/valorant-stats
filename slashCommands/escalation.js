@@ -63,7 +63,8 @@ module.exports = {
             if (!escalationStats) {
                 return await interaction.reply({
                     embeds: [noStatsEmbed],
-                    components: [buttons]
+                    components: [buttons],
+                    ephemeral: true
                 });
             }
 

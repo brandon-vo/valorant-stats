@@ -1,7 +1,7 @@
 const { MessageEmbed } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { buttons } = require('../components/buttons');
-const { noAccountEmbed, maintenanceEmbed, errorEmbed, noStatsEmbed } = require('../components/embeds');
+const { noAccountEmbed, maintenanceEmbed, errorEmbed } = require('../components/embeds');
 const Account = require('../schemas/AccountSchema');
 const { getWeapon, getProfile } = require('../api');
 
@@ -77,15 +77,16 @@ module.exports = {
                 weaponLongestKillDistance = weaponStats[x].stats.longestKillDistance.value
 
                 topWeapons.push([weaponName, weaponKills, weaponKillsValue, weaponDeathsBy, weaponHeadshotPct,
-                    weaponDamageRound, weaponFirstBloodCount, weaponLongestKillDistance])
+                    weaponDamageRound, weaponFirstBloodCount, weaponLongestKillDistance]);
             }
 
-            topWeapons.sort(function (a, b) { return b[2] - a[2] }) // Sort weapons by kills
+            topWeapons.sort(function (a, b) { return b[2] - a[2] }); // Sort weapons by kills
 
             // Top 5 weapons only
             weaponLength = topWeapons.length;
-            if (weaponLength > 5)
+            if (weaponLength > 5) {
                 weaponLength = 5;
+            }
 
             const weaponEmbed = new MessageEmbed()
                 .setColor('#11806A')
@@ -117,7 +118,7 @@ module.exports = {
             await interaction.reply({
                 embeds: [weaponEmbed],
                 components: [buttons]
-            })
+            });
         })()
     }
 }

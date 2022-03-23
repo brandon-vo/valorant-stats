@@ -64,7 +64,8 @@ module.exports = {
             if (!spikeRushStats) {
                 return await interaction.reply({
                     embeds: [noStatsEmbed],
-                    components: [buttons]
+                    components: [buttons],
+                    ephemeral: true
                 });
             }
 
@@ -151,7 +152,8 @@ module.exports = {
 
                 return await interaction.reply({
                     embeds: [cooldownEmbed],
-                    components: [buttons]
+                    components: [buttons],
+                    ephemeral: true
                 })
             }
 

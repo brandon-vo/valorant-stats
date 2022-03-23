@@ -65,7 +65,8 @@ module.exports = {
             if (!compStats) {
                 return await interaction.reply({
                     embeds: [noStatsEmbed],
-                    components: [buttons]
+                    components: [buttons],
+                    ephemeral: true
                 });
             }
 
@@ -115,9 +116,13 @@ module.exports = {
 
                 var agentEmoji = ":white_small_square:"
 
-                if (agentName == "Astra" || agentName == "Breach" || agentName == "Brimstone" || agentName == "Cypher" || agentName == "Jett"
-                    || agentName == "Killjoy" || agentName == "Omen" || agentName == "Phoenix" || agentName == "Raze" || agentName == "Reyna"
-                    || agentName == "Sage" || agentName == "Skye" || agentName == "Sova" || agentName == "Viper" || agentName == "Yoru" || agentName == "KAY/O") {
+                let availableAgentEmojis = [
+                    'Astra', 'Breach', 'Brimstone', 'Cypher',
+                    'Jett', 'Killjoy', 'Omen', 'Phoenix', 'Raze', 'Reyna',
+                    'Sage', 'Skye', 'Sova', 'Viper', 'Yoru', 'KAY/O',
+                    'Chamber', 'Neon'
+                ]
+                if (availableAgentEmojis.includes(agentName)) {
                     var agentEmoji = assets.agentEmojis[agentName].emoji
                 }
 
