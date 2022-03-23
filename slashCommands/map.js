@@ -1,6 +1,6 @@
 const { MessageEmbed } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { buttons } = require('../components/buttons');
+const { buttons, helpButtons } = require('../components/buttons');
 const { noAccountEmbed, maintenanceEmbed, errorEmbed } = require('../components/embeds');
 const Account = require('../schemas/AccountSchema');
 const assets = require('../assets.json');
@@ -35,8 +35,9 @@ module.exports = {
                 args = taggedAccount[0].valorantAccount;
             } catch (error) {
                 return await interaction.reply({
-                    embeds: [noAccountEmbed],
-                    components: [buttons]
+                    embeds: [errorEmbed],
+                    components: [helpButtons],
+                    ephemeral: true
                 });
             }
         }
@@ -48,9 +49,17 @@ module.exports = {
             trackerMap = await getMap(playerID);
             switch (trackerMap) {
                 case '403_error':
-                    return await interaction.reply({ embeds: [maintenanceEmbed], components: [buttons] });
+                    return await interaction.reply({
+                        embeds: [maintenanceEmbed],
+                        components: [buttons],
+                        ephemeral: true
+                    });
                 case 'default_error':
-                    return await interaction.reply({ embeds: [errorEmbed], components: [buttons] });
+                    return await interaction.reply({
+                        embeds: [errorEmbed],
+                        components: [helpButtons],
+                        ephemeral: true
+                    });
                 default:
                     mapStats = trackerMap.data.data; // Map stats
                     break;

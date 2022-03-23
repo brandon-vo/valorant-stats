@@ -1,6 +1,6 @@
 const { MessageEmbed } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { buttons } = require('../components/buttons');
+const { buttons, helpButtons } = require('../components/buttons');
 const { getRow, editGetRow, timeout } = require('../components/pages');
 const { noAccountEmbed, maintenanceEmbed, errorEmbed, noStatsEmbed } = require('../components/embeds');
 const Account = require('../schemas/AccountSchema');
@@ -35,8 +35,9 @@ module.exports = {
                 args = taggedAccount[0].valorantAccount;
             } catch (error) {
                 return await interaction.reply({
-                    embeds: [noAccountEmbed],
-                    components: [buttons]
+                    embeds: [errorEmbed],
+                    components: [helpButtons],
+                    ephemeral: true
                 });
             }
         }
@@ -47,9 +48,17 @@ module.exports = {
             trackerProfile = await getProfile(playerID);
             switch (trackerProfile) {
                 case '403_error':
-                    return await interaction.reply({ embeds: [maintenanceEmbed], components: [buttons] });
+                    return await interaction.reply({
+                        embeds: [maintenanceEmbed],
+                        components: [buttons],
+                        ephemeral: true
+                    });
                 case 'default_error':
-                    return await interaction.reply({ embeds: [errorEmbed], components: [buttons] });
+                    return await interaction.reply({
+                        embeds: [errorEmbed],
+                        components: [helpButtons],
+                        ephemeral: true
+                    });
                 default:
                     profileStats = trackerProfile.data.data.segments;
                     break;
