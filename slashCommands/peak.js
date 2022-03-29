@@ -109,7 +109,7 @@ module.exports = {
                 .setThumbnail(compStats.peakRank.metadata.iconUrl)
                 .addFields(
                     {
-                        name: compStats.peakRank.displayName + ' : ' + compStats.peakRank.metadata.actName + ' ' + rankEmoji,
+                        name: compStats.peakRank.displayName + ' - ' + compStats.peakRank.metadata.actName + ' ' + rankEmoji,
                         value: "```\n" + rankName + "\n```", inline: true
                     },
                 )
