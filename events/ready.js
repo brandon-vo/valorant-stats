@@ -15,8 +15,9 @@ module.exports = {
     },
 };
 
-function delay(n){
-    return new Promise(function(resolve){
-        setTimeout(resolve,n*1000);
+
+function delay(t) {
+    return new Promise(function (resolve) {
+        setTimeout(resolve, t * 1000);
     });
 }

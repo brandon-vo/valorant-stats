@@ -51,10 +51,10 @@ async function getWeapon(playerID) {
 async function getMatchInfo(matchID) {
     try {
         matchInfo = await axios.get(process.env.MATCH_INFO + `${matchID}`)
-    } catch(error) {
+    } catch (error) {
         return 'default_error';
     }
     return matchInfo;
 }
 
-module.exports = {getProfile, getMatch, getMap, getWeapon, getMatchInfo};
+module.exports = { getProfile, getMatch, getMap, getWeapon, getMatchInfo };
