@@ -21,8 +21,7 @@
 # Commands ⌨️
 | Command        | Description    | 
 | :-----------: | :--------: | 
-| /help      | Display a list of avaliable commands      | 
-| /competitive    | Display competitive career stats of a Valorant player | 
+| /stats    | Display competitive career stats of a Valorant player | 
 | /unrated     | Display unrated career stats of a Valorant player | 
 | /lastmatch      | Display last match information of a Valorant player |  
 | /spikerush    | Display spike rush career stats of a Valorant player | 
