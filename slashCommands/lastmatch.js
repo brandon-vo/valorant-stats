@@ -62,10 +62,16 @@ module.exports = {
                         ephemeral: true
                     });
                 default:
+                    var profileStats = trackerProfile.data.data.segments;
                     var lastMatch = trackerMatch.data.data.matches[0]; // Last match info
                     var lmStats = lastMatch.segments[0].stats; // Last match stats for the player
                     var matchID = lastMatch.attributes.id; // Match ID
                     break;
+            }
+
+            for (let x = 0; x < profileStats.length; x++) {
+                if (profileStats[x].metadata.name === 'Competitive' && profileStats[x].type === 'playlist')
+                    var compStats = profileStats[x].stats;
             }
 
             const userHandle = trackerProfile.data.data.platformInfo.platformUserHandle; // Username and tag
@@ -244,8 +250,9 @@ module.exports = {
             }
 
             // Text format
-            if (lastMatch.metadata.modeName == 'Normal')
+            if (lastMatch.metadata.modeName == 'Normal') {
                 lastMatch.metadata.modeName = 'Unrated'
+            }
 
             // Score
             greenSquare = Math.round(lmStats.roundsWon.displayValue)
@@ -264,6 +271,26 @@ module.exports = {
 
             // Competitive game embed
             if (lastMatch.metadata.modeName === 'Competitive') {
+                // Set rank emojis and name
+                var rankName = '';
+                var rankEmoji = '';
+                if (compStats) {
+                    rankName = compStats.rank.metadata.tierName;
+                    rankEmoji = assets.rankEmojis[rankName].emoji;
+                    if (rankName.includes('Immortal')) {
+                        rankName = rankName.split(' ')[0] + ' #' + compStats.rank.rank;
+                    }
+                    else if (rankName.includes('Radiant')) {
+                        rankName = rankName + ' #' + compStats.rank.rank;
+                    }
+                } else {
+                    return await interaction.reply({
+                        embeds: [noStatsEmbed],
+                        components: [buttons],
+                        ephemeral: true
+                    });
+                }
+
                 lastMatchEmbed1.setColor('#11806A')
                 lastMatchEmbed1.setTitle('Last Match Stats - ' + lastMap)
                 lastMatchEmbed1.setAuthor(author)
