@@ -93,13 +93,20 @@ module.exports = {
             };
 
             let totalPlaytimeValue = 0;
-            totalPlaytimeValue += compStats.timePlayed.value;
-            totalPlaytimeValue += dmStats.timePlayed.value;
-            totalPlaytimeValue += escalationStats.timePlayed.value;
-            totalPlaytimeValue += spikeRushStats.timePlayed.value
-            totalPlaytimeValue += unratedStats.timePlayed.value;
-            totalPlaytimeValue += replicationStats.timePlayed.value;
-            totalPlaytimeValue += snowballStats.timePlayed.value;
+            if (compStats)
+                totalPlaytimeValue += compStats.timePlayed.value;
+            if (dmStats)
+                totalPlaytimeValue += dmStats.timePlayed.value;
+            if (escalationStats)
+                totalPlaytimeValue += escalationStats.timePlayed.value;
+            if (spikeRushStats)
+                totalPlaytimeValue += spikeRushStats.timePlayed.value
+            if (unratedStats)
+                totalPlaytimeValue += unratedStats.timePlayed.value;
+            if (replicationStats)
+                totalPlaytimeValue += replicationStats.timePlayed.value;
+            if (snowballStats)
+                totalPlaytimeValue += snowballStats.timePlayed.value;
 
             let playtimeHours = Math.floor(totalPlaytimeValue / (1000 * 60 * 60));
             let playtimeMinutes = Math.floor(totalPlaytimeValue / (1000 * 60)) - (playtimeHours * 60);
