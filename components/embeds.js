@@ -79,7 +79,7 @@ const helpEmbed = new MessageEmbed()
                 "#             ValoStats Commands             #" +
                 "\n```",
         },
-        { name: 'Stats', value: "```yaml\n/stats\n/unrated\n/lastmatch\n/spikerush\n/deathmatch\n/escalation\n/replication\n/snowball\n/agent\n/weapon\n/map\n/peak```", inline: true },
+        { name: 'Stats', value: "```yaml\n/stats\n/unrated\n/lastmatch\n/spikerush\n/deathmatch\n/escalation\n/replication\n/snowball\n/agent\n/weapon\n/map\n/peak\n/playtime```", inline: true },
         { name: 'Other', value: "```yaml\n/link\n/unlink\n/linked\n/invite\n/ping\n/help```", inline: true },
         { name: '\u200b', value: "`To start using ValoStats, log into tracker.gg/valorant\n    Connect with /link USERNAME#TAG to use commands   \n        The Original Valorant Stats Discord Bot       `", inline: false },
     )
