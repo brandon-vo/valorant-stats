@@ -3,13 +3,12 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { buttons, helpButtons } = require('../components/buttons');
 const { noAccountEmbed, maintenanceEmbed, errorEmbed, noStatsEmbed } = require('../components/embeds');
 const Account = require('../schemas/AccountSchema');
-const assets = require('../assets.json');
 const { getProfile } = require('../api');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('peak')
-        .setDescription('Get the peak rating of a Valorant user')
+        .setName('playtime')
+        .setDescription('Get the total playtime of a Valorant user')
         .addStringOption(option =>
             option.setName('username-tag')
                 .setDescription('Your Valorant Username and Tagline (ex: CMDRVo#CMDR)')
@@ -66,19 +65,22 @@ module.exports = {
                     break;
             }
 
-
             // // Checking users playlist stats
             for (let x = 0; x < profileStats.length; x++) {
                 if (profileStats[x].metadata.name === 'Competitive' && profileStats[x].type === 'playlist')
-                    var compStats = profileStats[x].stats;
-            }
-
-            if (!compStats) {
-                return await interaction.reply({
-                    embeds: [noStatsEmbed],
-                    components: [buttons],
-                    ephemeral: true
-                });
+                    var compStats = profileStats[x].stats; // Access overall comp stats
+                else if (profileStats[x].metadata.name === 'Deathmatch' && profileStats[x].type === 'playlist')
+                    var dmStats = profileStats[x].stats // Access overall deathmatch stats
+                else if (profileStats[x].metadata.name === 'Escalation' && profileStats[x].type === 'playlist')
+                    var escalationStats = profileStats[x].stats; // Access overall escalation stats
+                else if (profileStats[x].metadata.name === 'Spike Rush' && profileStats[x].type === 'playlist')
+                    var spikeRushStats = profileStats[x].stats; // Access overall spike rush stats
+                else if (profileStats[x].metadata.name === 'Unrated' && profileStats[x].type === 'playlist')
+                    var unratedStats = profileStats[x].stats; // Access overall unrated stats 
+                else if (profileStats[x].metadata.name === 'Replication' && profileStats[x].type === 'playlist')
+                    var replicationStats = profileStats[x].stats; // Access overall replication stats
+                else if (profileStats[x].metadata.name === 'Snowball Fight' && profileStats[x].type === 'playlist')
+                    var snowballStats = profileStats[x].stats; // Access overall snowball fight stats
             }
 
             const userHandle = trackerProfile.data.data.platformInfo.platformUserHandle; // Username and tag
@@ -90,31 +92,28 @@ module.exports = {
                 url: `https://tracker.gg/valorant/profile/riot/${playerID}/overview`
             };
 
-            // Set rank emojis and name
-            let rankName = '';
-            let rankEmoji = '';
-            if (compStats) {
-                rankName = compStats.peakRank.metadata.tierName;
-                rankEmoji = assets.rankEmojis[rankName].emoji;
-                if (rankName.includes('Immortal') || rankName.includes('Radiant')) {
-                    rankName = rankName + ' ' + (compStats.peakRank.value ? compStats.peakRank.value + ' RR' : '');
-                }
-            }
+            let totalPlaytimeValue = 0;
+            totalPlaytimeValue += compStats.timePlayed.value;
+            totalPlaytimeValue += dmStats.timePlayed.value;
+            totalPlaytimeValue += escalationStats.timePlayed.value;
+            totalPlaytimeValue += spikeRushStats.timePlayed.value
+            totalPlaytimeValue += unratedStats.timePlayed.value;
+            totalPlaytimeValue += replicationStats.timePlayed.value;
+            totalPlaytimeValue += snowballStats.timePlayed.value;
 
-            const peakEmbed = new MessageEmbed()
+            let playtimeHours = Math.floor(totalPlaytimeValue / (1000 * 60 * 60));
+            let playtimeMinutes = Math.floor(totalPlaytimeValue / (1000 * 60)) - (playtimeHours * 60);
+            let totalPlaytime = playtimeHours + 'h ' + playtimeMinutes + 'm';
+
+            const playtimeEmbed = new MessageEmbed()
                 .setColor('#11806A')
                 .setAuthor(author)
-                .setThumbnail(compStats.peakRank.metadata.iconUrl)
-                .addFields(
-                    {
-                        name: compStats.peakRank.displayName + ' - ' + compStats.peakRank.metadata.actName + ' ' + rankEmoji,
-                        value: "```\n" + rankName + "\n```", inline: true
-                    },
-                )
-                .setFooter({text: 'According to Tracker.gg'})
+                .setThumbnail(userAvatar)
+                .addFields({ name: 'Total Playtime', value: "```yaml\n" + `${totalPlaytime}` + "\n```" },)
+                .setFooter({ text: 'All game modes' })
 
             return await interaction.reply({
-                embeds: [peakEmbed],
+                embeds: [playtimeEmbed],
                 components: [buttons]
             });
         })()

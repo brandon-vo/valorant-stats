@@ -33,6 +33,7 @@
 | /weapon  | Display weapon stats of a Valorant player |
 | /map     | Display map stats of a Valorant player |
 | /peak | Get a users highest competitive rank |
+| /playtime | Get a users total playtime |
 | /link | Link a Valorant user to your Discord ID    |
 | /unlink | Unlink a Valorant user from your Discord ID    |
 | /linked | Check which Valorant account has been linked to your Discord ID    |
