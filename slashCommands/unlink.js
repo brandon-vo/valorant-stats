@@ -2,11 +2,12 @@ const DiscordUser = require('../schemas/AccountSchema');
 const Account = require('../schemas/AccountSchema');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { buttons } = require('../components/buttons');
+const { unlinkEmbed } = require('../components/embeds');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('unlink')
-        .setDescription('Unlink a Valorant account from your Discord ID'),
+        .setDescription('Unlink a VALORANT account from your Discord ID'),
     async execute(interaction) {
 
         const accounts = await Account.find({ discordId: interaction.user.id })
@@ -23,13 +24,13 @@ module.exports = {
                 valorantAccount: null
             })
             await interaction.reply({
-                content: 'Successfuly unlinked the Valorant account from your Discord ID',
+                embeds: [unlinkEmbed],
                 components: [buttons]
             });
         } catch (error) {
             console.error(error);
             return await interaction.reply({
-                content: "Failed to unlink the Valorant account from your Discord ID",
+                content: "Failed to unlink any VALORANT accounts from your Discord ID",
                 components: [buttons]
             });
         }

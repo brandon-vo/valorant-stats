@@ -9,10 +9,10 @@ const { getProfile } = require('../api');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('peak')
-        .setDescription('Get the peak rating of a Valorant user')
+        .setDescription('Get the peak rating of a VALORANT user')
         .addStringOption(option =>
             option.setName('username-tag')
-                .setDescription('Your Valorant Username and Tagline (ex: CMDRVo#CMDR)')
+                .setDescription('Your VALORANT Username and Tagline (ex: CMDRVo#CMDR)')
                 .setRequired(false)),
     async execute(interaction) {
 

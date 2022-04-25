@@ -9,10 +9,10 @@ const { getProfile, getMap } = require('../api');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('map')
-        .setDescription('Get all map stats for a Valorant user')
+        .setDescription('Get all map stats for a VALORANT user')
         .addStringOption(option =>
             option.setName('username-tag')
-                .setDescription('Your Valorant Username and Tagline (ex: CMDRVo#CMDR)')
+                .setDescription('Your VALORANT Username and Tagline (ex: CMDRVo#CMDR)')
                 .setRequired(false)),
     async execute(interaction) {
 

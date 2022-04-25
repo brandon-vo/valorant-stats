@@ -2,14 +2,15 @@ const DiscordUser = require('../schemas/AccountSchema')
 const Account = require('../schemas/AccountSchema');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { buttons } = require('../components/buttons');
+const { linkEmbed } = require('../components/embeds');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('link')
-        .setDescription('Link a Valorant account to your Discord ID')
+        .setDescription('Link a VALORANT account to your Discord ID')
         .addStringOption(option =>
             option.setName('username-tag')
-                .setDescription('Your Valorant Username and Tagline (ex: CMDRVo#CMDR)')
+                .setDescription('Your VALORANT Username and Tagline (ex: CMDRVo#CMDR)')
                 .setRequired(true)),
     async execute(interaction) {
 
@@ -32,10 +33,11 @@ module.exports = {
                 discordId: interaction.user.id,
                 valorantAccount: playerID
             })
+
             await interaction.reply({
-                content: 'Successfuly linked the Valorant account `' + args + '` to your Discord ID',
+                embeds: [linkEmbed(args)],
                 components: [buttons]
-            })
+            });
         } catch (error) {
             console.log(error)
             return await interaction.reply({

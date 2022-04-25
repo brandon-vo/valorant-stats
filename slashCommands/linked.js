@@ -1,11 +1,12 @@
 const Account = require('../schemas/AccountSchema');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { buttons } = require('../components/buttons');
+const { linkedEmbed, noLinkEmbed } = require('../components/embeds');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('linked')
-        .setDescription('View your linked Valorant account'),
+        .setDescription('View your linked VALORANT account'),
     async execute(interaction) {
 
         const accounts = await Account.find({ discordId: interaction.user.id });
@@ -15,12 +16,12 @@ module.exports = {
             const linkedAccount = decodeURI(ID);
 
             await interaction.reply({
-                content: `Your linked account is: \`${linkedAccount}\``,
+                embeds: [linkedEmbed(linkedAccount)],
                 components: [buttons]
             })
         } else {
             await interaction.reply({
-                content: 'You do not have an account linked! Use /link USERNAME#TAG to link a Valorant account.',
+                embeds: [noLinkEmbed],
                 components: [buttons]
             });
         }

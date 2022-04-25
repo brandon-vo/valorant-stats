@@ -7,7 +7,7 @@ const noAccountEmbed = new MessageEmbed()
     .addFields(
         {
             name: 'Error Status',
-            value: "```diff\n" + "Please connect your Valorant account to your \nDiscord ID using /link to view player statistics." +
+            value: "```diff\n" + "Please connect your VALORANT account to your \nDiscord ID using /link to view player statistics." +
                 "\n\nExample: /link ValoStats#NA1\n```",
             inline: true
         },
@@ -81,7 +81,70 @@ const helpEmbed = new MessageEmbed()
         },
         { name: 'Stats', value: "```yaml\n/stats\n/unrated\n/lastmatch\n/spikerush\n/deathmatch\n/escalation\n/replication\n/snowball\n/agent\n/weapon\n/map\n/peak\n/playtime```", inline: true },
         { name: 'Other', value: "```yaml\n/link\n/unlink\n/linked\n/invite\n/ping\n/help```", inline: true },
-        { name: '\u200b', value: "`To start using ValoStats, log into tracker.gg/valorant\n    Connect with /link USERNAME#TAG to use commands   \n        The Original Valorant Stats Discord Bot       `", inline: false },
+        { name: '\u200b', value: "`To start using ValoStats, log into tracker.gg/valorant\n    Connect with /link USERNAME#TAG to use commands   \n        The Original VALORANT Stats Discord Bot       `", inline: false },
     )
 
-module.exports = { noAccountEmbed, maintenanceEmbed, errorEmbed, noStatsEmbed, useSlashEmbed, helpEmbed };
+function linkEmbed(args) {
+    return new MessageEmbed()
+        .setColor('RANDOM')
+        .setFooter({ text: 'Developed by CMDRVo' })
+        .addFields(
+            {
+                name: 'Success!',
+                value: 'Successfully linked the VALORANT account `' + `${args}` + '` to your Discord ID.\n\n' +
+                    'Please consider voting for ValoStats on [top.gg](https://top.gg/bot/833535533287866398)! It only takes a few minutes :)',
+                inline: true
+            },
+        )
+}
+
+const unlinkEmbed = new MessageEmbed()
+    .setColor('RANDOM')
+    .setFooter({ text: 'Developed by CMDRVo' })
+    .addFields(
+        {
+            name: 'Success!',
+            value: 'Successfuly unlinked any VALORANT accounts from your Discord ID.\n\n' +
+                'Please consider voting for ValoStats on [top.gg](https://top.gg/bot/833535533287866398)! It only takes a few minutes :)',
+            inline: true
+        },
+    )
+
+function linkedEmbed(args) {
+    return new MessageEmbed()
+        .setColor('RANDOM')
+        .setFooter({ text: 'Developed by CMDRVo' })
+        .addFields(
+            {
+                name: 'Status',
+                value: 'Your linked account is `' + `${args}` + '`\n\n' +
+                    'Please consider voting for ValoStats on [top.gg](https://top.gg/bot/833535533287866398)! It only takes a few minutes :)',
+                inline: true
+            },
+        )
+}
+
+const noLinkEmbed = new MessageEmbed()
+    .setColor('RANDOM')
+    .setFooter({ text: 'Developed by CMDRVo' })
+    .addFields(
+        {
+            name: 'Error Status',
+            value: "You do not have an account linked!\nUse `/link USERNAME#TAG` to link a VALORANT account to your Discord ID",
+            inline: true
+        },
+    )
+
+
+module.exports = {
+    noAccountEmbed,
+    maintenanceEmbed,
+    errorEmbed,
+    noStatsEmbed,
+    useSlashEmbed,
+    helpEmbed,
+    linkEmbed,
+    unlinkEmbed,
+    linkedEmbed,
+    noLinkEmbed
+};
