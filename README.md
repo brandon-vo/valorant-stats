@@ -11,6 +11,8 @@
   </a>
 </p>
 
+![valostats](https://user-images.githubusercontent.com/76707560/164144042-0aa56d18-bca5-45ab-8f09-e67a0186a17a.jpg)
+
 ---
 # Screenshots 📷
 ![stats](https://user-images.githubusercontent.com/76707560/123704292-83bc0080-d833-11eb-8256-fbc30e317e18.png)
