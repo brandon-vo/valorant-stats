@@ -1,60 +1,69 @@
 const axios = require('axios').default;
+const { ErrorType, DataType } = require('./constants/types');
 
-async function getProfile(playerID) {
-    try {
-        trackerProfile = await axios.get(process.env.TRACKER_PROFILE + `${playerID}`);
-    } catch (error) {
-        if (error.response.status === 403) {
-            return '403_error';
-        }
-        return 'default_error';
+async function getData(playerID, dataType, matchID = null) {
+  let data;
+
+  try {
+    if (dataType === DataType.PROFILE) {
+      data = await axios.get(process.env.TRACKER_PROFILE + playerID);
+    } else if (dataType === DataType.COMP_OVERVIEW) {
+      data = await axios.get(
+        process.env.TRACKER_PROFILE +
+          playerID +
+          process.env.OVERVIEW_HEADER +
+          'competitive' +
+          process.env.SOURCE_HEADER
+      );
+    } else if (dataType === DataType.RANK) {
+      data = await axios.get(process.env.TRACKER_PROFILE + playerID + process.env.RANK_HEADER);
+    } else if (dataType === DataType.UNRATED_OVERVIEW) {
+      data = await axios.get(
+        process.env.TRACKER_PROFILE + playerID + process.env.OVERVIEW_HEADER + 'unrated'
+      );
+    } else if (dataType === DataType.SPIKE_RUSH_OVERVIEW) {
+      data = await axios.get(
+        process.env.TRACKER_PROFILE + playerID + process.env.OVERVIEW_HEADER + 'spikerush'
+      );
+    } else if (dataType === DataType.DEATHMATCH_OVERVIEW) {
+      data = await axios.get(
+        process.env.TRACKER_PROFILE + playerID + process.env.OVERVIEW_HEADER + 'deathmatch'
+      );
+    } else if (dataType === DataType.REPLICATION_OVERVIEW) {
+      data = await axios.get(
+        process.env.TRACKER_PROFILE + playerI + process.env.OVERVIEW_HEADER + 'replication'
+      );
+    } else if (dataType === DataType.ESCALATION_OVERVIEW) {
+      data = await axios.get(
+        process.env.TRACKER_PROFILE + playerID + process.env.OVERVIEW_HEADER + 'escalation'
+      );
+    } else if (dataType === DataType.SWIFTPLAY_OVERVIEW) {
+      data = await axios.get(
+        process.env.TRACKER_PROFILE + playerID + process.env.OVERVIEW_HEADER + 'swiftplay'
+      );
+    } else if (dataType === DataType.SNOWBALL_OVERVIEW) {
+      data = await axios.get(
+        process.env.TRACKER_PROFILE + playerID + process.env.OVERVIEW_HEADER + 'snowball'
+      );
+    } else if (dataType === DataType.WEAPON) {
+      data = await axios.get(process.env.TRACKER_PROFILE + playerID + process.env.WEAPON_HEADER);
+    } else if (dataType === DataType.SEASON_REPORT) {
+      data = await axios.get(process.env.TRACKER_PROFILE + playerID + process.env.SEASON_REPORT);
+    } else if (dataType === DataType.MATCH) {
+      data = await axios.get(process.env.TRACKER_MATCH + `riot/${playerID}`);
+    } else if (dataType === DataType.MATCH_INFO) {
+      data = await axios.get(process.env.TRACKER_MATCH + matchID);
+    } else {
+      console.error('You should not reach here. There is a typo in the code :|');
     }
-    return trackerProfile;
+  } catch (error) {
+    if (error.response && error.response.status === 403) {
+      return ErrorType.FORBIDDEN;
+    }
+    return ErrorType.DEFAULT;
+  }
+
+  return data;
 }
 
-async function getMatch(playerID) {
-    try {
-        trackerMatch = await axios.get(process.env.TRACKER_MATCH + `${playerID}`);
-    } catch (error) {
-        if (error.response.status === 403) {
-            return '403_error';
-        }
-        return 'default_error';
-    }
-    return trackerMatch;
-}
-
-async function getMap(playerID) {
-    try {
-        trackerMap = await axios.get(process.env.TRACKER_PROFILE + `${playerID}` + '/segments/map');
-    } catch (error) {
-        if (error.response.status === 403) {
-            return '403_error';
-        }
-        return 'default_error';
-    }
-    return trackerMap;
-}
-
-async function getWeapon(playerID) {
-    try {
-        trackerWeapon = await axios.get(process.env.TRACKER_PROFILE + `${playerID}` + '/segments/weapon');
-    } catch (error) {
-        if (error.response.status === 403) {
-            return '403_error';
-        }
-        return 'default_error';
-    }
-    return trackerWeapon;
-}
-
-async function getMatchInfo(matchID) {
-    try {
-        matchInfo = await axios.get(process.env.MATCH_INFO + `${matchID}`)
-    } catch (error) {
-        return 'default_error';
-    }
-    return matchInfo;
-}
-
-module.exports = { getProfile, getMatch, getMap, getWeapon, getMatchInfo };
+module.exports = { getData };

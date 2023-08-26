@@ -1,133 +1,75 @@
 const { MessageEmbed } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { buttons, helpButtons } = require('../components/buttons');
-const { noAccountEmbed, maintenanceEmbed, errorEmbed } = require('../components/embeds');
-const Account = require('../schemas/AccountSchema');
-const { getWeapon, getProfile } = require('../api');
+const { buttons } = require('../components/buttons');
+const { DataType } = require('../constants/types');
+const { getAuthor } = require('../utils/getAuthor');
+const { getArgs } = require('../utils/getArgs');
+const { getData } = require('../api');
+const { handleResponse } = require('../utils/handleResponse');
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('weapon')
-        .setDescription('Get top 5 weapon stats for a VALORANT user')
-        .addStringOption(option =>
-            option.setName('username-tag')
-                .setDescription('Your VALORANT Username and Tagline (ex: CMDRVo#CMDR)')
-                .setRequired(false)),
-    async execute(interaction) {
+  data: new SlashCommandBuilder()
+    .setName('weapon')
+    .setDescription('Get top 5 competitive weapon stats for a VALORANT user')
+    .addStringOption((option) =>
+      option
+        .setName('username-tag')
+        .setDescription('Your VALORANT Username and Tagline (ex: CMDRVo#CMDR)')
+        .setRequired(false)
+    ),
+  async execute(interaction) {
+    const playerID = encodeURIComponent(await getArgs(interaction));
 
-        let args = interaction.options.getString('username-tag');
-        let account = await Account.find({ discordId: interaction.user.id });
-        if (!args) {
-            if (account.length < 1) {
-                return await interaction.reply({
-                    embeds: [noAccountEmbed],
-                    components: [buttons]
-                });
-            }
-            args = account[0].valorantAccount;
-        }
+    const [trackerProfile, trackerOverview] = await Promise.all([
+      getData(playerID, DataType.PROFILE),
+      getData(playerID, DataType.COMP_OVERVIEW),
+    ]);
 
-        if (args.includes('@')) {
-            try {
-                mentionedID = args.split('!')[1].slice(0, -1);
-                taggedAccount = await Account.find({ discordId: (mentionedID) });
-                args = taggedAccount[0].valorantAccount;
-            } catch (error) {
-                return await interaction.reply({
-                    embeds: [errorEmbed],
-                    components: [helpButtons],
-                    ephemeral: true
-                });
-            }
-        }
-
-        const playerID = encodeURIComponent(args);
-
-        (async () => {
-            trackerProfile = await getProfile(playerID);
-            trackerWeapon = await getWeapon(playerID);
-            switch (trackerWeapon) {
-                case '403_error':
-                    return await interaction.reply({
-                        embeds: [maintenanceEmbed],
-                        components: [buttons],
-                        ephemeral: true
-                    });
-                case 'default_error':
-                    return await interaction.reply({
-                        embeds: [errorEmbed],
-                        components: [helpButtons],
-                        ephemeral: true
-                    });
-                default:
-                    weaponStats = trackerWeapon.data.data; // Weapon stats
-                    break;
-            }
-
-            const userHandle = trackerProfile.data.data.platformInfo.platformUserHandle; // Username and tag
-            const userAvatar = trackerProfile.data.data.platformInfo.avatarUrl; // Avatar image
-
-            const author = {
-                name: `${userHandle}`,
-                iconURL: userAvatar,
-                url: `https://tracker.gg/valorant/profile/riot/${playerID}/overview`
-            };
-
-            topWeapons = []
-
-            for (let x = 0; x < weaponStats.length; x++) {
-                weaponName = weaponStats[x].metadata.name
-                weaponKills = weaponStats[x].stats.kills.displayValue
-                weaponKillsValue = weaponStats[x].stats.kills.value
-                weaponDeathsBy = weaponStats[x].stats.deaths.displayValue
-                weaponHeadshotPct = weaponStats[x].stats.headshotsPercentage.displayValue
-                weaponDamageRound = weaponStats[x].stats.damagePerRound.displayValue
-                weaponFirstBloodCount = weaponStats[x].stats.firstBloods.displayValue
-                weaponLongestKillDistance = weaponStats[x].stats.longestKillDistance.value
-
-                topWeapons.push([weaponName, weaponKills, weaponKillsValue, weaponDeathsBy, weaponHeadshotPct,
-                    weaponDamageRound, weaponFirstBloodCount, weaponLongestKillDistance]);
-            }
-
-            topWeapons.sort(function (a, b) { return b[2] - a[2] }); // Sort weapons by kills
-
-            // Top 5 weapons only
-            weaponLength = topWeapons.length;
-            if (weaponLength > 5) {
-                weaponLength = 5;
-            }
-
-            const weaponEmbed = new MessageEmbed()
-                .setColor('#11806A')
-                .setAuthor(author)
-                .setThumbnail(userAvatar)
-                .setDescription("```grey\n      " + "      Top " + weaponLength + " - Weapon Stats" + "\n```")
-                .setFooter({ text: 'Competitive Weapons Only' })
-
-            for (let i = 0; i < weaponLength; i++) {
-
-                let weaponName = topWeapons[i][0]
-                let weaponKills = topWeapons[i][1]
-                let weaponDeathsBy = topWeapons[i][3]
-                let weaponHeadshot = topWeapons[i][4]
-                let weaponDamage = topWeapons[i][5]
-                let weaponFirstBlood = topWeapons[i][6]
-                let weaponKillDistance = topWeapons[i][7]
-
-                weaponEmbed.addFields(
-                    {
-                        name: weaponName + "     |     First Bloods: " + weaponFirstBlood + "     |     "
-                            + "Longest Kill Dist: " + parseInt(weaponKillDistance / 100).toFixed(0) + " m",
-                        value: "```yaml\nK:" + weaponKills + " / D:" + weaponDeathsBy + " | HS: "
-                            + weaponHeadshot + " | DMG/R: " + weaponDamage + "\n```", inline: false
-                    },
-                )
-            }
-
-            await interaction.reply({
-                embeds: [weaponEmbed],
-                components: [buttons]
-            });
-        })()
+    const dataSources = [trackerOverview, trackerProfile];
+    if (!(await handleResponse(interaction, dataSources))) {
+      return;
     }
-}
+
+    const author = getAuthor(trackerProfile.data.data, playerID);
+
+    const weaponObjects = trackerOverview.data.data.filter((item) => item.type === 'weapon');
+
+    weaponObjects.sort((a, b) => b.stats.kills.value - a.stats.kills.value);
+    const maxWeaponsToShow = Math.min(weaponObjects.length, 5);
+    let topWeapons = weaponObjects.slice(0, maxWeaponsToShow);
+
+    const weaponEmbed = new MessageEmbed()
+      .setColor('#11806A')
+      .setAuthor(author)
+      .setThumbnail(author.iconURL)
+      .setDescription(`\`\`\`grey\n            Top ${maxWeaponsToShow} - Weapon Stats\n\`\`\``)
+      .setFooter({ text: 'Competitive Weapons Only' });
+
+    topWeapons.forEach((weapon) => {
+      const {
+        metadata: { name },
+        stats: {
+          kills: { displayValue: weaponKills },
+          deaths: { displayValue: weaponDeathsBy },
+          headshotsPercentage: { displayValue: weaponHeadshotPct },
+          damagePerRound: { displayValue: weaponDamageRound },
+          roundsPlayed: { displayValue: weaponRoundsPlayed },
+          longestKillDistance: { value: weaponLongestKillDistance },
+        },
+      } = weapon;
+
+      const weaponKillDistanceInMeters = (weaponLongestKillDistance / 100).toFixed(0);
+
+      weaponEmbed.addFields({
+        name: `${name}     |     Rounds Used: ${weaponRoundsPlayed}     |     Furthest Kill: ${weaponKillDistanceInMeters} m`,
+        value: `\`\`\`ansi\n\u001b[2;34mK:${weaponKills}\u001b[0;0m / \u001b[2;35mD:${weaponDeathsBy}\u001b[0;0m | \u001b[2;36mHS:${weaponHeadshotPct}\u001b[0;0m | \u001b[2;33mDMG/R:${weaponDamageRound}\n\`\`\``,
+        inline: false,
+      });
+    });
+
+    await interaction.reply({
+      embeds: [weaponEmbed],
+      components: [buttons],
+    });
+  },
+};
