@@ -1,5 +1,6 @@
 const Account = require('../schemas/AccountSchema');
 const { noAccountEmbed } = require('../components/embeds');
+const { buttons, helpButtons } = require('../components/buttons');
 
 async function getArgs(interaction) {
   let args = interaction.options.getString('username-tag');
