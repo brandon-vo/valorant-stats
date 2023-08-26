@@ -2,16 +2,17 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { getData } = require('../api');
 const { Overview } = require('../constants/overview');
 const { DataType } = require('../constants/types');
-const { getAuthor } = require('../utils/getAuthor');
-const { getArgs } = require('../utils/getArgs');
-const { handlePages } = require('../utils/handlePages');
-const { createEmbed } = require('../utils/createEmbed');
-const { handleResponse } = require('../utils/handleResponse');
+const { getAuthor } = require('../functions/getAuthor');
+const { getArgs } = require('../functions/getArgs');
+const { handlePages } = require('../functions/handlePages');
+const { createEmbed } = require('../functions/createEmbed');
+const assets = require('../assets.json');
+const { handleResponse } = require('../functions/handleResponse');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('unrated')
-    .setDescription('Get overall unrated stats for a VALORANT user')
+    .setName('stats')
+    .setDescription('Get overall competitive stats for a VALORANT user')
     .addStringOption((option) =>
       option
         .setName('username-tag')
@@ -21,23 +22,38 @@ module.exports = {
   async execute(interaction) {
     const playerID = encodeURIComponent(await getArgs(interaction));
 
-    const [trackerProfile, trackerOverview] = await Promise.all([
+    const [trackerProfile, trackerOverview, trackerRank] = await Promise.all([
       getData(playerID, DataType.PROFILE),
-      getData(playerID, DataType.UNRATED_OVERVIEW),
+      getData(playerID, DataType.COMP_OVERVIEW),
+      getData(playerID, DataType.RANK),
     ]);
 
-    const dataSources = [trackerOverview, trackerProfile];
+    const dataSources = [trackerOverview, trackerProfile, trackerRank];
     if (!(await handleResponse(interaction, dataSources))) {
       return;
     }
 
-    const author = getAuthor(trackerProfile.data.data, playerID);
     const profileOverview = trackerOverview.data.data[0].stats;
+    const author = getAuthor(trackerProfile.data.data, playerID);
     const stats = Overview(profileOverview);
+
+    let rankName = stats.rankName; // Rank Name
+
+    // Set rank emoji and name if Radiant or Immortal
+    const rankEmoji = assets.rankEmojis[rankName]?.emoji || '';
+    if (rankName.includes('Immortal') || rankName.includes('Radiant')) {
+      rankName =
+        rankName +
+        ' #' +
+        (profileOverview.rank.rank ? profileOverview.rank.rank : '') +
+        '\n' +
+        profileOverview.rank.value +
+        ' RR';
+    }
 
     const embeds = [
       createEmbed(
-        'Unrated Career Stats',
+        'Competitive Career Stats',
         [
           { name: 'KDR', value: '```ansi\n\u001b[2;36m' + stats.kdrRatio + '\n```', inline: true },
           {
@@ -45,11 +61,7 @@ module.exports = {
             value: '```ansi\n\u001b[2;36m' + stats.damagePerRound + '\n```',
             inline: true,
           },
-          {
-            name: 'HS %',
-            value: '```ansi\n\u001b[2;36m' + stats.headshotPct + '\n```',
-            inline: true,
-          },
+          { name: 'Rank ' + rankEmoji, value: '```grey\n' + rankName + '\n```', inline: true },
           { name: 'Kills', value: '```ansi\n\u001b[2;36m' + stats.kills + '\n```', inline: true },
           { name: 'Deaths', value: '```ansi\n\u001b[2;36m' + stats.deaths + '```', inline: true },
           {
@@ -83,7 +95,7 @@ module.exports = {
         author
       ),
       createEmbed(
-        'Unrated Career Stats',
+        'Competitive Career Stats',
         [
           {
             name: 'Kills/Match',
@@ -106,8 +118,8 @@ module.exports = {
             inline: true,
           },
           {
-            name: 'Avg Econ',
-            value: '```ansi\n\u001b[2;36m' + stats.avgEconRating + '\n```',
+            name: 'HS %',
+            value: '```ansi\n\u001b[2;36m' + stats.headshotPct + '\n```',
             inline: true,
           },
           {
@@ -123,6 +135,11 @@ module.exports = {
           {
             name: 'Defuses',
             value: '```ansi\n\u001b[2;36m' + stats.defuseCount + '\n```',
+            inline: true,
+          },
+          {
+            name: 'Avg Econ',
+            value: '```ansi\n\u001b[2;36m' + stats.avgEconRating + '\n```',
             inline: true,
           },
           { name: 'Aces', value: '```ansi\n\u001b[2;36m' + stats.aceCount + '\n```', inline: true },

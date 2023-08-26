@@ -2,10 +2,10 @@ const { MessageEmbed } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { buttons } = require('../components/buttons');
 const { DataType } = require('../constants/types');
-const { getAuthor } = require('../utils/getAuthor');
-const { getArgs } = require('../utils/getArgs');
+const { getAuthor } = require('../functions/getAuthor');
+const { getArgs } = require('../functions/getArgs');
 const { getData } = require('../api');
-const { handleResponse } = require('../utils/handleResponse');
+const { handleResponse } = require('../functions/handleResponse');
 const assets = require('../assets.json');
 
 module.exports = {
@@ -62,32 +62,17 @@ module.exports = {
 
       // Check if 'agentName' is in 'availableAgentEmojis' list and get the emoji
       let agentEmoji = ':white_small_square:';
+      // prettier-ignore
       const availableAgentEmojis = [
-        'Astra',
-        'Breach',
-        'Brimstone',
-        'Cypher',
-        'Jett',
-        'Killjoy',
-        'Omen',
-        'Phoenix',
-        'Raze',
-        'Reyna',
-        'Sage',
-        'Skye',
-        'Sova',
-        'Viper',
-        'Yoru',
-        'KAY/O',
-        'Chamber',
-        'Neon',
+        'Astra', 'Breach', 'Brimstone', 'Cypher', 'Jett', 'Killjoy', 'Omen', 'Phoenix',
+        'Raze', 'Reyna', 'Sage', 'Skye', 'Sova', 'Viper', 'Yoru', 'KAY/O', 'Chamber', 'Neon',
       ];
       if (availableAgentEmojis.includes(name)) {
         agentEmoji = assets.agentEmojis[name].emoji;
       }
 
       agentEmbed.addFields({
-        name: `${name} ${agentEmoji}      |      Time Played: ${agentTimePlayed}      |      Win Rate: ${agentWinRate}`,
+        name: `${name} ${agentEmoji}    |    Time Played: ${agentTimePlayed}    |    Win Rate: ${agentWinRate}`,
         value: `\`\`\`ansi\n\u001b[2;34mK:${agentKills}\u001b[0;0m / \u001b[2;35mD:${agentDeaths}\u001b[0;0m / \u001b[2;36mA:${agentAssists}\u001b[0;0m / \u001b[2;32mR:${agentKDRatio}\u001b[0;0m | \u001b[2;33mDMG/R:${agentDamageRound} \n\`\`\``,
         inline: false,
       });

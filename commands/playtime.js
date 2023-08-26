@@ -2,10 +2,10 @@ const { MessageEmbed } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { buttons } = require('../components/buttons');
 const { DataType } = require('../constants/types');
-const { getArgs } = require('../utils/getArgs');
-const { getAuthor } = require('../utils/getAuthor');
+const { getArgs } = require('../functions/getArgs');
+const { getAuthor } = require('../functions/getAuthor');
 const { getData } = require('../api');
-const { handleResponse } = require('../utils/handleResponse');
+const { handleResponse } = require('../functions/handleResponse');
 
 module.exports = {
   data: new SlashCommandBuilder()

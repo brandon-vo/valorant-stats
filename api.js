@@ -8,12 +8,9 @@ async function getData(playerID, dataType, matchID = null) {
     if (dataType === DataType.PROFILE) {
       data = await axios.get(process.env.TRACKER_PROFILE + playerID);
     } else if (dataType === DataType.COMP_OVERVIEW) {
+      // prettier-ignore
       data = await axios.get(
-        process.env.TRACKER_PROFILE +
-          playerID +
-          process.env.OVERVIEW_HEADER +
-          'competitive' +
-          process.env.SOURCE_HEADER
+        process.env.TRACKER_PROFILE + playerID + process.env.OVERVIEW_HEADER + 'competitive' + process.env.SOURCE_HEADER,
       );
     } else if (dataType === DataType.RANK) {
       data = await axios.get(process.env.TRACKER_PROFILE + playerID + process.env.RANK_HEADER);

@@ -2,30 +2,17 @@ const { MessageEmbed } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { helpButtons } = require('../components/buttons');
 const { ErrorType, DataType } = require('../constants/types');
-const { getAuthor } = require('../utils/getAuthor');
+const { getAuthor } = require('../functions/getAuthor');
 const { getData } = require('../api');
-const { getArgs } = require('../utils/getArgs');
-const { handlePages } = require('../utils/handlePages');
-const { handleResponse } = require('../utils/handleResponse');
+const { getArgs } = require('../functions/getArgs');
+const { handlePages } = require('../functions/handlePages');
+const { handleResponse } = require('../functions/handleResponse');
 const assets = require('../assets.json');
 
+// prettier-ignore
 const validAgents = [
-  'Astra',
-  'Breach',
-  'Brimstone',
-  'Cypher',
-  'Jett',
-  'Killjoy',
-  'Omen',
-  'Phoenix',
-  'Raze',
-  'Reyna',
-  'Sage',
-  'Skye',
-  'Sova',
-  'Viper',
-  'Yoru',
-  'KAY/O',
+  'Astra', 'Breach', 'Brimstone', 'Cypher', 'Jett', 'Killjoy', 'Omen', 'Phoenix',
+  'Raze', 'Reyna', 'Sage', 'Skye', 'Sova', 'Viper', 'Yoru', 'KAY/O',
 ];
 
 function getAgentEmoji(agentName) {

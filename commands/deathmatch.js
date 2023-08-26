@@ -3,15 +3,15 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { buttons } = require('../components/buttons');
 const { Overview } = require('../constants/overview');
 const { DataType } = require('../constants/types');
-const { getAuthor } = require('../utils/getAuthor');
+const { getAuthor } = require('../functions/getAuthor');
 const { getData } = require('../api');
-const { handleResponse } = require('../utils/handleResponse');
-const { getArgs } = require('../utils/getArgs');
+const { getArgs } = require('../functions/getArgs');
+const { handleResponse } = require('../functions/handleResponse');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('snowball')
-    .setDescription('Get overall snowball fight stats for a VALORANT user')
+    .setName('deathmatch')
+    .setDescription('Get overall deathmatch stats for a VALORANT user')
     .addStringOption((option) =>
       option
         .setName('username-tag')
@@ -23,7 +23,7 @@ module.exports = {
 
     const [trackerProfile, trackerOverview] = await Promise.all([
       getData(playerID, DataType.PROFILE),
-      getData(playerID, DataType.SNOWBALL_OVERVIEW),
+      getData(playerID, DataType.DEATHMATCH_OVERVIEW),
     ]);
 
     const dataSources = [trackerOverview, trackerProfile];
@@ -36,16 +36,26 @@ module.exports = {
     const author = getAuthor(profileInfo, playerID);
     const stats = Overview(profileOverview);
 
-    const snowballEmbed = new MessageEmbed()
+    const deathmatchEmbed = new MessageEmbed()
       .setColor('#11806A')
-      .setTitle(`Snowball Fight Career Stats`)
+      .setTitle(`Deathmatch Career Stats`)
       .setAuthor(author)
       .setThumbnail(author.iconURL)
       .addFields(
         {
           name: 'KDR',
           value: '```ansi\n\u001b[2;36m' + stats.kdrRatio + '\n```',
-          inline: false,
+          inline: true,
+        },
+        {
+          name: 'KAD',
+          value: '```ansi\n\u001b[2;36m' + stats.kadRatio + '\n```',
+          inline: true,
+        },
+        {
+          name: 'Kills/Game ',
+          value: '```ansi\n\u001b[2;36m' + stats.killsPerRound + '\n```',
+          inline: true,
         },
         {
           name: 'Kills',
@@ -60,11 +70,6 @@ module.exports = {
         {
           name: 'Assists',
           value: '```ansi\n\u001b[2;36m' + stats.assists + '\n```',
-          inline: true,
-        },
-        {
-          name: 'Most Kills',
-          value: '```ansi\n\u001b[2;36m' + stats.mostKills + '\n```',
           inline: true,
         },
         {
@@ -87,7 +92,7 @@ module.exports = {
       );
 
     return await interaction.reply({
-      embeds: [snowballEmbed],
+      embeds: [deathmatchEmbed],
       components: [buttons],
     });
   },

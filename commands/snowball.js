@@ -3,15 +3,15 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { buttons } = require('../components/buttons');
 const { Overview } = require('../constants/overview');
 const { DataType } = require('../constants/types');
-const { getAuthor } = require('../utils/getAuthor');
+const { getAuthor } = require('../functions/getAuthor');
 const { getData } = require('../api');
-const { getArgs } = require('../utils/getArgs');
-const { handleResponse } = require('../utils/handleResponse');
+const { handleResponse } = require('../functions/handleResponse');
+const { getArgs } = require('../functions/getArgs');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('escalation')
-    .setDescription('Get overall escalation stats for a VALORANT user')
+    .setName('snowball')
+    .setDescription('Get overall snowball fight stats for a VALORANT user')
     .addStringOption((option) =>
       option
         .setName('username-tag')
@@ -23,7 +23,7 @@ module.exports = {
 
     const [trackerProfile, trackerOverview] = await Promise.all([
       getData(playerID, DataType.PROFILE),
-      getData(playerID, DataType.ESCALATION_OVERVIEW),
+      getData(playerID, DataType.SNOWBALL_OVERVIEW),
     ]);
 
     const dataSources = [trackerOverview, trackerProfile];
@@ -36,9 +36,9 @@ module.exports = {
     const author = getAuthor(profileInfo, playerID);
     const stats = Overview(profileOverview);
 
-    const escalationEmbed = new MessageEmbed()
+    const snowballEmbed = new MessageEmbed()
       .setColor('#11806A')
-      .setTitle(`Escalation Career Stats`)
+      .setTitle(`Snowball Fight Career Stats`)
       .setAuthor(author)
       .setThumbnail(author.iconURL)
       .addFields(
@@ -87,7 +87,7 @@ module.exports = {
       );
 
     return await interaction.reply({
-      embeds: [escalationEmbed],
+      embeds: [snowballEmbed],
       components: [buttons],
     });
   },

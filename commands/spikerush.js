@@ -2,11 +2,11 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { getData } = require('../api');
 const { Overview } = require('../constants/overview');
 const { DataType } = require('../constants/types');
-const { getAuthor } = require('../utils/getAuthor');
-const { getArgs } = require('../utils/getArgs');
-const { handlePages } = require('../utils/handlePages');
-const { createEmbed } = require('../utils/createEmbed');
-const { handleResponse } = require('../utils/handleResponse');
+const { getAuthor } = require('../functions/getAuthor');
+const { getArgs } = require('../functions/getArgs');
+const { handlePages } = require('../functions/handlePages');
+const { createEmbed } = require('../functions/createEmbed');
+const { handleResponse } = require('../functions/handleResponse');
 
 module.exports = {
   data: new SlashCommandBuilder()

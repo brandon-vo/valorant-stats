@@ -1,7 +1,7 @@
 const { MessageActionRow, MessageButton } = require('discord.js');
 
 let count = {};
-const timeout = 1000 * 30;
+const timeout = 1000 * 25;
 
 const getRow = (id, pages, embeds, randomID) => {
   const row = new MessageActionRow();

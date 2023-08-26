@@ -7,9 +7,8 @@ module.exports = (client) => {
     client.commandArray = [];
 
     const commandFiles = fs.readdirSync(`${path}`).filter((file) => file.endsWith('.js'));
-
     for (const file of commandFiles) {
-      const command = require(`.${path}/${file}`);
+      const command = require(`../.${path}/${file}`);
       client.commands.set(command.data.name, command);
       client.commandArray.push(command.data.toJSON());
     }
@@ -22,7 +21,7 @@ module.exports = (client) => {
           // Dev server
           // Routes.applicationGuildCommands(process.env.APPLICATION_ID_DEV, process.env.GUILD_ID),
           Routes.applicationCommands(process.env.APPLICATION_ID), // Prod
-          { body: client.commandArray }
+          { body: client.commandArray },
         );
         console.log('Reloaded slash commands');
       } catch (error) {

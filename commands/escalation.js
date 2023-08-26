@@ -3,15 +3,15 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { buttons } = require('../components/buttons');
 const { Overview } = require('../constants/overview');
 const { DataType } = require('../constants/types');
-const { getAuthor } = require('../utils/getAuthor');
+const { getAuthor } = require('../functions/getAuthor');
 const { getData } = require('../api');
-const { getArgs } = require('../utils/getArgs');
-const { handleResponse } = require('../utils/handleResponse');
+const { getArgs } = require('../functions/getArgs');
+const { handleResponse } = require('../functions/handleResponse');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('replication')
-    .setDescription('Get overall replication stats for a VALORANT user')
+    .setName('escalation')
+    .setDescription('Get overall escalation stats for a VALORANT user')
     .addStringOption((option) =>
       option
         .setName('username-tag')
@@ -23,7 +23,7 @@ module.exports = {
 
     const [trackerProfile, trackerOverview] = await Promise.all([
       getData(playerID, DataType.PROFILE),
-      getData(playerID, DataType.REPLICATION_OVERVIEW),
+      getData(playerID, DataType.ESCALATION_OVERVIEW),
     ]);
 
     const dataSources = [trackerOverview, trackerProfile];
@@ -36,26 +36,16 @@ module.exports = {
     const author = getAuthor(profileInfo, playerID);
     const stats = Overview(profileOverview);
 
-    const replicationEmbed = new MessageEmbed()
+    const escalationEmbed = new MessageEmbed()
       .setColor('#11806A')
-      .setTitle(`Replication Career Stats`)
+      .setTitle(`Escalation Career Stats`)
       .setAuthor(author)
       .setThumbnail(author.iconURL)
       .addFields(
         {
           name: 'KDR',
           value: '```ansi\n\u001b[2;36m' + stats.kdrRatio + '\n```',
-          inline: true,
-        },
-        {
-          name: 'DMG/R',
-          value: '```ansi\n\u001b[2;36m' + stats.damagePerRound + '\n```',
-          inline: true,
-        },
-        {
-          name: 'HS %',
-          value: '```ansi\n\u001b[2;36m' + stats.headshotPct + '\n```',
-          inline: true,
+          inline: false,
         },
         {
           name: 'Kills',
@@ -97,7 +87,7 @@ module.exports = {
       );
 
     return await interaction.reply({
-      embeds: [replicationEmbed],
+      embeds: [escalationEmbed],
       components: [buttons],
     });
   },

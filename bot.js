@@ -9,12 +9,12 @@ const { AutoPoster } = require('topgg-autoposter');
 const poster = AutoPoster(process.env.TOPGG_TOKEN, client);
 client.commands = new Collection();
 
-const functions = fs.readdirSync('./functions').filter((file) => file.endsWith('.js'));
+const functions = fs.readdirSync('./functions/bot').filter((file) => file.endsWith('.js'));
 const eventFiles = fs.readdirSync('./events').filter((file) => file.endsWith('.js'));
 
 (async () => {
   for (const file of functions) {
-    require(`./functions/${file}`)(client);
+    require(`./functions/bot/${file}`)(client);
   }
 
   mongoose
@@ -28,11 +28,11 @@ const eventFiles = fs.readdirSync('./events').filter((file) => file.endsWith('.j
     .catch((error) => console.error(error));
 
   poster.on('posted', (stats) => {
-  	console.log(`Posted to Top.gg | ${stats.serverCount} servers`)
+    console.log(`Posted to Top.gg | ${stats.serverCount} servers`);
   });
 
   client.handleEvents(eventFiles, './events');
-  client.handleCommands('./slashCommands');
+  client.handleCommands('./commands');
 
   client.login(process.env.DISCORD_TOKEN);
 })();
