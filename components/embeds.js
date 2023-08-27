@@ -93,18 +93,18 @@ const helpEmbed = new MessageEmbed()
     {
       name: 'Stats',
       value:
-        '```ansi\n\u001b[2;36m\n/stats\n/unrated\n/lastmatch\n/spikerush\n/deathmatch\n/escalation\n/replication\n/swiftplay\n/snowball\n/agent\n/weapon\n/map\n/playtime```',
+        '```ansi\n\u001b[2;36m/stats\n/unrated\n/lastmatch\n/spikerush\n/deathmatch\n/escalation\n/replication\n/swiftplay\n/snowball\n/agent\n/weapon\n/map\n/playtime```',
       inline: true,
     },
     {
       name: 'Other',
-      value: '```ansi\n\u001b[2;33m\n/link\n/unlink\n/linked\n/invite\n/ping\n/help```',
+      value: '```ansi\n\u001b[2;33m/link\n/unlink\n/linked\n/invite\n/ping\n/help```',
       inline: true,
     },
     {
       name: '\u200b',
       value:
-        '`To start using ValoStats, log into tracker.gg/valorant\n    Connect with /link USERNAME#TAG to use commands    \n        The Original VALORANT Stats Discord Bot       \n     Not affiliated with Riot Games or tracker.gg     `',
+        '`To start using ValoStats, log into tracker.gg/valorant\n    Connect with /link USERNAME#TAG to use commands    \n        The Original VALORANT Stats Discord Bot       \n      Not affiliated with Riot Games or tracker.gg    `',
       inline: false,
     }
   );
