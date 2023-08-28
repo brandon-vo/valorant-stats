@@ -60,16 +60,7 @@ module.exports = {
         },
       } = agent;
 
-      // Check if 'agentName' is in 'availableAgentEmojis' list and get the emoji
-      let agentEmoji = ':white_small_square:';
-      // prettier-ignore
-      const availableAgentEmojis = [
-        'Astra', 'Breach', 'Brimstone', 'Cypher', 'Jett', 'Killjoy', 'Omen', 'Phoenix',
-        'Raze', 'Reyna', 'Sage', 'Skye', 'Sova', 'Viper', 'Yoru', 'KAY/O', 'Chamber', 'Neon',
-      ];
-      if (availableAgentEmojis.includes(name)) {
-        agentEmoji = assets.agentEmojis[name].emoji;
-      }
+      const agentEmoji = assets.agentEmojis[name]?.emoji || ':white_small_square:';
 
       agentEmbed.addFields({
         name: `${name} ${agentEmoji}    |    Time Played: ${agentTimePlayed}    |    Win Rate: ${agentWinRate}`,

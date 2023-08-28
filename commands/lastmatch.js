@@ -9,18 +9,6 @@ const { handlePages } = require('../functions/handlePages');
 const { handleResponse } = require('../functions/handleResponse');
 const assets = require('../assets.json');
 
-// prettier-ignore
-const validAgents = [
-  'Astra', 'Breach', 'Brimstone', 'Cypher', 'Jett', 'Killjoy', 'Omen', 'Phoenix',
-  'Raze', 'Reyna', 'Sage', 'Skye', 'Sova', 'Viper', 'Yoru', 'KAY/O',
-];
-
-function getAgentEmoji(agentName) {
-  return validAgents.includes(agentName)
-    ? assets.agentEmojis[agentName]?.emoji || ''
-    : ':white_small_square:';
-}
-
 function getPlayerFields(player, team) {
   const {
     attributes: { platformUserIdentifier: playerName },
@@ -35,7 +23,7 @@ function getPlayerFields(player, team) {
     },
   } = player;
 
-  const agentEmoji = getAgentEmoji(agentName);
+  const agentEmoji = assets.agentEmojis[agentName]?.emoji || ':white_small_square:';
   const rankEmoji = assets.rankEmojis[rank]?.emoji || '';
   const acs = parseInt(scorePerRound.value).toFixed(0);
   const ansiCode = team === 'red' ? '36m' : '33m';
@@ -118,7 +106,7 @@ module.exports = {
 
     const lastMatchEmbed1 = new MessageEmbed()
       .setColor('#11806A')
-      .setTitle('Last Match Stats - ' + lastMap)
+      .setTitle('Last Match Competitive Stats - ' + lastMap)
       .setAuthor(author)
       .setThumbnail(lastMatch.segments[0].metadata.agentImageUrl)
       .setDescription('`              ' + timeStamp[0] + '             `')
@@ -191,7 +179,7 @@ module.exports = {
     const lastMatchEmbed2 = new MessageEmbed()
       .setColor('#11806A')
       .setTitle(
-        'Last Match Stats - ' +
+        'Last Competitive Match Stats - ' +
           lastMap +
           ' | ' +
           playerStats.roundsWon.displayValue +

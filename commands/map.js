@@ -60,16 +60,11 @@ module.exports = {
         '<:greenline:839562756930797598>'.repeat(greenSquare) +
         '<:redline:839562438760071298>'.repeat(redSquare);
 
-      let mapEmoji = '▫️';
-
-      let availableMapEmojis = ['Ascent', 'Bind', 'Breeze', 'Haven', 'Icebox', 'Split', 'Fracture'];
-      if (availableMapEmojis.includes(name)) {
-        mapEmoji = assets.mapEmojis[name].emoji;
-      }
+      const mapEmoji = assets.mapEmojis[name]?.emoji || '▫️';
 
       const winRatePct = parseInt(winPctValue).toFixed(0);
       mapEmbed.addFields({
-        name: `${name}  ${mapEmoji}    |    ${timePlayed}    |    W/L: ${matchesWon}/${matchesLost} ${winRatePct}%`,
+        name: `${name}  ${mapEmoji}    |    ${timePlayed}    |    W/L: ${matchesWon}/${matchesLost} - ${winRatePct}%`,
         value: winRateVisualized,
         inline: false,
       });

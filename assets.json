@@ -190,6 +190,20 @@
       "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836970398692016188/breezeDraw.jpg",
       "img": "https://cdn.discordapp.com/attachments/834195818080108564/839591211358748713/breezeImage.png"
     },
+    "Lotus": {
+      "name": "Lotus",
+      "imgWon": "https://cdn.discordapp.com/attachments/960747086918344734/1145850029001687090/lotusVictory.jpg",
+      "imgLost": "https://cdn.discordapp.com/attachments/960747086918344734/1145850028204765224/lotusDefeat.jpg",
+      "imgDraw": "https://cdn.discordapp.com/attachments/960747086918344734/1145850028460613765/lotusDraw.jpg",
+      "img": "https://cdn.discordapp.com/attachments/960747086918344734/1145850362478207007/lotus.jpg"
+    },
+    "Pearl": {
+      "name": "Pearl",
+      "imgWon": "https://cdn.discordapp.com/attachments/960747086918344734/1145850003252858920/pearlVictory.jpg",
+      "imgLost": "https://cdn.discordapp.com/attachments/960747086918344734/1145850002439163935/pearlDefeat.jpg",
+      "imgDraw": "https://cdn.discordapp.com/attachments/960747086918344734/1145850002741141574/pearlDraw.jpg",
+      "img": "https://cdn.discordapp.com/attachments/960747086918344734/1145850362075545640/pearl.jpg"
+    },
     "Unknown": {
       "name": "Unknown",
       "imgWon": "https://cdn.discordapp.com/attachments/834195818080108564/924407916973395968/victory.jpg",
@@ -338,6 +352,18 @@
     },
     "Neon": {
       "emoji": "<:neon:956293647186415636>"
+    },
+    "Fade": {
+      "emoji": "<:fade:1145848343298330655>"
+    },
+    "Harbor": {
+      "emoji": "<:harbor:1145848342157479956>"
+    },
+    "Gekko": {
+      "emoji": "<:gekko:1145848340383281294>"
+    },
+    "Deadlock": {
+      "emoji": "<:deadlock:1145848339305340988>"
     }
   },
   "modeEmojis": {
@@ -378,6 +404,12 @@
     },
     "Fracture": {
       "emoji": "<:fracture:956290115511148565>"
+    },
+    "Pearl": {
+      "emoji": "<:pearl:1145847954859630696>"
+    },
+    "Lotus": {
+      "emoji": "<:lotusmap:1145847957065842719>"
     }
   }
 }
