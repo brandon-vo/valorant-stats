@@ -83,29 +83,57 @@ const useSlashEmbed = new MessageEmbed()
   );
 
 const helpEmbed = new MessageEmbed()
-  .setColor('RANDOM')
+  .setColor('#6c71c4')
   .setFooter({ text: 'Developed by CMDRVo' })
   .addFields(
     {
       name: '\u200B',
-      value: '```md\n' + '#             ValoStats Commands             #' + '\n```',
+      value:
+        '```ansi\n\u001b[0;45m' +
+        '                          ValoStats                          ' +
+        '\u001b[0m\n```',
     },
     {
-      name: 'Stats',
+      name: '**Gamemode Stats (All Acts)**',
       value:
-        '```ansi\n\u001b[2;36m/stats\n/unrated\n/lastmatch\n/spikerush\n/deathmatch\n/escalation\n/replication\n/swiftplay\n/snowball\n/agent\n/weapon\n/map\n/playtime```',
+        `<:slash:1145942150916358164> lastmatch: Last Comp Match\n` +
+        `<:slash:1145942150916358164> stats: Competitive Stats\n` +
+        `<:slash:1145942150916358164> unrated: Unrated Stats\n` +
+        `<:slash:1145942150916358164> spikerush: Spike Rush Stats\n` +
+        `<:slash:1145942150916358164> deathmatch: Deathmatch Stats\n` +
+        `<:slash:1145942150916358164> escalation: Escalation Stats\n` +
+        `<:slash:1145942150916358164> replication: Replication Stats\n` +
+        `<:slash:1145942150916358164> swiftplay: Swiftplay Stats\n` +
+        `<:slash:1145942150916358164> snowball: Snowball Stats\n`,
       inline: true,
     },
     {
-      name: 'Other',
-      value: '```ansi\n\u001b[2;33m/link\n/unlink\n/linked\n/invite\n/ping\n/help```',
+      name: '**Other Stats**',
+      value:
+        `<:slash:1145942150916358164> agent: Top 5 Ranked Agents\n` +
+        `<:slash:1145942150916358164> weapon: Top 5 Ranked Weapons\n` +
+        `<:slash:1145942150916358164> map: All Ranked Map Stats\n` +
+        `<:slash:1145942150916358164> playtime: Total Playtime\n` +
+        `**\nUtility**\n` +
+        `<:slash:1145942150916358164> link: Link a VALORANT account\n` +
+        `<:slash:1145942150916358164> unlink: Unlink VALORANT account\n` +
+        `<:slash:1145942150916358164> linked: View linked account\n` +
+        `<:slash:1145942150916358164> invite: Get bot invite link\n`,
+      inline: true,
+    },
+    { name: '\u200B', value: '\u200B', inline: true },
+    {
+      name: '**How to get started**',
+      value: `1. 'Sign in with Riot ID' on https://tracker.gg/valorant\n2. Connect your VALORANT account to your Discord\n   ID by typing /link YOUR_USERNAME#TAG`,
       inline: true,
     },
     {
-      name: '\u200b',
+      name: '**Ways to support :)**',
       value:
-        '`To start using ValoStats, log into tracker.gg/valorant\n    Connect with /link USERNAME#TAG to use commands    \n        The Original VALORANT Stats Discord Bot       \n      Not affiliated with Riot Games or tracker.gg    `',
-      inline: false,
+        `𓆩♡𓆪 [Donate w/ PayPal](https://www.paypal.me/cmdrvo)\n` +
+        `𓆩♡𓆪 [Vote on Top.gg](https://top.gg/bot/833535533287866398)\n` +
+        `𓆩♡𓆪 [Report bugs](https://discord.com/api/oauth2/authorize?client_id=833535533287866398&permissions=431644736576&scope=bot%20applications.commands)`,
+      inline: true,
     }
   );
 

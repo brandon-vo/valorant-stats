@@ -190,6 +190,13 @@
       "imgDraw": "https://cdn.discordapp.com/attachments/834195818080108564/836970398692016188/breezeDraw.jpg",
       "img": "https://cdn.discordapp.com/attachments/834195818080108564/839591211358748713/breezeImage.png"
     },
+    "Fracture": {
+      "name": "Lotus",
+      "imgWon": "https://cdn.discordapp.com/attachments/960747086918344734/1145901663475998730/fractureVictory.jpg",
+      "imgLost": "https://cdn.discordapp.com/attachments/960747086918344734/1145901663987703898/fractureDefeat.jpg",
+      "imgDraw": "https://cdn.discordapp.com/attachments/960747086918344734/1145901664298086400/fractureDraw.jpg",
+      "img": "https://cdn.discordapp.com/attachments/960747086918344734/1145901663731847318/fracture.jpg"
+    },
     "Lotus": {
       "name": "Lotus",
       "imgWon": "https://cdn.discordapp.com/attachments/960747086918344734/1145850029001687090/lotusVictory.jpg",

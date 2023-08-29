@@ -18,8 +18,11 @@ module.exports = {
     const args = interaction.options.getString('username-tag');
     const playerID = encodeURI(args).toLowerCase();
 
-    if (!playerID.includes('#'))
+    if (!playerID.includes('#')) {
       return await interaction.reply('You have entered an invalid Valorant username and tag!');
+    }
+
+    await interaction.deferReply();
 
     const accounts = await Account.find({ discordId: interaction.user.id });
 
@@ -35,13 +38,13 @@ module.exports = {
         valorantAccount: playerID,
       });
 
-      await interaction.reply({
+      await interaction.editReply({
         embeds: [linkEmbed(args)],
         components: [buttons],
       });
     } catch (error) {
       console.log(error);
-      return await interaction.reply({
+      return await interaction.editReply({
         content: 'Failed to link Valorant account to your Discord ID',
         components: [buttons],
       });

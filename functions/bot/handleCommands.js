@@ -13,15 +13,17 @@ module.exports = (client) => {
       client.commandArray.push(command.data.toJSON());
     }
 
-    const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_TOKEN);
+    const rest = new REST({ version: '9' }).setToken(
+      process.env.DEV ? process.env.DISCORD_TOKEN_DEV : process.env.DISCORD_TOKEN
+    );
 
     (async () => {
       try {
         await rest.put(
-          // Dev server
-          // Routes.applicationGuildCommands(process.env.APPLICATION_ID_DEV, process.env.GUILD_ID),
-          Routes.applicationCommands(process.env.APPLICATION_ID), // Prod
-          { body: client.commandArray },
+          process.env.DEV
+            ? Routes.applicationGuildCommands(process.env.APPLICATION_ID_DEV, process.env.GUILD_ID)
+            : Routes.applicationCommands(process.env.APPLICATION_ID), // Prod
+          { body: client.commandArray }
         );
         console.log('Reloaded slash commands');
       } catch (error) {

@@ -52,6 +52,8 @@ module.exports = {
     ),
   async execute(interaction) {
     const playerID = encodeURIComponent(await getArgs(interaction));
+    await interaction.deferReply();
+
     const [trackerProfile, trackerMatch] = await Promise.all([
       getData(playerID, DataType.PROFILE),
       getData(playerID, DataType.MATCH),
@@ -69,7 +71,7 @@ module.exports = {
     const [trackerMatchInfo] = await Promise.all([getData(playerID, DataType.MATCH_INFO, matchID)]);
 
     if (trackerMatchInfo === ErrorType.DEFAULT) {
-      return await interaction.reply({
+      return await interaction.editReply({
         embeds: [errorEmbed],
         components: [helpButtons],
         ephemeral: true,
@@ -106,7 +108,7 @@ module.exports = {
 
     const lastMatchEmbed1 = new MessageEmbed()
       .setColor('#11806A')
-      .setTitle('Last Match Competitive Stats - ' + lastMap)
+      .setTitle('Last Competitive Match - ' + lastMap)
       .setAuthor(author)
       .setThumbnail(lastMatch.segments[0].metadata.agentImageUrl)
       .setDescription('`              ' + timeStamp[0] + '             `')
@@ -179,7 +181,7 @@ module.exports = {
     const lastMatchEmbed2 = new MessageEmbed()
       .setColor('#11806A')
       .setTitle(
-        'Last Competitive Match Stats - ' +
+        'Last Competitive Match - ' +
           lastMap +
           ' | ' +
           playerStats.roundsWon.displayValue +

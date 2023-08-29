@@ -1,7 +1,7 @@
 const { MessageActionRow, MessageButton } = require('discord.js');
 
 let count = {};
-const timeout = 1000 * 25;
+let timeout = 1000 * 20;
 
 const getRow = (id, pages, embeds, randomID) => {
   const row = new MessageActionRow();
@@ -45,7 +45,7 @@ const getRow = (id, pages, embeds, randomID) => {
   return row;
 };
 
-const editGetRow = (id, pages, embeds, randomID) => {
+const editGetRow = (id, pages, embeds, randomID, timedOut = false) => {
   const row = new MessageActionRow();
 
   row.addComponents(
@@ -59,14 +59,14 @@ const editGetRow = (id, pages, embeds, randomID) => {
       .setLabel('<')
       .setStyle('SUCCESS')
       .setCustomId('previous' + randomID)
-      .setDisabled(pages[id] === 0)
+      .setDisabled(pages[id] === 0 || timedOut === true)
   );
   row.addComponents(
     new MessageButton()
       .setLabel('>')
       .setStyle('SUCCESS')
       .setCustomId('next' + randomID)
-      .setDisabled(pages[id] === embeds.length - 1)
+      .setDisabled(pages[id] === embeds.length - 1 || timedOut === true)
   );
   row.addComponents(
     new MessageButton()

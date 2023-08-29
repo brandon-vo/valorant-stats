@@ -27,12 +27,14 @@ const eventFiles = fs.readdirSync('./events').filter((file) => file.endsWith('.j
     })
     .catch((error) => console.error(error));
 
-  poster.on('posted', (stats) => {
-    console.log(`Posted to Top.gg | ${stats.serverCount} servers`);
-  });
+  if (!process.env.DEV) {
+    poster.on('posted', (stats) => {
+      console.log(`Posted to Top.gg | ${stats.serverCount} servers`);
+    });
+  }
 
   client.handleEvents(eventFiles, './events');
   client.handleCommands('./commands');
 
-  client.login(process.env.DISCORD_TOKEN);
+  client.login(process.env.DEV ? process.env.DISCORD_TOKEN_DEV : process.env.DISCORD_TOKEN);
 })();

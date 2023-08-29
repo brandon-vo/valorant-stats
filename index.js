@@ -3,7 +3,7 @@ require('dotenv').config();
 
 const manager = new ShardingManager('./bot.js', {
   totalShards: 'auto',
-  token: process.env.DISCORD_TOKEN,
+  token: process.env.DEV ? process.env.DISCORD_TOKEN_DEV : process.env.DISCORD_TOKEN,
   respawn: true,
 });
 

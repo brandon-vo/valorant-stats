@@ -8,18 +8,19 @@ module.exports = {
     .setName('linked')
     .setDescription('View your linked VALORANT account'),
   async execute(interaction) {
+    await interaction.deferReply();
     const accounts = await Account.find({ discordId: interaction.user.id });
 
     if (accounts.length > 0) {
       const ID = accounts[0].valorantAccount;
       const linkedAccount = decodeURI(ID);
 
-      await interaction.reply({
+      return await interaction.editReply({
         embeds: [linkedEmbed(linkedAccount)],
         components: [buttons],
       });
     } else {
-      await interaction.reply({
+      return await interaction.editReply({
         embeds: [noLinkEmbed],
         components: [buttons],
       });

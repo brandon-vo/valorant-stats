@@ -21,6 +21,7 @@ module.exports = {
     ),
   async execute(interaction) {
     const playerID = encodeURIComponent(await getArgs(interaction));
+    await interaction.deferReply();
 
     const [trackerProfile, trackerOverview, trackerRank] = await Promise.all([
       getData(playerID, DataType.PROFILE),
@@ -84,10 +85,12 @@ module.exports = {
             value:
               stats.winRateBar +
               ' ```ansi\n\u001b[2;34m' +
-              '    W: ' +
+              ' W: ' +
               stats.matchesWon +
-              '   \u001b[2;30m|\u001b[2;35m   L: ' +
+              '\u001b[2;30m |\u001b[2;35m L: ' +
               stats.matchesLost +
+              '\u001b[2;30m |\u001b[2;37m T: ' +
+              stats.matchesTied +
               '\n```',
             inline: false,
           },

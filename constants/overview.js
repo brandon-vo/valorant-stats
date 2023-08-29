@@ -14,6 +14,7 @@ function Overview(profileOverview) {
     winRatePct: profileOverview.matchesWinPct.displayValue,
     matchesWon: profileOverview.matchesWon.displayValue,
     matchesLost: profileOverview.matchesLost.displayValue,
+    matchesTied: profileOverview.matchesTied.displayValue,
     killsPerMatch: profileOverview.killsPerMatch.displayValue,
     deathsPerMatch: profileOverview.deathsPerMatch.displayValue,
     assistsPerMatch: profileOverview.assistsPerMatch.displayValue,

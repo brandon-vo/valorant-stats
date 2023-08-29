@@ -9,6 +9,7 @@ module.exports = {
     .setName('unlink')
     .setDescription('Unlink a VALORANT account from your Discord ID'),
   async execute(interaction) {
+    await interaction.deferReply();
     const accounts = await Account.find({ discordId: interaction.user.id });
 
     // // Check if the user has a linked account and delete it
@@ -21,13 +22,13 @@ module.exports = {
         discordId: interaction.user.id,
         valorantAccount: null,
       });
-      await interaction.reply({
+      return await interaction.editReply({
         embeds: [unlinkEmbed],
         components: [buttons],
       });
     } catch (error) {
       console.error(error);
-      return await interaction.reply({
+      return await interaction.editReply({
         content: 'Failed to unlink any VALORANT accounts from your Discord ID',
         components: [buttons],
       });

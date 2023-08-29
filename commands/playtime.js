@@ -19,6 +19,7 @@ module.exports = {
     ),
   async execute(interaction) {
     const playerID = encodeURIComponent(await getArgs(interaction));
+    await interaction.deferReply();
 
     const [trackerProfile, trackerReport] = await Promise.all([
       getData(playerID, DataType.PROFILE),
@@ -60,7 +61,7 @@ module.exports = {
       )
       .setFooter({ text: 'All game modes' });
 
-    return await interaction.reply({
+    return await interaction.editReply({
       embeds: [playtimeEmbed],
       components: [buttons],
     });

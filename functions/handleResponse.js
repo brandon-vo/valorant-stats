@@ -10,7 +10,7 @@ async function handleResponse(interaction, dataSources) {
   };
 
   if (dataSources.includes(ErrorType.FORBIDDEN)) {
-    await interaction.reply({
+    await interaction.editReply({
       embeds: [maintenanceEmbed],
       components: [buttons],
       ephemeral: true,
@@ -19,7 +19,7 @@ async function handleResponse(interaction, dataSources) {
   }
 
   if (dataSources.includes(ErrorType.DEFAULT)) {
-    await interaction.reply({
+    await interaction.editReply({
       embeds: [errorEmbed],
       components: [helpButtons],
       ephemeral: true,
@@ -32,7 +32,7 @@ async function handleResponse(interaction, dataSources) {
       return source.data && source.data.data && source.data.data.length === 0;
     })
   ) {
-    await interaction.reply(noDataResponse);
+    await interaction.editReply(noDataResponse);
     return false;
   }
   return true;

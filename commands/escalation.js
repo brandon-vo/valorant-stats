@@ -20,6 +20,7 @@ module.exports = {
     ),
   async execute(interaction) {
     const playerID = encodeURIComponent(await getArgs(interaction));
+    await interaction.deferReply();
 
     const [trackerProfile, trackerOverview] = await Promise.all([
       getData(playerID, DataType.PROFILE),
@@ -86,7 +87,7 @@ module.exports = {
         }
       );
 
-    return await interaction.reply({
+    return await interaction.editReply({
       embeds: [escalationEmbed],
       components: [buttons],
     });

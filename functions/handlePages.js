@@ -14,6 +14,7 @@ async function handlePages(interaction, embeds, author) {
   const filter = (i) => i.user.id === interaction.user.id;
 
   let navButtons = getRow(id, pages, embeds, randomID);
+
   if (typeof navButtons === 'number') {
     const cooldownEmbed = new MessageEmbed()
       .setColor('#11806A')
@@ -24,14 +25,14 @@ async function handlePages(interaction, embeds, author) {
         value: 'Please wait ' + navButtons + ' more seconds before using this command.',
       });
 
-    return await interaction.reply({
+    return await interaction.editReply({
       embeds: [cooldownEmbed],
       components: [buttons],
       ephemeral: true,
     });
   }
 
-  reply = await interaction.reply({
+  reply = await interaction.editReply({
     embeds: [embed],
     components: [navButtons],
     fetchReply: true,
@@ -50,9 +51,9 @@ async function handlePages(interaction, embeds, author) {
       return;
     }
     if (btnInt.customId === 'previous' + randomID && pages[id] > 0) {
-      --pages[id];
+      pages[id]--;
     } else if (btnInt.customId === 'next' + randomID && pages[id] < embeds.length - 1) {
-      ++pages[id];
+      pages[id]++;
     }
     if (reply) {
       interaction.editReply({
@@ -60,6 +61,14 @@ async function handlePages(interaction, embeds, author) {
         components: [editGetRow(id, pages, embeds, randomID)],
       });
     }
+  });
+
+  // Disable arrow buttons after timeout done
+  collector.on('end', () => {
+    interaction.editReply({
+      embeds: [embeds[pages[id]]],
+      components: [editGetRow(id, pages, embeds, randomID, (timedOut = true))],
+    });
   });
 }
 
