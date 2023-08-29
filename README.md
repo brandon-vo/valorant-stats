@@ -63,18 +63,17 @@
 | ----- | ---------------- |
 | /ping | Pong!            |
 | /help | Display commands |
-
+<br>
 <i>
 Discord's very first Valorant Stats Discord Bot.<br>
 Initially developed in April 2021. Officially released in May 2021. Verified by Discord in July 2021.<br> 
 Peak Servers: 4,700 servers<br>
 A hobby Discord bot project created by Brandon Vo
 </i>
-
-Version 3.0
-Retrieves data from https://tracker.gg/valorant  
-Built with Discord.js, uses MongoDB database to store usernames  
-<br>
-
 <br><br>
+Version 3.0<br>
+Retrieves data from https://tracker.gg/valorant<br>
+Built with Discord.js, uses MongoDB database to store usernames  
+<br><br>
+
 Not affiliated with Riot Games or tracker.gg  
