@@ -30,4 +30,11 @@ const helpButtons = new MessageActionRow().addComponents(
   new MessageButton().setLabel('Tracker.gg').setURL('https://tracker.gg/valorant').setStyle('LINK')
 );
 
-module.exports = { buttons, helpButtons };
+const voteButton = new MessageActionRow().addComponents(
+  new MessageButton()
+    .setLabel('Click me to vote!')
+    .setURL('https://top.gg/bot/833535533287866398')
+    .setStyle('LINK')
+);
+
+module.exports = { buttons, helpButtons, voteButton };

@@ -1,16 +1,21 @@
 require('dotenv').config();
 const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
+const mongoose = require('mongoose');
+const { AutoPoster } = require('topgg-autoposter');
+const { Api } = require('@top-gg/sdk');
+
 const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
 });
-const mongoose = require('mongoose');
-const { AutoPoster } = require('topgg-autoposter');
-const poster = AutoPoster(process.env.TOPGG_TOKEN, client);
+
 client.commands = new Collection();
 
 const functions = fs.readdirSync('./functions/bot').filter((file) => file.endsWith('.js'));
 const eventFiles = fs.readdirSync('./events').filter((file) => file.endsWith('.js'));
+
+const poster = AutoPoster(process.env.TOPGG_TOKEN, client);
+client.topgg = new Api(process.env.TOPGG_TOKEN, this);
 
 (async () => {
   for (const file of functions) {

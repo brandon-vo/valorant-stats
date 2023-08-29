@@ -1,11 +1,11 @@
 {
   "name": "valorant-stats-bot",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "engines": {
     "node": "16.x",
     "npm": "7.x"
   },
-  "description": "Discord bot to retrieve Valorant statistics for a user. Created by Brandon Vo",
+  "description": "Discord bot to retrieve Valorant statistics of a user. Created by Brandon Vo",
   "main": "index.js",
   "scripts": {
     "start": "start"
@@ -14,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "@discordjs/rest": "^0.2.0-canary.0",
+    "@top-gg/sdk": "^3.1.5",
     "axios": "^0.21.4",
     "discord-api-types": "^0.26.1",
     "discord.js": "^13.6.0",

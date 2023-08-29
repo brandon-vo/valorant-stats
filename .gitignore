@@ -1,3 +1,4 @@
 .vscode
 .env
 old/*
+node_modules

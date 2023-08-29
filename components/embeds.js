@@ -9,7 +9,7 @@ const noAccountEmbed = new MessageEmbed()
   .addFields({
     name: 'Error Status',
     value:
-      '```ansi\n\u001b[2;31m\n' +
+      '```ansi\n\u001b[2;31m' +
       'Please connect your VALORANT account to your \nDiscord ID using /link to view player statistics.' +
       '\n\nExample: /link ValoStats#NA1\n```',
     inline: true,
@@ -24,7 +24,7 @@ const maintenanceEmbed = new MessageEmbed()
   .addFields({
     name: 'Maintenance Status',
     value:
-      '```ansi\n\u001b[2;31m\n' +
+      '```ansi\n\u001b[2;31m' +
       'ValoStats currently has issues in retrieving stats.' +
       ' Please try again later.' +
       '\n```',
@@ -40,7 +40,7 @@ const errorEmbed = new MessageEmbed()
   .addFields({
     name: 'Error Status',
     value:
-      '```ansi\n\u001b[2;31m\n' +
+      '```ansi\n\u001b[2;31m' +
       'Please ensure the account you are trying to view has' +
       " logged into tracker.gg/valorant!\n\nExample:\n1. Click 'Sign in with Riot ID'\n2. /command-to-use USERNAME#TAG\n\n" +
       'Note: Linked Discord accounts do not need to provide a USERNAME#TAG.\n```',
@@ -57,7 +57,7 @@ const noStatsEmbed = new MessageEmbed()
   .addFields({
     name: 'Error Status',
     value:
-      '```ansi\n\u001b[2;31m\n' +
+      '```ansi\n\u001b[2;31m' +
       'This user does not have statistics to retrieve for this gamemode.' +
       '\n```',
     inline: true,
@@ -147,7 +147,7 @@ function linkEmbed(args) {
         'Successfully linked the VALORANT account `' +
         `${args}` +
         '` to your Discord ID.\n\n' +
-        'Please consider voting for ValoStats on [top.gg](https://top.gg/bot/833535533287866398)! It only takes a few minutes :)',
+        'Please consider voting for ValoStats on [top.gg](https://top.gg/bot/833535533287866398)! It only takes a minute :)',
       inline: true,
     });
 }
@@ -159,7 +159,7 @@ const unlinkEmbed = new MessageEmbed()
     name: 'Success!',
     value:
       'Successfuly unlinked any VALORANT accounts from your Discord ID.\n\n' +
-      'Please consider voting for ValoStats on [top.gg](https://top.gg/bot/833535533287866398)! It only takes a few minutes :)',
+      'Please consider voting for ValoStats on [top.gg](https://top.gg/bot/833535533287866398)! It only takes a minute :)',
     inline: true,
   });
 
@@ -173,7 +173,7 @@ function linkedEmbed(args) {
         'Your linked account is `' +
         `${args}` +
         '`\n\n' +
-        'Please consider voting for ValoStats on [top.gg](https://top.gg/bot/833535533287866398)! It only takes a few minutes :)',
+        'Please consider voting for ValoStats on [top.gg](https://top.gg/bot/833535533287866398)! It only takes a minute :)',
       inline: true,
     });
 }
@@ -188,6 +188,21 @@ const noLinkEmbed = new MessageEmbed()
     inline: true,
   });
 
+const voteEmbed = new MessageEmbed()
+  .setColor('#FFAA20')
+  .setThumbnail(
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/OOjs_UI_icon_alert-yellow.svg/1200px-OOjs_UI_icon_alert-yellow.svg.png'
+  )
+  .setFooter({ text: 'Developed by CMDRVo' })
+  .addFields({
+    name: 'Alert Status',
+    value:
+      `\`\`\`ansi\n\u001b[2;33mIn order to use this command, you must vote for ValoStats on Top.gg!` +
+      ` For voting, you will gain access to unrated, spikerush, replication, escalation, snowball, swiftplay, and playtime.\n` +
+      `\nDon't worry, It only takes a minute :)\n\`\`\``,
+    inline: true,
+  });
+
 module.exports = {
   noAccountEmbed,
   maintenanceEmbed,
@@ -199,4 +214,5 @@ module.exports = {
   unlinkEmbed,
   linkedEmbed,
   noLinkEmbed,
+  voteEmbed,
 };

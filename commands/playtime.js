@@ -18,6 +18,12 @@ module.exports = {
         .setRequired(false)
     ),
   async execute(interaction) {
+    const hasVoted = await client.topgg.hasVoted(interaction.user.id);
+    if (!hasVoted) {
+      handleNoVote(interaction);
+      return;
+    }
+
     const playerID = encodeURIComponent(await getArgs(interaction));
     await interaction.deferReply();
 

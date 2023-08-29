@@ -6,6 +6,7 @@ const { DataType } = require('../constants/types');
 const { getAuthor } = require('../functions/getAuthor');
 const { getData } = require('../api');
 const { handleResponse } = require('../functions/handleResponse');
+const { handleNoVote } = require('../functions/handleNoVote');
 const { getArgs } = require('../functions/getArgs');
 
 module.exports = {
@@ -18,7 +19,13 @@ module.exports = {
         .setDescription('Your VALORANT Username and Tagline (ex: CMDRVo#CMDR)')
         .setRequired(false)
     ),
-  async execute(interaction) {
+  async execute(interaction, client) {
+    const hasVoted = await client.topgg.hasVoted(interaction.user.id);
+    if (!hasVoted) {
+      handleNoVote(interaction);
+      return;
+    }
+
     const playerID = encodeURIComponent(await getArgs(interaction));
     await interaction.deferReply();
 
