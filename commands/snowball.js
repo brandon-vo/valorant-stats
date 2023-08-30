@@ -26,8 +26,8 @@ module.exports = {
       return;
     }
 
-    const playerID = encodeURIComponent(await getArgs(interaction));
     await interaction.deferReply();
+    const playerID = encodeURIComponent(await getArgs(interaction));
 
     const [trackerProfile, trackerOverview] = await Promise.all([
       getData(playerID, DataType.PROFILE),

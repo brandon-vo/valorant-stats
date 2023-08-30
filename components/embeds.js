@@ -47,7 +47,6 @@ const errorEmbed = new MessageEmbed()
     inline: true,
   });
 
-// TODO: Not able to be used anymore. Grouped with errorEmbed
 const noStatsEmbed = new MessageEmbed()
   .setColor('#d1390f')
   .setThumbnail(
@@ -75,7 +74,7 @@ const useSlashEmbed = new MessageEmbed()
       ' [See Here.](https://support-dev.discord.com/hc/en-us/articles/4404772028055-Message-Content-Privileged-Intent-for-Verified-Bots)\n\n' +
       'If you cannot see slash commands on this server, please ask the admininstrator to reinvite the bot using [this link. ](https://discord.com/api/oauth2/authorize?client_id=833535533287866398&permissions=431644736576&scope=bot%20applications.commands)' +
       '\nThe bot **does not** need to be kicked. Only **readded!**\n\n' +
-      'Any issues? Join the test server and alert **@CMDRVo** for assistance. Thank you! <:jett:839142770576851006>',
+      'Any issues? Join the test server and alert **@brandon** for assistance. Thank you! <:jett:839142770576851006>',
     inline: true,
   })
   .setImage(
@@ -158,7 +157,7 @@ const unlinkEmbed = new MessageEmbed()
   .addFields({
     name: 'Success!',
     value:
-      'Successfuly unlinked any VALORANT accounts from your Discord ID.\n\n' +
+      'Successfuly unlinked any VALORANT accounts connected to your Discord ID.\n\n' +
       'Please consider voting for ValoStats on [top.gg](https://top.gg/bot/833535533287866398)! It only takes a minute :)',
     inline: true,
   });

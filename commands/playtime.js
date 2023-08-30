@@ -6,6 +6,7 @@ const { getArgs } = require('../functions/getArgs');
 const { getAuthor } = require('../functions/getAuthor');
 const { getData } = require('../api');
 const { handleResponse } = require('../functions/handleResponse');
+const { handleNoVote } = require('../functions/handleNoVote');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -24,8 +25,8 @@ module.exports = {
       return;
     }
 
-    const playerID = encodeURIComponent(await getArgs(interaction));
     await interaction.deferReply();
+    const playerID = encodeURIComponent(await getArgs(interaction));
 
     const [trackerProfile, trackerReport] = await Promise.all([
       getData(playerID, DataType.PROFILE),

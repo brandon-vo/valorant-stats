@@ -20,8 +20,8 @@ module.exports = {
         .setRequired(false)
     ),
   async execute(interaction) {
-    const playerID = encodeURIComponent(await getArgs(interaction));
     await interaction.deferReply();
+    const playerID = encodeURIComponent(await getArgs(interaction));
 
     const [trackerProfile, trackerOverview, trackerRank] = await Promise.all([
       getData(playerID, DataType.PROFILE),

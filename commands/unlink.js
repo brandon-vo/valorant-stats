@@ -12,7 +12,7 @@ module.exports = {
     await interaction.deferReply();
     const accounts = await Account.find({ discordId: interaction.user.id });
 
-    // // Check if the user has a linked account and delete it
+    // Check if the user has a linked account and delete it
     if (accounts.length > 0) await Account.deleteMany({ discordId: interaction.user.id });
 
     // Remove linked account from Discord ID
@@ -29,7 +29,7 @@ module.exports = {
     } catch (error) {
       console.error(error);
       return await interaction.editReply({
-        content: 'Failed to unlink any VALORANT accounts from your Discord ID',
+        content: 'Failed to unlink any VALORANT account connected to your Discord ID',
         components: [buttons],
       });
     }
