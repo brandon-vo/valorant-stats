@@ -9,6 +9,8 @@ async function getArgs(interaction) {
     args = account[0].valorantAccount;
   }
 
+  const account = await Account.find({ discordId: interaction.user.id });
+
   if (args.includes('@')) {
     try {
       // mentionedID = args.split('!')[1].slice(0, -1); // old doesn't work
@@ -23,8 +25,6 @@ async function getArgs(interaction) {
       });
     }
   }
-
-  const account = await Account.find({ discordId: interaction.user.id });
 
   if (account.length < 1) {
     return await interaction.editReply({
