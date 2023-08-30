@@ -7,7 +7,7 @@ async function getArgs(interaction) {
 
   const account = await Account.find({ discordId: interaction.user.id });
 
-  if (!args) {
+  if (!args && account) {
     args = account[0].valorantAccount;
   }
 
