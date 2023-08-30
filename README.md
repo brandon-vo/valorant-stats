@@ -21,10 +21,6 @@
     <br><br>
  </details>
 
-
-<i>
-</i>
-
 </p>
 
 ![valostats](https://user-images.githubusercontent.com/76707560/164144042-0aa56d18-bca5-45ab-8f09-e67a0186a17a.jpg)

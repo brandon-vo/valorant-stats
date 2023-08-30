@@ -18,7 +18,7 @@ module.exports = {
         .setDescription('Your VALORANT Username and Tagline (ex: CMDRVo#CMDR)')
         .setRequired(false)
     ),
-  async execute(interaction) {
+  async execute(interaction, client) {
     const hasVoted = await client.topgg.hasVoted(interaction.user.id);
     if (!hasVoted) {
       handleNoVote(interaction);
