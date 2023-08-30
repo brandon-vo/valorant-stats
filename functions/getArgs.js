@@ -5,6 +5,10 @@ const { buttons, helpButtons } = require('../components/buttons');
 async function getArgs(interaction) {
   let args = interaction.options.getString('username-tag');
 
+  if (!args) {
+    args = account[0].valorantAccount;
+  }
+
   if (args.includes('@')) {
     try {
       // mentionedID = args.split('!')[1].slice(0, -1); // old doesn't work
@@ -21,10 +25,6 @@ async function getArgs(interaction) {
   }
 
   const account = await Account.find({ discordId: interaction.user.id });
-
-  if (!args) {
-    args = account[0].valorantAccount;
-  }
 
   if (account.length < 1) {
     return await interaction.editReply({
