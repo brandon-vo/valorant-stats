@@ -3,8 +3,15 @@ const { noAccountEmbed, errorEmbed } = require('../components/embeds');
 const { buttons, helpButtons } = require('../components/buttons');
 
 async function getArgs(interaction) {
-
   const account = await Account.find({ discordId: interaction.user.id });
+
+  if (account.length < 1) {
+    return await interaction.editReply({
+      embeds: [noAccountEmbed],
+      components: [buttons],
+      ephemeral: true,
+    });
+  }
 
   let args = interaction.options.getString('username-tag') || account[0]?.valorantAccount;
 
@@ -21,14 +28,6 @@ async function getArgs(interaction) {
         ephemeral: true,
       });
     }
-  }
-
-  if (account.length < 1) {
-    return await interaction.editReply({
-      embeds: [noAccountEmbed],
-      components: [buttons],
-      ephemeral: true,
-    });
   }
 
   return args;

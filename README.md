@@ -10,7 +10,7 @@
     <img src="https://top.gg/api/widget/servers/833535533287866398.svg">
   </a>
     <h3>LATEST UPDATE [8/26/23]:</h3> The bot has been fixed :)
-    <br><br>
+    <br>
       <details close>
         <summary><h3>UPDATE [11/28/22]:</h3></summary> As of November 28th, 2022, ValoStats will be offline from Discord. The platform used to host this bot, Heroku, will no longer allow hosting for free. At this time, I do not have the funds to be able to continue hosting ValoStats. Also, the API     usage with Tracker Network has changed and the bot cannot retrieve stats properly. 
       <br><br>In the future, I may plan to use Riot's official Valorant API and revive this project. 
@@ -23,7 +23,9 @@
 
 </p>
 
-![valostats](https://user-images.githubusercontent.com/76707560/164144042-0aa56d18-bca5-45ab-8f09-e67a0186a17a.jpg)
+[![ValoStats Demo](https://i.ytimg.com/vi/xL2vHANiYGk/maxresdefault.jpg)](https://www.youtube.com/watch?v=xL2vHANiYGk&ab_channel=BrandonVo)
+
+<!-- ![valostats](https://user-images.githubusercontent.com/76707560/164144042-0aa56d18-bca5-45ab-8f09-e67a0186a17a.jpg) -->
 
 ---
 

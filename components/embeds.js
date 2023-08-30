@@ -42,7 +42,7 @@ const errorEmbed = new MessageEmbed()
     value:
       '```ansi\n\u001b[2;31m' +
       'Please ensure the account you are trying to view has' +
-      " logged into tracker.gg/valorant!\n\nExample:\n1. Click 'Sign in with Riot ID'\n2. /command-to-use USERNAME#TAG\n\n" +
+      " logged into tracker.gg/valorant and linked their account!\n\nExample:\n1. Click 'Sign in with Riot ID' on tracker.gg\n2. /link USERNAME#TAG\n3. /command-to-use USERNAME#TAG\n\n" +
       'Note: Linked Discord accounts do not need to provide a USERNAME#TAG.\n```',
     inline: true,
   });
