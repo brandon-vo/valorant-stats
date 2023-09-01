@@ -25,6 +25,9 @@
 
 [![ValoStats Demo](https://i.ytimg.com/vi/xL2vHANiYGk/maxresdefault.jpg)](https://www.youtube.com/watch?v=xL2vHANiYGk&ab_channel=BrandonVo)
 
+https://github.com/brandon-vo/valorant-stats/assets/76707560/f975dfa9-41ac-4390-95d1-2f7d1baf1925
+
+
 <!-- ![valostats](https://user-images.githubusercontent.com/76707560/164144042-0aa56d18-bca5-45ab-8f09-e67a0186a17a.jpg) -->
 
 ---

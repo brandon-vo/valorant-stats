@@ -22,6 +22,7 @@ module.exports = {
   async execute(interaction) {
     await interaction.deferReply();
     const playerID = encodeURIComponent(await getArgs(interaction));
+    if (!playerID) return;
 
     const [trackerProfile, trackerOverview, trackerRank] = await Promise.all([
       getData(playerID, DataType.PROFILE),
@@ -30,9 +31,7 @@ module.exports = {
     ]);
 
     const dataSources = [trackerOverview, trackerProfile, trackerRank];
-    if (!(await handleResponse(interaction, dataSources))) {
-      return;
-    }
+    if (!(await handleResponse(interaction, dataSources))) return;
 
     const profileOverview = trackerOverview.data.data[0].stats;
     const author = getAuthor(trackerProfile.data.data, playerID);

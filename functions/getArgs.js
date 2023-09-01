@@ -4,7 +4,8 @@ const { buttons, helpButtons } = require('../components/buttons');
 
 async function getArgs(interaction) {
   const account = await Account.find({ discordId: interaction.user.id });
-
+  console.log(account);
+  console.log(account.length);
   if (account.length < 1) {
     return await interaction.editReply({
       embeds: [noAccountEmbed],

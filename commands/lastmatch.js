@@ -53,6 +53,7 @@ module.exports = {
   async execute(interaction) {
     await interaction.deferReply();
     const playerID = encodeURIComponent(await getArgs(interaction));
+    if (!playerID) return;
 
     const [trackerProfile, trackerMatch] = await Promise.all([
       getData(playerID, DataType.PROFILE),
@@ -60,9 +61,7 @@ module.exports = {
     ]);
 
     const dataSources = [trackerMatch, trackerProfile];
-    if (!(await handleResponse(interaction, dataSources))) {
-      return;
-    }
+    if (!(await handleResponse(interaction, dataSources))) return;
 
     const author = getAuthor(trackerProfile.data.data, playerID);
     const lastMatch = trackerMatch.data.data.matches[0];
