@@ -14,7 +14,7 @@ module.exports = {
       .addFields({
         name: 'Invite',
         value:
-          '```ansi\n\u001b[2;31m\n' +
+          '```ansi\n\u001b[2;31m' +
           'https://discord.com/api/oauth2/authorize?client_id=833535533287866398&permissions=431644736576&scope=bot%20applications.commands' +
           '\n```',
         inline: true,

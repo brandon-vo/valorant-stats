@@ -90,7 +90,7 @@ const helpEmbed = new MessageEmbed()
       value:
         '```ansi\n\u001b[0;45m' +
         '                          ValoStats                          ' +
-        '\u001b[0m\n```',
+        '\u001b[0m```',
     },
     {
       name: '**Gamemode Stats (All Acts)**',
@@ -115,7 +115,7 @@ const helpEmbed = new MessageEmbed()
         `<:slash:1145942150916358164> playtime: Total Playtime\n` +
         `**\nUtility**\n` +
         `<:slash:1145942150916358164> link: Link a VALORANT account\n` +
-        `<:slash:1145942150916358164> unlink: Unlink VALORANT account\n` +
+        `<:slash:1145942150916358164> unlink: Unlink VALORANT acct\n` +
         `<:slash:1145942150916358164> linked: View linked account\n` +
         `<:slash:1145942150916358164> invite: Get bot invite link\n`,
       inline: true,

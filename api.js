@@ -7,13 +7,13 @@ async function getData(playerID, dataType, matchID = null) {
   try {
     if (dataType === DataType.PROFILE) {
       data = await axios.get(process.env.TRACKER_PROFILE + playerID);
+    } else if (dataType === DataType.RANK) {
+      data = await axios.get(process.env.TRACKER_PROFILE + playerID + process.env.RANK_HEADER);
     } else if (dataType === DataType.COMP_OVERVIEW) {
       // prettier-ignore
       data = await axios.get(
         process.env.TRACKER_PROFILE + playerID + process.env.OVERVIEW_HEADER + 'competitive' + process.env.SOURCE_HEADER,
       );
-    } else if (dataType === DataType.RANK) {
-      data = await axios.get(process.env.TRACKER_PROFILE + playerID + process.env.RANK_HEADER);
     } else if (dataType === DataType.UNRATED_OVERVIEW) {
       data = await axios.get(
         process.env.TRACKER_PROFILE + playerID + process.env.OVERVIEW_HEADER + 'unrated'
@@ -28,7 +28,7 @@ async function getData(playerID, dataType, matchID = null) {
       );
     } else if (dataType === DataType.REPLICATION_OVERVIEW) {
       data = await axios.get(
-        process.env.TRACKER_PROFILE + playerI + process.env.OVERVIEW_HEADER + 'replication'
+        process.env.TRACKER_PROFILE + playerID + process.env.OVERVIEW_HEADER + 'replication'
       );
     } else if (dataType === DataType.ESCALATION_OVERVIEW) {
       data = await axios.get(
