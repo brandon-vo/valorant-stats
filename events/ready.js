@@ -5,13 +5,14 @@ module.exports = {
   once: true,
   async execute(client) {
     await delay(90); // 90s delay. TODO: Get guild sizes without hardcoded delay
-    
+
+    // TODO: Find out how to fetch guilds.cache.size in here since broadcastEval doesn't need to wait with a delay
     const totalMembers = await client.shard.broadcastEval((c) =>
       c.guilds.cache.map((guild) => guild.members.cache.size)
     );
     const guildSizes = await client.shard.fetchClientValues('guilds.cache.size');
     const totalGuilds = guildSizes.reduce((prev, curr) => prev + curr, 0);
-    const activities = [`${totalGuilds} servers | /help`, `${totalMembers} users | /help`];
+    const activities = [`${totalGuilds} servers | /help`, `${totalMembers[0][0]} users | /help`];
 
     setInterval(() => {
       const randomIndex = Math.floor(Math.random() * activities.length);
