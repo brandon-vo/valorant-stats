@@ -1,18 +1,24 @@
 const { ActivityType } = require('discord.js');
+const Account = require('../schemas/AccountSchema');
 
 module.exports = {
   name: 'ready',
   once: true,
   async execute(client) {
-    await delay(90); // 90s delay. TODO: Get guild sizes without hardcoded delay
+    // TODO: Get guild sizes without hardcoded delay
+    process.env.DEV ? await delay(5) : await delay(90);
 
-    // TODO: Find out how to fetch guilds.cache.size in here since broadcastEval doesn't need to wait with a delay
-    const totalMembers = await client.shard.broadcastEval((c) =>
-      c.guilds.cache.map((guild) => guild.members.cache.size)
-    );
+    let linkedCount;
+    try {
+      linkedCount = await Account.countDocuments({});
+      console.log(linkedCount);
+    } catch (err) {
+      console.error(err);
+    }
+
     const guildSizes = await client.shard.fetchClientValues('guilds.cache.size');
     const totalGuilds = guildSizes.reduce((prev, curr) => prev + curr, 0);
-    const activities = [`${totalGuilds} servers | /help`, `${totalMembers[0][0]} users | /help`];
+    const activities = [`${totalGuilds} servers | /help`, `${linkedCount} users | /help`];
 
     setInterval(() => {
       const randomIndex = Math.floor(Math.random() * activities.length);
