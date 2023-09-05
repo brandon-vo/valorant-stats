@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const { getRow, editGetRow, timeout } = require('../components/pages');
 const { buttons } = require('../components/buttons');
 
@@ -16,7 +16,7 @@ async function handlePages(interaction, embeds, author) {
   let navButtons = getRow(id, pages, embeds, randomID);
 
   if (typeof navButtons === 'number') {
-    const cooldownEmbed = new MessageEmbed()
+    const cooldownEmbed = new EmbedBuilder()
       .setColor('#11806A')
       .setAuthor(author)
       .setThumbnail(author.userAvatar)

@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { buttons } = require('../components/buttons.js');
 
@@ -8,8 +8,8 @@ module.exports = {
     .setDescription('Get the invite link to this Discord bot'),
 
   async execute(interaction) {
-    const inviteEmbed = new MessageEmbed()
-      .setColor('RANDOM')
+    const inviteEmbed = new EmbedBuilder()
+      .setColor('Random')
       .setFooter({ text: 'Developed by CMDRVo' })
       .addFields({
         name: 'Invite',

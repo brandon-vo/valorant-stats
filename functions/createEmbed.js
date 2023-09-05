@@ -1,8 +1,8 @@
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 
 // Used for mullti-page embeds
 const createEmbed = (title, fields, author) => {
-  return new MessageEmbed()
+  return new EmbedBuilder()
     .setColor('#11806A')
     .setTitle(title)
     .setAuthor(author)

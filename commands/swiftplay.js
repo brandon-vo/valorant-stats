@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { buttons } = require('../components/buttons');
 const { Overview } = require('../constants/overview');
@@ -42,7 +42,7 @@ module.exports = {
     const profileOverview = trackerOverview.data.data[0].stats;
     const stats = Overview(profileOverview);
 
-    const replicationEmbed = new MessageEmbed()
+    const replicationEmbed = new EmbedBuilder()
       .setColor('#11806A')
       .setTitle(`Swiftplay Career Stats`)
       .setAuthor(author)

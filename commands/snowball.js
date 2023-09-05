@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { buttons } = require('../components/buttons');
 const { Overview } = require('../constants/overview');
@@ -43,7 +43,7 @@ module.exports = {
     const author = getAuthor(profileInfo, playerID);
     const stats = Overview(profileOverview);
 
-    const snowballEmbed = new MessageEmbed()
+    const snowballEmbed = new EmbedBuilder()
       .setColor('#11806A')
       .setTitle(`Snowball Fight Career Stats`)
       .setAuthor(author)

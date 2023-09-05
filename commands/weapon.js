@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { buttons } = require('../components/buttons');
 const { DataType } = require('../constants/types');
@@ -38,7 +38,7 @@ module.exports = {
     const maxWeaponsToShow = Math.min(weaponObjects.length, 5);
     let topWeapons = weaponObjects.slice(0, maxWeaponsToShow);
 
-    const weaponEmbed = new MessageEmbed()
+    const weaponEmbed = new EmbedBuilder()
       .setColor('#11806A')
       .setAuthor(author)
       .setThumbnail(author.iconURL)

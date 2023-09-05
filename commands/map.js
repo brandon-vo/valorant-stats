@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { buttons } = require('../components/buttons');
 const assets = require('../assets.json');
@@ -37,7 +37,7 @@ module.exports = {
 
     mapObjects.sort((a, b) => b.stats.timePlayed.value - a.stats.timePlayed.value);
 
-    const mapEmbed = new MessageEmbed()
+    const mapEmbed = new EmbedBuilder()
       .setColor('#11806A')
       .setAuthor(author)
       .setThumbnail(author.iconURL)

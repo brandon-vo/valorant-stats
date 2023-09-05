@@ -1,6 +1,6 @@
 {
   "name": "valorant-stats-bot",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "engines": {
     "node": "16.x",
     "npm": "7.x"
@@ -13,13 +13,12 @@
   "author": "Brandon Vo",
   "license": "ISC",
   "dependencies": {
-    "@discordjs/rest": "^0.2.0-canary.0",
     "@top-gg/sdk": "^3.1.5",
     "axios": "^0.21.4",
-    "discord-api-types": "^0.26.1",
-    "discord.js": "^13.6.0",
+    "discord.js": "^14.13.0",
     "dotenv": "^8.2.0",
     "mongoose": "^5.12.9",
+    "node": "16.11.0",
     "top.gg": "^2.3.2",
     "topgg-autoposter": "^2.0.1"
   }

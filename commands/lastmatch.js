@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { helpButtons } = require('../components/buttons');
 const { ErrorType, DataType } = require('../constants/types');
@@ -105,7 +105,7 @@ module.exports = {
       mapImage = assets.maps[lastMap]?.imgLost || assets.maps['Unknown'].imgLost;
     }
 
-    const lastMatchEmbed1 = new MessageEmbed()
+    const lastMatchEmbed1 = new EmbedBuilder()
       .setColor('#11806A')
       .setTitle('Last Competitive Match - ' + lastMap)
       .setAuthor(author)
@@ -177,7 +177,7 @@ module.exports = {
       )
       .setImage(mapImage);
 
-    const lastMatchEmbed2 = new MessageEmbed()
+    const lastMatchEmbed2 = new EmbedBuilder()
       .setColor('#11806A')
       .setTitle(
         'Last Competitive Match - ' +

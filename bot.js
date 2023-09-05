@@ -1,12 +1,16 @@
 require('dotenv').config();
 const fs = require('fs');
-const { Client, Collection, Intents } = require('discord.js');
+const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const mongoose = require('mongoose');
 const { AutoPoster } = require('topgg-autoposter');
 const { Api } = require('@top-gg/sdk');
 
 const client = new Client({
-  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+  ],
 });
 
 client.commands = new Collection();

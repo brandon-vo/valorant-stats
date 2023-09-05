@@ -1,6 +1,6 @@
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 
-const noAccountEmbed = new MessageEmbed()
+const noAccountEmbed = new EmbedBuilder()
   .setColor('#d1390f')
   .setThumbnail(
     'https://cdn.discordapp.com/attachments/834195818080108564/932365602427920404/x-png-35400.png'
@@ -15,7 +15,7 @@ const noAccountEmbed = new MessageEmbed()
     inline: true,
   });
 
-const maintenanceEmbed = new MessageEmbed()
+const maintenanceEmbed = new EmbedBuilder()
   .setColor('#d1390f')
   .setThumbnail(
     'https://cdn.discordapp.com/attachments/834195818080108564/932365602427920404/x-png-35400.png'
@@ -31,7 +31,7 @@ const maintenanceEmbed = new MessageEmbed()
     inline: true,
   });
 
-const errorEmbed = new MessageEmbed()
+const errorEmbed = new EmbedBuilder()
   .setColor('#d1390f')
   .setThumbnail(
     'https://cdn.discordapp.com/attachments/834195818080108564/932365602427920404/x-png-35400.png'
@@ -47,7 +47,7 @@ const errorEmbed = new MessageEmbed()
     inline: true,
   });
 
-const noStatsEmbed = new MessageEmbed()
+const noStatsEmbed = new EmbedBuilder()
   .setColor('#d1390f')
   .setThumbnail(
     'https://cdn.discordapp.com/attachments/834195818080108564/932365602427920404/x-png-35400.png'
@@ -62,8 +62,8 @@ const noStatsEmbed = new MessageEmbed()
     inline: true,
   });
 
-const useSlashEmbed = new MessageEmbed()
-  .setColor('RANDOM')
+const useSlashEmbed = new EmbedBuilder()
+  .setColor('Random')
   .setAuthor({ name: 'IMPORTANT READ ME' })
   .addFields({
     name: ':warning: Please use slash commands from now on',
@@ -81,7 +81,7 @@ const useSlashEmbed = new MessageEmbed()
     'https://cdn.discordapp.com/attachments/834195818080108564/954932610780520468/thanks.jpg'
   );
 
-const helpEmbed = new MessageEmbed()
+const helpEmbed = new EmbedBuilder()
   .setColor('#6c71c4')
   .setFooter({ text: 'Developed by CMDRVo' })
   .addFields(
@@ -137,8 +137,8 @@ const helpEmbed = new MessageEmbed()
   );
 
 function linkEmbed(args) {
-  return new MessageEmbed()
-    .setColor('RANDOM')
+  return new EmbedBuilder()
+    .setColor('Random')
     .setFooter({ text: 'Developed by CMDRVo' })
     .addFields({
       name: 'Success!',
@@ -151,8 +151,8 @@ function linkEmbed(args) {
     });
 }
 
-const unlinkEmbed = new MessageEmbed()
-  .setColor('RANDOM')
+const unlinkEmbed = new EmbedBuilder()
+  .setColor('Random')
   .setFooter({ text: 'Developed by CMDRVo' })
   .addFields({
     name: 'Success!',
@@ -163,8 +163,8 @@ const unlinkEmbed = new MessageEmbed()
   });
 
 function linkedEmbed(args) {
-  return new MessageEmbed()
-    .setColor('RANDOM')
+  return new EmbedBuilder()
+    .setColor('Random')
     .setFooter({ text: 'Developed by CMDRVo' })
     .addFields({
       name: 'Status',
@@ -177,8 +177,8 @@ function linkedEmbed(args) {
     });
 }
 
-const noLinkEmbed = new MessageEmbed()
-  .setColor('RANDOM')
+const noLinkEmbed = new EmbedBuilder()
+  .setColor('Random')
   .setFooter({ text: 'Developed by CMDRVo' })
   .addFields({
     name: 'Error Status',
@@ -187,7 +187,7 @@ const noLinkEmbed = new MessageEmbed()
     inline: true,
   });
 
-const voteEmbed = new MessageEmbed()
+const voteEmbed = new EmbedBuilder()
   .setColor('#FFAA20')
   .setThumbnail(
     'https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/OOjs_UI_icon_alert-yellow.svg/1200px-OOjs_UI_icon_alert-yellow.svg.png'

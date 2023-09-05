@@ -1,40 +1,52 @@
-const { MessageActionRow, MessageButton } = require('discord.js');
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 
-const buttons = new MessageActionRow().addComponents(
-  new MessageButton()
+const buttons = new ActionRowBuilder().addComponents(
+  new ButtonBuilder()
     .setLabel('Invite')
     .setURL(
       'https://discord.com/api/oauth2/authorize?client_id=833535533287866398&permissions=431644736576&scope=bot%20applications.commands'
     )
-    .setStyle('LINK'),
-  new MessageButton().setLabel('Server').setURL('https://discord.gg/8bY6nFaVEY').setStyle('LINK'),
-  new MessageButton()
+    .setStyle(ButtonStyle.Link),
+  new ButtonBuilder()
+    .setLabel('Server')
+    .setURL('https://discord.gg/8bY6nFaVEY')
+    .setStyle(ButtonStyle.Link),
+  new ButtonBuilder()
     .setLabel('Vote')
     .setURL('https://top.gg/bot/833535533287866398')
-    .setStyle('LINK'),
-  new MessageButton().setLabel('Website').setURL('https://valostats.netlify.app/').setStyle('LINK')
+    .setStyle(ButtonStyle.Link),
+  new ButtonBuilder()
+    .setLabel('Website')
+    .setURL('https://valostats.netlify.app/')
+    .setStyle(ButtonStyle.Link)
 );
 
-const helpButtons = new MessageActionRow().addComponents(
-  new MessageButton()
+const helpButtons = new ActionRowBuilder().addComponents(
+  new ButtonBuilder()
     .setLabel('Invite')
     .setURL(
       'https://discord.com/api/oauth2/authorize?client_id=833535533287866398&permissions=431644736576&scope=bot%20applications.commands'
     )
-    .setStyle('LINK'),
-  new MessageButton().setLabel('Server').setURL('https://discord.gg/8bY6nFaVEY').setStyle('LINK'),
-  new MessageButton()
+    .setStyle(ButtonStyle.Link),
+  new ButtonBuilder()
+    .setLabel('Server')
+    .setURL('https://discord.gg/8bY6nFaVEY')
+    .setStyle(ButtonStyle.Link),
+  new ButtonBuilder()
     .setLabel('Vote')
     .setURL('https://top.gg/bot/833535533287866398')
-    .setStyle('LINK'),
-  new MessageButton().setLabel('Tracker.gg').setURL('https://tracker.gg/valorant').setStyle('LINK')
+    .setStyle(ButtonStyle.Link),
+  new ButtonBuilder()
+    .setLabel('Tracker.gg')
+    .setURL('https://tracker.gg/valorant')
+    .setStyle(ButtonStyle.Link)
 );
 
-const voteButton = new MessageActionRow().addComponents(
-  new MessageButton()
+const voteButton = new ActionRowBuilder().addComponents(
+  new ButtonBuilder()
     .setLabel('Click me to vote!')
     .setURL('https://top.gg/bot/833535533287866398')
-    .setStyle('LINK')
+    .setStyle(ButtonStyle.Link)
 );
 
 module.exports = { buttons, helpButtons, voteButton };

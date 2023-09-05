@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { buttons } = require('../components/buttons');
 const { DataType } = require('../constants/types');
@@ -39,7 +39,7 @@ module.exports = {
     const maxAgentsToShow = Math.min(agentStats.length, 5);
     const topAgents = agentStats.slice(0, maxAgentsToShow);
 
-    const agentEmbed = new MessageEmbed()
+    const agentEmbed = new EmbedBuilder()
       .setColor('#11806A')
       .setAuthor(author)
       .setThumbnail(author.iconURL)

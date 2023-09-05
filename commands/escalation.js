@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { buttons } = require('../components/buttons');
 const { Overview } = require('../constants/overview');
@@ -43,7 +43,7 @@ module.exports = {
     const author = getAuthor(profileInfo, playerID);
     const stats = Overview(profileOverview);
 
-    const escalationEmbed = new MessageEmbed()
+    const escalationEmbed = new EmbedBuilder()
       .setColor('#11806A')
       .setTitle(`Escalation Career Stats`)
       .setAuthor(author)
