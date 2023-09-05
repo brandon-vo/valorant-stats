@@ -6,11 +6,7 @@ const { AutoPoster } = require('topgg-autoposter');
 const { Api } = require('@top-gg/sdk');
 
 const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-  ],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
 });
 
 client.commands = new Collection();
