@@ -11,7 +11,6 @@ module.exports = {
     let linkedCount;
     try {
       linkedCount = await Account.countDocuments({});
-      console.log(linkedCount);
     } catch (err) {
       console.error(err);
     }

@@ -93,7 +93,7 @@ const helpEmbed = new EmbedBuilder()
         '\u001b[0m```',
     },
     {
-      name: '**Gamemode Stats (All Acts)**',
+      name: '**All Acts Stats**',
       value:
         `<:slash:1145942150916358164> lastmatch: Last Comp Match\n` +
         `<:slash:1145942150916358164> stats: Competitive Stats\n` +
@@ -103,21 +103,27 @@ const helpEmbed = new EmbedBuilder()
         `<:slash:1145942150916358164> escalation: Escalation Stats\n` +
         `<:slash:1145942150916358164> replication: Replication Stats\n` +
         `<:slash:1145942150916358164> swiftplay: Swiftplay Stats\n` +
-        `<:slash:1145942150916358164> snowball: Snowball Stats\n`,
+        `<:slash:1145942150916358164> snowball: Snowball Stats\n` +
+        `<:slash:1145942150916358164> playtime: Total Playtime\n` +
+        `\n**More Competitive Stats**\n` +
+        `<:slash:1145942150916358164> agent: Top 5 Ranked Agents\n` +
+        `<:slash:1145942150916358164> weapon: Top 5 Ranked Weapons\n` +
+        `<:slash:1145942150916358164> map: All Ranked Map Stats\n`,
       inline: true,
     },
     {
-      name: '**Other Stats**',
+      name: '**Utility**',
       value:
-        `<:slash:1145942150916358164> agent: Top 5 Ranked Agents\n` +
-        `<:slash:1145942150916358164> weapon: Top 5 Ranked Weapons\n` +
-        `<:slash:1145942150916358164> map: All Ranked Map Stats\n` +
-        `<:slash:1145942150916358164> playtime: Total Playtime\n` +
-        `**\nUtility**\n` +
         `<:slash:1145942150916358164> link: Link a VALORANT account\n` +
         `<:slash:1145942150916358164> unlink: Unlink VALORANT acct\n` +
         `<:slash:1145942150916358164> linked: View linked account\n` +
-        `<:slash:1145942150916358164> invite: Get bot invite link\n`,
+        `<:slash:1145942150916358164> invite: Get bot invite link\n` +
+        `\n**Fun**\n` +
+        `<:slash:1145942150916358164> joke: Get a random dad joke\n` +
+        `<:slash:1145942150916358164> dog: Get a random dog photo\n` +
+        `<:slash:1145942150916358164> bitcoin: Get Bitcoin's price\n` +
+        `<:slash:1145942150916358164> bored: Get a random activity\n` +
+        `<:slash:1145942150916358164> ping: Pong!\n`,
       inline: true,
     },
     { name: '\u200B', value: '\u200B', inline: true },
