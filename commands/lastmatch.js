@@ -219,7 +219,7 @@ module.exports = {
 
       // For 2 column formatting
       if (count === 1) {
-        lastMatchEmbed2.addField('\u200B', '\u200B', true);
+        lastMatchEmbed2.addFields('\u200B', '\u200B', true);
         count = 0;
       }
     }

@@ -121,7 +121,7 @@ const helpEmbed = new EmbedBuilder()
         `\n**Fun**\n` +
         `<:slash:1145942150916358164> joke: Get a random dad joke\n` +
         `<:slash:1145942150916358164> dog: Get a random dog photo\n` +
-        `<:slash:1145942150916358164> bitcoin: Get Bitcoin's price\n` +
+        `<:slash:1145942150916358164> bitcoin: Get price of Bitcoin\n` +
         `<:slash:1145942150916358164> bored: Get a random activity\n` +
         `<:slash:1145942150916358164> ping: Pong!\n`,
       inline: true,
