@@ -9,10 +9,15 @@
   <a href="https://top.gg/bot/833535533287866398">
     <img src="https://top.gg/api/widget/servers/833535533287866398.svg">
   </a>
-    <h3>LATEST UPDATE [8/26/23]:</h3> The bot has been fixed :)
-    <br>
-      <details close>
-        <summary><h3>UPDATE [11/28/22]:</h3></summary> As of November 28th, 2022, ValoStats will be offline from Discord. The platform used to host this bot, Heroku, will no longer allow hosting for free. At this time, I do not have the funds to be able to continue hosting ValoStats. Also, the API     usage with Tracker Network has changed and the bot cannot retrieve stats properly. 
+    <h3>UPDATE [11/01/24]:</h3>
+    I am no longer working on ValoStats, and the bot will not receive updates or maintenance until further notice. Thank you to everyone who supported and enjoyed this project. I’m grateful to have shared this journey with you all.
+  <br>
+  <details close>
+    <summary><h3>UPDATE [8/26/23]:</h3></summary>
+    The bot has been fixed :)
+  </details>
+  <details close>
+      <summary><h3>UPDATE [11/28/22]:</h3></summary> As of November 28th, 2022, ValoStats will be offline from Discord. The platform used to host this bot, Heroku, will no longer allow hosting for free. At this time, I do not have the funds to be able to continue hosting ValoStats. Also, the API     usage with Tracker Network has changed and the bot cannot retrieve stats properly. 
       <br><br>In the future, I may plan to use Riot's official Valorant API and revive this project. 
       <br><br>I am proud to inspire hundreds of other bright developers to make a Valorant Stats Discord bot like this. I am also pleased that thousands of Valorant users have been able to use and enjoy my first big side project for their gaming experience.
       <br><br>Thank you for supporting and using ValoStats for the past year.
